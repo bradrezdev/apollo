@@ -22,7 +22,7 @@ def qa(question: str, answer: str) -> rx.Component:
 def chat() -> rx.Component:
     return rx.box(
         rx.foreach(
-            state.chat_history,
+            State.chat_history,
             lambda messages: qa(messages[0], messages[1]),
         )
     )
