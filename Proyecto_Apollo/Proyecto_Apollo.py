@@ -1,58 +1,68 @@
-# chatapp.py
-import reflex as rx
+import reflex as rx 
 
-from Proyecto_Apollo import style
-from Proyecto_Apollo.state import State
+class State(rx.State):
+    pass
 
-
-def qa(question: str, answer: str) -> rx.Component:
-    return rx.box(
-        rx.box(
-            rx.text(question, style=style.question_style),
-            text_align="right",
-        ),
-        rx.box(
-            rx.text(answer, style=style.answer_style),
-            text_align="left",
-        ),
-        margin_y="1em",
-    )
-
-
-def chat() -> rx.Component:
-    return rx.box(
-        rx.foreach(
-            State.chat_history,
-            lambda messages: qa(messages[0], messages[1]),
-        )
-    )
-
-
-def action_bar() -> rx.Component:
+def index():
     return rx.hstack(
-        rx.input(
-            value=State.question,
-            placeholder="Haz una pregunta",
-            on_change=State.set_question,
-            style=style.input_style,
+        # Sidebar menu.
+        rx.center(
+            "Sidebar",
+            bg="gray",
+            height="100vh",
+            width="20vw",
         ),
-        rx.button(
-            "Enviar",
-            on_click=State.answer,
-            style=style.button_style,
-        ),
-    )
-
-
-def index() -> rx.Component:
-    return rx.center(
+        # Sección de chat.
         rx.vstack(
-            chat(),
-            action_bar(),
-            align="center",
-        )
+            # Header TelemedicinAI.
+            rx.container(
+                "TelemedicinAI",
+                bg="gold",
+                height="8vh",
+                width="100%",
+            ),
+            # Imagen banner NN Protect.
+            rx.container(
+                "Imagen banner NN Protect",
+                bg="orange",
+                height="16vh",
+                width="100%",
+            ),
+            # Sección de chat.
+            rx.flex(
+                height="56vh"
+            ),
+            # Sección de pregunta al chat.
+            rx.hstack(
+                # Input de pregunta al asistente.
+                rx.input(
+                    bg="lightgray",
+                    height="50%",
+                    max_height="70%",
+                    name="Pregunta",
+                    placeholder="Pregunta lo que quieras",
+                    type="text",
+                    required=True,
+                    width="80%",
+                ),
+                # Botón de enviar.
+                rx.button(
+                    "Enviar",
+                    height="50%",
+                    type="submit",
+                    width="20%",
+                ),
+                bg="lightgray",
+                height="12vh",
+                width="100%",
+            ),
+            spacing="4",
+            width="80vw",
+        ),
+        bg="#000",
+        spacing="0",
+        width="100vw",
     )
 
-
-app = rx.App()
+app=rx.App()
 app.add_page(index)

@@ -5,3 +5,4 @@ __pycache__/
 .web
 *.py[cod]
 apollo/
+.env

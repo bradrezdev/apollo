@@ -1,19 +1,21 @@
-import reflex as rx
 import os
 from openai import AsyncOpenAI
+import reflex as rx
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class State(rx.State):
-    # The current question being asked.
+    # La pregunta que está siendo hecha.
     question: str
 
-    # Keep track of the chat history as a list of (question, answer) tuples.
+    # Sigue el rastro del historial del chat como una lista de tuplas (pregunta, respuesta).
     chat_history: list[tuple[str, str]]
 
     async def answer(self):
-        # Our chatbot has some brains now!
         client = AsyncOpenAI(
-            api_key=os.environ["asst_tvVa2SUaRhesqjphWE09I7Wx"]
+            api_key=os.environ["OPENAI_API_KEY"]
         )
 
         session = await client.chat.completions.create(
@@ -26,13 +28,13 @@ class State(rx.State):
             stream=True,
         )
 
-        # Add to the answer as the chatbot responds.
         answer = ""
         self.chat_history.append((self.question, answer))
 
-        # Clear the question input.
+        # Limpiar la pregunta actual del input
         self.question = ""
-        # Yield here to clear the frontend input before continuing.
+
+        # Hacer yield para que el frontend se actualice
         yield
 
         async for item in session:
@@ -46,3 +48,24 @@ class State(rx.State):
                     answer,
                 )
                 yield
+
+    def auto_scroll(self):
+        return rx.auto_scroll(
+            rx.foreach(
+                self.chat_history,
+                lambda message: rx.box(
+                    rx.text(f"Usuario: {message[0]}"),
+                    rx.text(f"Asistente: {message[1]}"),
+                    padding="0.5em",
+                    border_bottom="1px solid #eee",
+                    width="100%",
+                ),
+            ),
+            height="400px",
+            width="100%",
+            border="1px solid #ddd",
+            border_radius="md",
+            padding="1em",
+            key=len(self.chat_history),  # <- Esto obliga a re-renderizar
+            overflow_y="auto",
+        )
