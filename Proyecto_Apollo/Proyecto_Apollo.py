@@ -9,7 +9,7 @@ def qa(question: str, answer: str) -> rx.Component:
             text_align="right",
         ),
         rx.box(
-            rx.text(answer, style=style.answer_style),
+            rx.markdown(answer, style=style.answer_style),
             text_align="left",
         ),
         margin_y="1em",
@@ -121,15 +121,15 @@ def index():
         rx.vstack(
             # Header TelemedicinAI.
             rx.container(
-                "TelemedicinAI",
+                rx.text("TelemedicinAI", align="left",),
                 bg="gold",
                 height="8vh",
                 margin_bottom="1vh",
                 width="100%",
             ),
             # Imagen banner NN Protect.
-            rx.container(
-                "Imagen banner NN Protect",
+            rx.box(
+                rx.image(src="/banner_web.jpg", height="100%", overflow="auto", width="100%"),
                 bg="orange",
                 height="16vh",
                 width="100%",
@@ -142,32 +142,32 @@ def index():
                 width="100%",
             ),
             # Sección de pregunta al chat.
-            rx.hstack(
-                rx.form(
+            rx.flex(
+                rx.hstack(
                     # Input de pregunta al asistente.
                     rx.input(
                         value=State.question,
                         on_change=State.set_question,
-                        height="50%",
-                        max_height="70%",
+                        border_radius="8px",
+                        height="65%",
                         placeholder="Pregunta lo que quieras",
                         required=True,
                         type="text",
+                        width="100%",
                     ),
                     # Botón de enviar.
                     rx.icon_button(
                         "arrow_up",
                         radius="full",
+                        on_click=State.answer,
+                        size="3",
                     ),
                     bg="lightgray",
-                    border_top_left_radius="16px",
-                    border_top_right_radius="16px",
-                    height="11vh",
-                    on_submit=State.answer,
+                    border_radius="16px",
+                    height="12vh",
                     padding="16px",
                     reset_on_submit=True,
-                    shadow = "rgba(0, 0, 0, 0.15) 0px 2px 8px",
-                    width="100%",
+                    width="99%",
                 ),
             width="100%",
         ),
