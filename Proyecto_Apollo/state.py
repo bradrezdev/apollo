@@ -10,34 +10,40 @@ class State(rx.State):
     chat_history: list[tuple[str, str]] = []
 
     async def answer(self):
+        message = self.question
         client = AsyncOpenAI(
             api_key=os.environ["OPENAI_API_KEY"]
         )
 
-        # Start streaming completion from OpenAI
-        session = await client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": self.question}
-            ],
-            temperature=0.7,
+        thread = await client.beta.threads.create()
+
+        await client.beta.threads.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=message
+        )
+
+        # Start streaming response from assistant
+        session = await client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id="asst_wbg01t4JFYx0AVal09mtljlS",
             stream=True,
         )
 
         # Initialize response and update UI
         answer = ""
-        self.chat_history.append((self.question, answer))
+        self.chat_history.append((message, answer))
         self.question = ""
         yield
 
         # Process streaming response
-        async for item in session:
-            if hasattr(item.choices[0].delta, "content"):
-                if item.choices[0].delta.content is None:
-                    break
-                answer += item.choices[0].delta.content
-                self.chat_history[-1] = (
-                    self.chat_history[-1][0],
-                    answer,
-                )
-                yield
+        async for event in session:
+            if event.event == "thread.message.delta" and event.data.delta.content:
+                for content_block in event.data.delta.content:
+                    if content_block.type == "text" and content_block.text and content_block.text.value:
+                        answer += content_block.text.value
+                        self.chat_history[-1] = (
+                            self.chat_history[-1][0],
+                            answer,
+                        )
+                        yield

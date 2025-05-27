@@ -19,5 +19,4 @@ question_style = message_style | dict(
 )
 answer_style = message_style | dict(
     margin_left="16px",
-    size="4",
 )

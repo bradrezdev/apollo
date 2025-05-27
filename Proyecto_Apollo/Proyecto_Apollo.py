@@ -29,21 +29,6 @@ def chat() -> rx.Component:
         ),
     )
 
-def action_bar() -> rx.Component:
-    return rx.hstack(
-        rx.input(
-            value=State.question,
-            placeholder="Ask a question",
-            on_change=State.set_question,
-            style=style.input_style,
-        ),
-        rx.button(
-            "Ask",
-            on_click=State.answer,
-            style=style.button_style,
-        ),
-    )
-
 def sidebar_item(
     text: str, icon: str, href: str
 ) -> rx.Component:
@@ -98,7 +83,7 @@ def index():
                     rx.vstack(
                         rx.box(
                             rx.text(
-                                "Mi cuenta",
+                                "Bryan Nuñez",
                                 size="3",
                                 weight="bold",
                             ),
@@ -129,17 +114,19 @@ def index():
             ),
             # Imagen banner NN Protect.
             rx.box(
-                rx.image(src="/banner_web.jpg", height="100%", overflow="auto", width="100%"),
+                rx.image(src="/banner_web.jpg", border_radius="16px", height="100%", overflow="auto", width="100%"),
                 bg="orange",
                 height="16vh",
-                width="100%",
+                width="98%",
             ),
             # Sección de chat.
-            rx.flex(
+            rx.center(
+                rx.flex(
                 chat(),
                 height="62vh",
                 overflow_y="auto",
-                width="100%",
+                max_width="90%",
+                ),
             ),
             # Sección de pregunta al chat.
             rx.flex(
@@ -176,5 +163,9 @@ def index():
     ),
 )
 
-app=rx.App()
+app = rx.App(
+    theme=rx.theme(
+        appearance="inherit", has_background=True, radius="large", accent_color="teal"
+    )
+)
 app.add_page(index)
