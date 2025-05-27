@@ -106,55 +106,78 @@ def index():
         rx.vstack(
             # Header TelemedicinAI.
             rx.container(
-                rx.text("TelemedicinAI", align="left",),
-                bg="gold",
+                rx.text("TelemedicinAI", align="center", weight="bold"),
+                position="fixed",
+                top=0,
+                z_index=100,
+                bg="rgba(255, 255, 255, 0.35)",
+                style={
+                    "backdropFilter": "blur(60px)",
+                    "-webkit-backdrop-filter": "blur(60px)",
+                },
                 height="8vh",
-                margin_bottom="1vh",
-                width="100%",
+                width="80%",
             ),
             # Imagen banner NN Protect.
-            rx.box(
-                rx.image(src="/banner_web.jpg", border_radius="16px", height="100%", overflow="auto", width="100%"),
-                bg="orange",
-                height="16vh",
-                width="98%",
-            ),
             # Sección de chat.
             rx.center(
-                rx.flex(
-                chat(),
-                height="62vh",
-                overflow_y="auto",
-                max_width="90%",
+                rx.vstack(
+                    rx.box(
+                        rx.image(
+                            src="/banner_web.jpg",
+                            border_radius="16px",
+                            width="100%",
+                            height="100%",
+                            style={"objectFit": "cover"},
+                        ),
+                        height="16vh",
+                        margin_top="10vh",
+                        width="98%",
+                    ),
+                    chat(),
+                    height="85vh",
+                    overflow_y="auto",
+                    max_width="80%",
+                    margin_bottom="1vh",
+                    min_width="50%",
                 ),
             ),
             # Sección de pregunta al chat.
-            rx.flex(
+            rx.center(
                 rx.hstack(
                     # Input de pregunta al asistente.
-                    rx.input(
+                    rx.text_area(
                         value=State.question,
                         on_change=State.set_question,
-                        border_radius="8px",
-                        height="65%",
+                        align_self="flex-end",
+                        auto_height=True,
+                        border_radius="12px",
+                        max_length=300,
                         placeholder="Pregunta lo que quieras",
                         required=True,
+                        resize="vertical",
+                        #rows="1",
+                        style={"overflowY": "auto", "alignSelf": "flex-end"},
                         type="text",
                         width="100%",
                     ),
                     # Botón de enviar.
                     rx.icon_button(
                         "arrow_up",
-                        radius="full",
+                        bg="#0984e3",
                         on_click=State.answer,
+                        radius="full",
                         size="3",
                     ),
-                    bg="lightgray",
+                    align_self="flex-end",
+                    auto_height=True,
+                    bg="#ecf0f1",
                     border_radius="16px",
-                    height="12vh",
+                    min_width="50%",
                     padding="16px",
                     reset_on_submit=True,
-                    width="99%",
+                    style={"overflowY": "auto", "alignSelf": "flex-end"},
+                    width="80%",
                 ),
             width="100%",
         ),
@@ -165,7 +188,7 @@ def index():
 
 app = rx.App(
     theme=rx.theme(
-        appearance="inherit", has_background=True, radius="large", accent_color="teal"
+        appearance="light", has_background=True, radius="large", accent_color="teal"
     )
 )
 app.add_page(index)
