@@ -2,6 +2,8 @@ import os
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import reflex as rx
+from Proyecto_Apollo.api_keys import OPENAI_API_KEY
+from Proyecto_Apollo.api_keys import API_ASSISTANT_ID
 
 load_dotenv()
 
@@ -12,7 +14,7 @@ class State(rx.State):
     async def answer(self):
         message = self.question
         client = AsyncOpenAI(
-            api_key=os.environ["OPENAI_API_KEY"]
+            api_key=OPENAI_API_KEY
         )
 
         thread = await client.beta.threads.create()
@@ -26,7 +28,7 @@ class State(rx.State):
         # Start streaming response from assistant
         session = await client.beta.threads.runs.create(
             thread_id=thread.id,
-            assistant_id="asst_wbg01t4JFYx0AVal09mtljlS",
+            assistant_id=API_ASSISTANT_ID,
             stream=True,
         )
 
