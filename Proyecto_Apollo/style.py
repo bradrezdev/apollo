@@ -53,21 +53,21 @@ chat_scroll_desktop_style = {
 
 # Estilos para chat container - Mobile
 chat_container_mobile_style = {
-    "flex": "1",
+    #"flex": "5",
     "width": "100%",
-    "height": "100%",
-    "overflow_y": "auto",
+    "height": "50%",
+    "overflow_y": "hidden",
     "padding_top": "4rem",  # Espacio para el header
     "padding_bottom": "1rem",  # Espacio para el input
     "z_index": 1,
 }
 
 chat_scroll_mobile_style = {
-    "height": "100%",
-    "overflow_y": "auto",
+    "height": "50%",
+    #"overflow_y": "auto",
     "scroll_behavior": "smooth",
     "width": "100%",
-    "min_height": "100%",
+    #"min_height": "100%",
 }
 
 # === ESTILOS PARA SIDEBAR ===
@@ -117,7 +117,7 @@ header_mobile_style = {
 }
 
 header_mobile_gradient_style = {
-    "background": "linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0))",
+    "background": "linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0))",
     "height": "4rem",
     "position": "fixed",
     "top": 0,
@@ -173,7 +173,7 @@ text_area_mobile_style = {
 }
 
 chat_input_style = {
-    "bg": "rgba(255, 255, 255, 0.35)",
+    "bg": "rgba(25, 25, 25, 0.35)",
     "border_radius": "16px",
     "direction": "row",
     "justify": "end",
@@ -315,8 +315,8 @@ user_info_container_style = {
 
 # Contenedor principal del chat mobile
 mobile_chat_main_container_style = {
-    "height": "100vh",
+    "height": "100 vh",
     "width": "100%",
-    "overflow": "hidden",
-    "position": "relative",
+    "overflow_y": "hidden",
+    "position": "absolute",
 }
