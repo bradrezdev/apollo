@@ -26,7 +26,18 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
             color="white"
         ),
         rx.box(
-            rx.markdown(answer, style=chat_styles.answer_style), 
+            rx.hstack(
+                rx.markdown(answer, style=chat_styles.answer_style),
+                rx.icon_button(
+                    rx.icon("copy", size=16),
+                    on_click=rx.set_clipboard(answer),
+                    size="1",
+                    variant="ghost",
+                    color_scheme="gray",
+                ),
+                align="start",
+                width="100%",
+            ),
             text_align="left"
         ),
         margin_y="1em",
