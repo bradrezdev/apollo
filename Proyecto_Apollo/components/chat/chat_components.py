@@ -19,7 +19,6 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
         rx.Component: Box con el mensaje del usuario y la respuesta del asistente
     """
     question, answer = qa[0], qa[1]
-    is_empty_answer = not answer or answer.strip() == ""
     
     return rx.box(
         rx.box(
@@ -29,7 +28,7 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
         ),
         rx.box(
             rx.cond(
-                is_empty_answer,
+                answer == "",
                 # Mostrar indicador de "pensando" cuando la respuesta está vacía
                 rx.hstack(
                     rx.spinner(size="2"),
