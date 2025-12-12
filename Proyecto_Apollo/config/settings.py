@@ -7,8 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # === OPENAI CONFIGURATION ===
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "sk-i1UmS_YTnDZrqlh2P_BzutHN2Cs5Em1_v9Ansvdek_T3BlbkFJz4pHhL_L8aL2IvExcf0h-_Sl7dOujDyyKUmMsddNUA")
-API_ASSISTANT_ID = os.getenv("API_ASSISTANT_ID", "asst_tvVa2SUaRhesqjphWE09I7Wx")
+# Hardcoded para producción ya que Reflex Cloud no soporta secrets
+OPENAI_API_KEY = "sk-i1UmS_YTnDZrqlh2P_BzutHN2Cs5Em1_v9Ansvdek_T3BlbkFJz4pHhL_L8aL2IvExcf0h-_Sl7dOujDyyKUmMsddNUA"
+API_ASSISTANT_ID = "asst_tvVa2SUaRhesqjphWE09I7Wx"
 
 # === SUPABASE CONFIGURATION ===
 SUPABASE_URL = "https://mqajbtjxwdtwimoavhjz.supabase.co"
