@@ -4,6 +4,9 @@ import reflex as rx
 from Proyecto_Apollo.state import State
 from Proyecto_Apollo.styles import chat_styles
 
+# Import de colores personalizados
+from ...styles.colors import ApolloTheme
+
 
 def chat_message(qa: tuple[str, str]) -> rx.Component:
     """
@@ -109,35 +112,31 @@ def desktop_chat_input() -> rx.Component:
 def mobile_chat_input() -> rx.Component:
     """Input de chat para vista mobile"""
     return rx.box(
-        rx.box(
-            rx.form(
-                rx.flex(
-                    rx.input(
-                        name="question",
-                        value=State.question,
-                        on_change=State.set_question,
-                        **chat_styles.text_area_mobile_style,
+        rx.form(
+            rx.flex(
+                rx.input(
+                    name="question",
+                    variant="soft",
+                    border_radius="40px",
+                    size="3",
+                    bg=rx.color_mode_cond(
+                        light=ApolloTheme.light_colors()["input_background"],
+                        dark=ApolloTheme.dark_colors()["input_background"]
                     ),
-                    rx.icon_button(
-                        "arrow-up",
-                        type="submit",
-                        loading=State.is_loading,
-                        **chat_styles.send_button_mobile_style,
-                    ),
-                    **chat_styles.chat_input_style,
+                    value=State.question,
+                    on_change=State.set_question,
+                    **chat_styles.text_area_mobile_style,
                 ),
-                on_submit=State.answer,
-                reset_on_submit=True,
-                width="100%",
+                rx.icon_button(
+                    "arrow-up",
+                    type="submit",
+                    loading=State.is_loading,
+                    **chat_styles.send_button_mobile_style,
+                ),
+                **chat_styles.chat_input_style,
             ),
-            bg="rgba(255, 255, 255, 0.35)",
-            style={
-                "backdropFilter": "blur(60px)",
-                "-webkit-backdrop-filter": "blur(60px)",
-            },
-            border_radius="40px",
-            padding="0.75rem",
-            box_shadow="0 4px 12px rgba(0, 0, 0, 0.1)",
+            on_submit=State.answer,
+            reset_on_submit=True,
             width="95%",
             margin_left="auto",
             margin_right="auto",

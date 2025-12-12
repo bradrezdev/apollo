@@ -1,5 +1,8 @@
 """Estilos para componentes del header"""
 
+import reflex as rx
+from .colors import ApolloTheme
+
 # === TAMAÑOS DE ICONOS ===
 icon_sizes = {
     "small": 24,
@@ -12,7 +15,10 @@ header_desktop_style = {
     "position": "fixed",
     "top": 0,
     "z_index": 100,
-    "bg": "rgba(255, 255, 255, 0.35)",
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["header_background"],
+        dark=ApolloTheme.dark_colors()["header_background"]
+    ),
     "style": {
         "backdropFilter": "blur(60px)",
         "-webkit-backdrop-filter": "blur(60px)",
@@ -24,6 +30,10 @@ header_desktop_style = {
 title_style = {
     "align": "center",
     "weight": "bold",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["header_text_color"],
+        dark=ApolloTheme.dark_colors()["header_text_color"]
+    ),
 }
 
 # === ESTILOS PARA HEADER MOBILE ===
@@ -71,7 +81,10 @@ header_mobile_title_box_style = {
 
 mobile_title_style = {
     "align": "center",
-    "color": "white",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["header_icon_color"],
+        dark=ApolloTheme.dark_colors()["header_icon_color"]
+    ),
     "size": "4",
 }
 
@@ -86,7 +99,10 @@ drawer_content_style = {
     "height": "100%",
     "width": "20em",
     "padding": "1.5em",
-    "bg": "rgba(255, 255, 255, 0.95)",
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["sidebar_background"],
+        dark=ApolloTheme.dark_colors()["sidebar_background"]
+    ),
 }
 
 # === ESTILOS COMPARTIDOS CON SIDEBAR ===

@@ -1,30 +1,43 @@
 """Estilos para componentes de chat"""
 
-from .colors import GRAY_DARK
+import reflex as rx
+from .colors import ApolloTheme
 
 # === ESTILOS BASE ===
 base_message_style = {
-    "padding": "2vh",
-    "border_radius": "20px",
+    "padding": "8px 16px 8px 16px",
+    "border_radius": "26px",
     "display": "inline-block",
     "overflow_wrap": "break-word",
-    "white_space": "pre-wrap",
 }
 
 # === ESTILOS PARA MENSAJES ===
-chat_margin = "40%"
+chat_margin = "0%"
 
 question_style = {
     **base_message_style,
-    "background_color": GRAY_DARK,
+    "background_color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["question_background"],
+        dark=ApolloTheme.dark_colors()["question_background"]
+    ),
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["question_text_color"],
+        dark=ApolloTheme.dark_colors()["question_text_color"]
+    ),
     "margin_left": chat_margin,
-    "margin_right": "16px",
-    "max_width": "58.6%",
+    "margin_right": "10px",
+    "max_width": "80%",
+    "white_space": "pre-wrap",
 }
 
 answer_style = {
     **base_message_style,
-    "margin_left": "16px",
+    "margin_left": "10px",
+    "max_width": "100%",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["answer_text_color"],
+        dark=ApolloTheme.dark_colors()["answer_text_color"]
+    ),
 }
 
 # === ESTILOS PARA CONTAINERS - DESKTOP ===
@@ -58,17 +71,20 @@ chat_scroll_mobile_style = {
 
 # === ESTILOS PARA INPUT ===
 chat_input_style = {
-    "bg": "rgba(255, 255, 255, 0.35)",
-    "border_radius": "16px",
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["input_background"],
+        dark=ApolloTheme.dark_colors()["input_background"]
+    ),
+    "border_radius": "40px",
+    "box_shadow": "0 4px 12px rgba(0, 0, 0, 0.1)",
     "direction": "row",
-    "margin_left": "2%",
     "padding": "3%",
     "spacing": "2",
     "style": {
         "backdropFilter": "blur(60px)",
         "-webkit-backdrop-filter": "blur(60px)",
     },
-    "width": "96%",
+    "width": "100%",
 }
 
 text_area_desktop_style = {
@@ -76,6 +92,10 @@ text_area_desktop_style = {
     "resize": "none",
     "placeholder": "Pregunta lo que quieras",
     "width": "100%",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["input_text_color"],
+        dark=ApolloTheme.dark_colors()["input_text_color"]
+    ),
 }
 
 text_area_mobile_style = {
@@ -84,16 +104,38 @@ text_area_mobile_style = {
     "resize": "vertical",
     "placeholder": "Pregunta lo que quieras",
     "width": "100%",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["input_text_color"],
+        dark=ApolloTheme.dark_colors()["input_text_color"]
+    ),
 }
 
 send_button_desktop_style = {
-    "bg": "#0984e3",
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["send_button_color"],
+        dark=ApolloTheme.dark_colors()["send_button_color"]
+    ),
     "radius": "full",
     "size": "3",
+    "_hover": {
+        "bg": rx.color_mode_cond(
+            light=ApolloTheme.light_colors()["send_button_hover_color"],
+            dark=ApolloTheme.dark_colors()["send_button_hover_color"]
+        ),
+    },
 }
 
 send_button_mobile_style = {
-    "bg": "#0984e3",
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["send_button_color"],
+        dark=ApolloTheme.dark_colors()["send_button_color"]
+    ),
     "radius": "full",
     "size": "3",
+    "_hover": {
+        "bg": rx.color_mode_cond(
+            light=ApolloTheme.light_colors()["send_button_hover_color"],
+            dark=ApolloTheme.dark_colors()["send_button_hover_color"]
+        ),
+    },
 }

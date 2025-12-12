@@ -1,10 +1,14 @@
 """Estilos para componentes del sidebar"""
 
-from .colors import WHITE, ACCENT_LIGHT, ACCENT_DARK
+import reflex as rx
+from .colors import ApolloTheme
 
 # === ESTILOS PARA SIDEBAR ===
 sidebar_style = {
-    "bg": WHITE,
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["sidebar_background"],
+        dark=ApolloTheme.dark_colors()["sidebar_background"]
+    ),
     "padding": "1rem",
     "height": "100vh",
     "width": "220px",
@@ -12,8 +16,11 @@ sidebar_style = {
 
 sidebar_item_hover_style = {
     "_hover": {
-        "bg": ACCENT_LIGHT,
-        "color": ACCENT_DARK,
+        "bg": rx.color_mode_cond(
+            light=ApolloTheme.light_colors()["sidebar_item_hover"],
+            dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
+        ),
+        "cursor": "pointer",
     },
     "border-radius": "0.5em",
 }
