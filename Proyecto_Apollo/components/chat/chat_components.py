@@ -19,6 +19,8 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
         rx.Component: Box con el mensaje del usuario y la respuesta del asistente
     """
     question, answer = qa[0], qa[1]
+    is_empty_answer = not answer or answer.strip() == ""
+    
     return rx.box(
         rx.box(
             rx.text(question, style=chat_styles.question_style), 
@@ -26,17 +28,27 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
             color="white"
         ),
         rx.box(
-            rx.hstack(
-                rx.markdown(answer, style=chat_styles.answer_style),
-                rx.icon_button(
-                    rx.icon("copy", size=16),
-                    on_click=rx.set_clipboard(answer),
-                    size="1",
-                    variant="ghost",
-                    color_scheme="gray",
+            rx.cond(
+                is_empty_answer,
+                # Mostrar indicador de "pensando" cuando la respuesta está vacía
+                rx.hstack(
+                    rx.spinner(size="2"),
+                    rx.text("Pensando en su respuesta...", color="gray", font_size="0.9em"),
+                    spacing="2",
                 ),
-                align="start",
-                width="100%",
+                # Mostrar respuesta completa con botón de copiar
+                rx.hstack(
+                    rx.markdown(answer, style=chat_styles.answer_style),
+                    rx.icon_button(
+                        rx.icon("copy", size=16),
+                        on_click=rx.set_clipboard(answer),
+                        size="1",
+                        variant="ghost",
+                        color_scheme="gray",
+                    ),
+                    align="start",
+                    width="100%",
+                ),
             ),
             text_align="left"
         ),

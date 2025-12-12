@@ -63,12 +63,16 @@ class State(DBState):
         if not question_text or not question_text.strip():
             return
         
-        # Activar estado de carga
-        self.is_loading = True
-        yield
-            
         message = question_text.strip()
         print(f"🚀 Iniciando respuesta para: '{message}'")
+        
+        # Agregar mensaje del usuario inmediatamente al historial
+        self.chat_history = self.chat_history + [(message, "")]
+        self.question = ""
+        
+        # Activar estado de carga (el asistente está "pensando")
+        self.is_loading = True
+        yield
         
         try:
             # Inicializar cliente OpenAI
@@ -92,10 +96,8 @@ class State(DBState):
                 content=message
             )
             
-            # Inicializar respuesta vacía en el historial
+            # Inicializar variable para respuesta en streaming
             answer = ""
-            self.chat_history = self.chat_history + [(message, answer)]
-            self.question = ""
             print(f"📋 Mensaje agregado al historial. Total: {len(self.chat_history)}")
             yield
             
