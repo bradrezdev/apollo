@@ -5,7 +5,8 @@ from Proyecto_Apollo.state import State
 from Proyecto_Apollo.styles import header_styles, colors
 from Proyecto_Apollo.components.sidebar import (
     sidebar_item,
-    conversations_list
+    conversations_list,
+    conversations_list_mobile
 )
 
 
@@ -25,8 +26,8 @@ def mobile_drawer_content() -> rx.Component:
             rx.drawer.close(rx.icon("x", size=header_styles.icon_sizes["large"])), 
             width="100%"
         ),
-        # Lista de conversaciones
-        conversations_list(),
+        # Lista de conversaciones para móvil con botones visibles
+        conversations_list_mobile(),
         rx.divider(),
         rx.spacer(),
         # Sección inferior del drawer

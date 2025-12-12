@@ -81,6 +81,71 @@ def conversation_item(conversation: dict) -> rx.Component:
     )
 
 
+def conversation_item_mobile(conversation: dict) -> rx.Component:
+    """Item individual de conversación para móvil con botón de menú visible"""
+    return rx.hstack(
+        rx.box(
+            rx.text(
+                conversation["title"],
+                size="3",
+                weight="medium",
+                style={
+                    "overflow": "hidden",
+                    "text_overflow": "ellipsis",
+                    "white_space": "nowrap",
+                }
+            ),
+            flex="1",
+            padding_x="0.5rem",
+            padding_y="0.75rem",
+            style={
+                "_hover": {
+                    "bg": colors.ACCENT_LIGHT,
+                    "cursor": "pointer",
+                },
+                "border-radius": "0.5em",
+            },
+            on_click=lambda: [
+                State.load_conversation_and_messages(conversation["id"]),
+                State.set_is_open(False)
+            ],
+        ),
+        rx.context_menu.root(
+            rx.context_menu.trigger(
+                rx.icon_button(
+                    rx.icon("circle-ellipsis", size=18),
+                    size="2",
+                    variant="ghost",
+                    color_scheme="gray",
+                ),
+            ),
+            rx.context_menu.content(
+                rx.context_menu.item(
+                    rx.hstack(
+                        rx.icon("pencil", size=16),
+                        rx.text("Editar título"),
+                        spacing="2",
+                    ),
+                    on_select=lambda: State.open_edit_dialog(conversation["id"], conversation["title"]),
+                ),
+                rx.context_menu.separator(),
+                rx.context_menu.item(
+                    rx.hstack(
+                        rx.icon("trash-2", size=16),
+                        rx.text("Eliminar"),
+                        spacing="2",
+                    ),
+                    color_scheme="red",
+                    on_select=lambda: State.delete_conversation_confirm(conversation["id"]),
+                ),
+            ),
+        ),
+        width="100%",
+        align="center",
+        spacing="2",
+    )
+
+
 def conversations_list() -> rx.Component:
     """Lista de conversaciones en el sidebar"""
     return rx.vstack(
@@ -100,6 +165,36 @@ def conversations_list() -> rx.Component:
             rx.foreach(
                 State.conversations,
                 conversation_item
+            ),
+            spacing="1",
+            width="100%",
+            max_height="300px",
+            overflow_y="auto",
+        ),
+        spacing="2",
+        width="100%",
+    )
+
+
+def conversations_list_mobile() -> rx.Component:
+    """Lista de conversaciones en el sidebar para móvil con botones de menú visibles"""
+    return rx.vstack(
+        rx.hstack(
+            rx.text("Conversaciones", size="4", weight="bold"),
+            rx.spacer(),
+            rx.icon_button(
+                rx.icon("plus"),
+                size="2",
+                on_click=State.start_new_conversation,
+            ),
+            width="100%",
+            padding_x="0.5rem",
+        ),
+        rx.divider(),
+        rx.vstack(
+            rx.foreach(
+                State.conversations,
+                conversation_item_mobile
             ),
             spacing="1",
             width="100%",
