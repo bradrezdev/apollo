@@ -116,13 +116,12 @@ def mobile_chat_input() -> rx.Component:
             rx.flex(
                 rx.input(
                     name="question",
-                    variant="soft",
                     border_radius="40px",
                     padding="4px",
                     height="3em",
                     font_size="1em",
                     bg=rx.color_mode_cond(
-                        light=ApolloTheme.light_colors()["input_background"],
+                        light="rgba(25, 25, 25, 0.15)",
                         dark=ApolloTheme.dark_colors()["input_background"]
                     ),
                     value=State.question,

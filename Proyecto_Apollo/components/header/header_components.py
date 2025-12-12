@@ -94,7 +94,7 @@ def mobile_header() -> rx.Component:
             
             # Título en box redondeado
             rx.box(
-                rx.text("TelemedicinAI", style=header_styles.mobile_title_style),
+                rx.text("Apollo AI", style=header_styles.mobile_title_style),
                 **header_styles.header_mobile_title_box_style,
             ),
             
@@ -103,7 +103,7 @@ def mobile_header() -> rx.Component:
             # Botón de nueva conversación en box redondo
             rx.box(
                 rx.icon(
-                    "square-pen",
+                    "message-circle-plus",
                     size=header_styles.icon_sizes["small"],
                     color=colors.WHITE,
                     on_click=State.start_new_conversation,

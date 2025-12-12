@@ -90,14 +90,10 @@ text_area_desktop_style = {
 
 text_area_mobile_style = {
     "max_length": 150,
+    "placeholder": "Chat con Apollo",
     "rows": "1",
     "resize": "vertical",
-    "placeholder": "Pregunta lo que quieras",
     "width": "100%",
-    "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_text_color"],
-        dark=ApolloTheme.dark_colors()["input_text_color"]
-    ),
 }
 
 send_button_desktop_style = {
@@ -121,7 +117,7 @@ send_button_mobile_style = {
         dark=ApolloTheme.dark_colors()["send_button_color"]
     ),
     "radius": "full",
-    "size": "3",
+    "size": "4",
     "_hover": {
         "bg": rx.color_mode_cond(
             light=ApolloTheme.light_colors()["send_button_hover_color"],
