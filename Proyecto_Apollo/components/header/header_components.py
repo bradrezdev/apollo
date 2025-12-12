@@ -4,7 +4,6 @@ import reflex as rx
 from Proyecto_Apollo.state import State
 from Proyecto_Apollo.styles import header_styles, colors
 from Proyecto_Apollo.components.sidebar import (
-    sidebar_navigation,
     sidebar_item,
     conversations_list
 )
@@ -29,8 +28,6 @@ def mobile_drawer_content() -> rx.Component:
         # Lista de conversaciones
         conversations_list(),
         rx.divider(),
-        # Navegación principal
-        sidebar_navigation(),
         rx.spacer(),
         # Sección inferior del drawer
         rx.vstack(
@@ -85,9 +82,10 @@ def mobile_header() -> rx.Component:
                             mobile_drawer_content(),
                             **header_styles.drawer_content_style,
                         ),
-                        width="100%",
                     ),
                     direction="left",
+                    open=State.is_open,
+                    on_open_change=State.set_is_open,
                 ),
                 **header_styles.header_mobile_round_box_style,
             ),

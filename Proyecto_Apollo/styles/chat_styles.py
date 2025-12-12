@@ -43,15 +43,15 @@ chat_scroll_desktop_style = {
 # === ESTILOS PARA CONTAINERS - MOBILE ===
 chat_container_mobile_style = {
     "width": "100%",
-    "height": "50%",
-    "overflow_y": "hidden",
-    "padding_top": "4rem",
+    "flex": "1",  # Ocupa todo el espacio disponible
+    "overflow_y": "auto",  # Cambiar a auto para permitir scroll
+    "padding_top": "5rem",  # Espacio para el header flotante
     "padding_bottom": "1rem",
     "z_index": 1,
 }
 
 chat_scroll_mobile_style = {
-    "height": "50%",
+    "height": "100%",
     "scroll_behavior": "smooth",
     "width": "100%",
 }

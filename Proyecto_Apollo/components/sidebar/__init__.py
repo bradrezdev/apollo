@@ -2,7 +2,6 @@
 
 from .sidebar_components import (
     sidebar_item,
-    sidebar_navigation,
     conversation_item,
     conversations_list,
     user_profile_section,
@@ -11,7 +10,6 @@ from .sidebar_components import (
 
 __all__ = [
     "sidebar_item",
-    "sidebar_navigation",
     "conversation_item",
     "conversations_list",
     "user_profile_section",

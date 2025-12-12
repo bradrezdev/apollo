@@ -17,7 +17,6 @@ from Proyecto_Apollo.components.chat import (
 )
 from Proyecto_Apollo.components.sidebar import desktop_sidebar
 from Proyecto_Apollo.components.header import desktop_header, mobile_header
-from Proyecto_Apollo.components.layout import desktop_banner
 
 
 # === COMPOSICIÓN DE VISTAS ===
@@ -28,7 +27,6 @@ def desktop_view() -> rx.Component:
         desktop_sidebar(),
         rx.vstack(
             desktop_header(),
-            desktop_banner(),
             chat_container_desktop(),
             desktop_chat_input(),
             spacing="0",

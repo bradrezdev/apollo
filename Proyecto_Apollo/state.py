@@ -22,6 +22,11 @@ class State(DBState):
     # === VARIABLES DEL DRAWER ===
     is_open: bool = False
     
+    # === VARIABLES DE EDICIÓN DE CONVERSACIONES ===
+    is_edit_dialog_open: bool = False
+    conversation_to_edit_id: int | None = None
+    new_conversation_title: str = ""
+    
     # === VARIABLES DE UI ===
     auto_scroll_enabled: bool = True
     user_name: str = "Bryan Nuñez"
@@ -39,21 +44,30 @@ class State(DBState):
         return len(self.chat_history)
     
     # === MÉTODOS DEL CHAT ===
-    async def answer(self):
+    async def answer(self, form_data: dict = None):
         """
         Procesa la pregunta del usuario y obtiene respuesta del assistant mediante streaming
+        
+        Args:
+            form_data: Diccionario con los datos del formulario (requerido por rx.form)
         
         Implementación basada en OpenAI Assistants API v2 (beta)
         Documentación: https://platform.openai.com/docs/api-reference/assistants
         """
-        if not self.question.strip():
+        # Usar form_data si está disponible, sino usar self.question
+        if form_data and "question" in form_data:
+            question_text = form_data["question"]
+        else:
+            question_text = self.question
+        
+        if not question_text or not question_text.strip():
             return
         
         # Activar estado de carga
         self.is_loading = True
         yield
             
-        message = self.question.strip()
+        message = question_text.strip()
         print(f"🚀 Iniciando respuesta para: '{message}'")
         
         try:
@@ -78,39 +92,31 @@ class State(DBState):
                 content=message
             )
             
-            # Limpiar la pregunta del input
+            # Inicializar respuesta vacía en el historial
+            answer = ""
+            self.chat_history = self.chat_history + [(message, answer)]
             self.question = ""
+            print(f"📋 Mensaje agregado al historial. Total: {len(self.chat_history)}")
             yield
             
-            # Crear el run y esperar a que se complete (sin streaming)
-            print(f"🤖 Iniciando run con assistant {API_ASSISTANT_ID}...")
-            run = await client.beta.threads.runs.create_and_poll(
+            # Usar create_and_stream() para streaming en tiempo real
+            print(f"🤖 Iniciando streaming con assistant {API_ASSISTANT_ID}...")
+            async with client.beta.threads.runs.create_and_stream(
                 thread_id=self.current_thread_id,
                 assistant_id=API_ASSISTANT_ID,
-            )
-            print(f"✅ Run completado con estado: {run.status}")
-            
-            # Obtener todos los mensajes del thread
-            messages = await client.beta.threads.messages.list(
-                thread_id=self.current_thread_id,
-                order="desc",
-                limit=1
-            )
-            
-            # Extraer la respuesta del asistente
-            answer = ""
-            if messages.data and len(messages.data) > 0:
-                last_message = messages.data[0]
-                if last_message.role == "assistant" and last_message.content:
-                    first_content = last_message.content[0]
-                    if first_content.type == "text":
-                        answer = first_content.text.value  # type: ignore
-            
-            print(f"📝 Respuesta recibida: {len(answer)} caracteres")
-            
-            # Agregar al historial una vez que tengamos la respuesta completa
-            self.chat_history = self.chat_history + [(message, answer)]
-            yield
+            ) as stream:
+                # Iterar sobre text_deltas - streaming palabra por palabra
+                print("📥 Procesando text deltas en streaming...")
+                async for text_delta in stream.text_deltas:
+                    answer += text_delta
+                    # Reasignar la lista completa para que Reflex detecte el cambio
+                    updated_history = self.chat_history.copy()
+                    updated_history[-1] = (updated_history[-1][0], answer)
+                    self.chat_history = updated_history
+                    print(f"📝 Streaming: '{text_delta}' | Total: {len(answer)} caracteres")
+                    yield
+                
+                print("✅ Streaming completado exitosamente")
             
             # Actualizar timestamp de la conversación
             if self.current_conversation_id:
@@ -178,6 +184,50 @@ class State(DBState):
         """Actualiza la información del usuario"""
         self.user_name = name
         self.user_email = email
+    
+    # === MÉTODOS DE GESTIÓN DE CONVERSACIONES (CRUD) ===
+    @rx.event
+    def open_edit_dialog(self, conversation_id: int, current_title: str):
+        """
+        Abre el diálogo de edición de título
+        
+        Args:
+            conversation_id: ID de la conversación a editar
+            current_title: Título actual de la conversación
+        """
+        self.conversation_to_edit_id = conversation_id
+        self.new_conversation_title = current_title
+        self.is_edit_dialog_open = True
+    
+    @rx.event
+    def close_edit_dialog(self):
+        """Cierra el diálogo de edición"""
+        self.is_edit_dialog_open = False
+        self.conversation_to_edit_id = None
+        self.new_conversation_title = ""
+    
+    @rx.event
+    def save_conversation_title(self):
+        """Guarda el nuevo título de la conversación"""
+        if self.conversation_to_edit_id and self.new_conversation_title.strip():
+            self.update_conversation_title(
+                self.conversation_to_edit_id,
+                self.new_conversation_title.strip()
+            )
+            self.close_edit_dialog()
+    
+    @rx.event
+    def delete_conversation_confirm(self, conversation_id: int):
+        """
+        Elimina una conversación
+        
+        Args:
+            conversation_id: ID de la conversación a eliminar
+        """
+        self.delete_conversation(conversation_id)
+        # Si eliminamos la conversación actual, limpiar el chat
+        if self.current_conversation_id == conversation_id:
+            self.chat_history = []
     
     # === MÉTODOS DE GESTIÓN DE CONVERSACIONES ===
     def auto_generate_title(self, first_message: str):
