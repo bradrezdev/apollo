@@ -63,7 +63,7 @@ def index() -> rx.Component:
 
 app = rx.App(
     theme=rx.theme(
-        appearance="inherit",
+        appearance="dark",
         has_background=True,
         accent_color="indigo",
     ),

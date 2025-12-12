@@ -1,0 +1,14 @@
+Deploy to app 'Proyecto_Apollo' in project 'bradrez'? [y/n] (y): ──────────────────────────────────────────────────────────────────── Compiling production app and preparing for export. ─────────────────────────────────────────────────────────────────────
+Zipping Backend: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 46/46 0:00:00
+──────────────────────────────────────────────────────────────────── Compiling production app and preparing for export. ─────────────────────────────────────────────────────────────────────
+[03:04:03] Compiling: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 19/19 0:00:10
+Creating Production Build:  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 4/4 0:00:03
+Zipping Frontend: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 384/384 0:00:00
+deployment progress can now be viewed on the website: https://cloud.reflex.dev/project/7cd5cfe4-bc66-4e58-9824-c301dd7623b4/app/0b2d7926-ee88-420b-9acb-9803019680fe/
+you are now safe to exit this command.
+follow along with the deployment with the following command: 
+  reflex cloud apps status a1dd6c63-a8ae-491f-86de-0c8db5bb2b67 --watch
+Info: Building backend application...
+Info: Deploying backend to infrastructure...
+Info: Waiting for backend to be ready...
+Success: Deployment completed successfully! app running at https://proyecto-apollo-aqua-orca.reflex.run

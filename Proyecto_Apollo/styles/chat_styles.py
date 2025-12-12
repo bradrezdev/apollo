@@ -71,19 +71,9 @@ chat_scroll_mobile_style = {
 
 # === ESTILOS PARA INPUT ===
 chat_input_style = {
-    "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_background"],
-        dark=ApolloTheme.dark_colors()["input_background"]
-    ),
-    "border_radius": "40px",
-    "box_shadow": "0 4px 12px rgba(0, 0, 0, 0.1)",
     "direction": "row",
-    "padding": "3%",
+    "margin_bottom": "2em",
     "spacing": "2",
-    "style": {
-        "backdropFilter": "blur(60px)",
-        "-webkit-backdrop-filter": "blur(60px)",
-    },
     "width": "100%",
 }
 

@@ -118,7 +118,9 @@ def mobile_chat_input() -> rx.Component:
                     name="question",
                     variant="soft",
                     border_radius="40px",
-                    size="3",
+                    padding="4px",
+                    height="3em",
+                    font_size="1em",
                     bg=rx.color_mode_cond(
                         light=ApolloTheme.light_colors()["input_background"],
                         dark=ApolloTheme.dark_colors()["input_background"]
@@ -137,7 +139,7 @@ def mobile_chat_input() -> rx.Component:
             ),
             on_submit=State.answer,
             reset_on_submit=True,
-            width="95%",
+            width="90%",
             margin_left="auto",
             margin_right="auto",
             margin_bottom="1rem",
