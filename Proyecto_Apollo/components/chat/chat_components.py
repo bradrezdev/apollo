@@ -3,6 +3,7 @@
 import reflex as rx
 from Proyecto_Apollo.state import State
 from Proyecto_Apollo.styles import chat_styles
+from Proyecto_Apollo.components.header.header_components import desktop_header
 
 # Import de colores personalizados
 from ...styles.colors import ApolloTheme
@@ -45,23 +46,24 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
                         size="1",
                         variant="ghost",
                         color_scheme="gray",
-                        margin_left="16px",
-                        margin_top="-16px",
+                        margin_left="14px",
+                        margin_top="-20px",
                         cursor="pointer",
                         border_radius="16px",
                     ),
-                    width="97%",
+                    width="98%",
                 ),
             ),
         ),
-        margin_y=["1em", "1em", "2em", "2em", "2em"],
         height="auto",
+        margin_top="1em",
     )
 
 
 def chat_container_desktop() -> rx.Component:
     """Contenedor de chat para desktop con scroll automático"""
     return rx.box(
+        desktop_header(),
         rx.cond(
             State.has_messages,
             rx.auto_scroll(
@@ -73,7 +75,7 @@ def chat_container_desktop() -> rx.Component:
                     width="100%",
                     max_width="900px",
                     margin_x="auto",
-                    padding_bottom="4rem",
+                    padding_top="6em",
                     spacing="4",
                 ),
                 autoscroll=State.auto_scroll_enabled,
@@ -93,7 +95,6 @@ def chat_container_desktop() -> rx.Component:
         width="100%",
         flex="1",
         overflow="hidden",
-        padding_top="2rem",
     )
 
 
@@ -182,7 +183,6 @@ def desktop_chat_input() -> rx.Component:
             },
         ),
         width="100%",
-        padding_bottom="1rem",
     )
 
 

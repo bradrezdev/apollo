@@ -5,16 +5,30 @@ from Proyecto_Apollo.state import State
 from Proyecto_Apollo.styles import header_styles, colors
 from Proyecto_Apollo.components.sidebar import (
     sidebar_item,
-    conversations_list,
     conversations_list_mobile
 )
+
+# Importar colores
+from ...styles.colors import ApolloTheme
 
 
 def desktop_header() -> rx.Component:
     """Header para vista desktop"""
-    return rx.container(
-        rx.text("Apollo AI"),
-        **header_styles.header_desktop_style,
+    return rx.box(
+        rx.flex(
+            rx.text(
+                rx.cond(
+                    State.current_conversation_title != "",
+                    "Apollo AI - " + State.current_conversation_title,
+                    "Apollo AI"
+                ),
+                **header_styles.header_text_style,
+            ),
+            **header_styles.header_desktop_style,
+        ),
+        position="relative",
+        width="100%",
+        z_index="100",
     )
 
 

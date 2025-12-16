@@ -68,8 +68,10 @@ def conversation_item(conversation: dict) -> rx.Component:
                 rx.hstack(
                     rx.icon("pencil", size=16),
                     rx.text("Editar título"),
+                    align="center",
                     spacing="2",
                 ),
+                border_radius="18px",
                 on_select=lambda: State.open_edit_dialog(conversation["id"], conversation["title"]),
             ),
             rx.context_menu.separator(),
@@ -77,11 +79,14 @@ def conversation_item(conversation: dict) -> rx.Component:
                 rx.hstack(
                     rx.icon("trash-2", size=16),
                     rx.text("Eliminar"),
+                    align="center",
                     spacing="2",
                 ),
+                border_radius="18px",
                 color_scheme="red",
                 on_select=lambda: State.delete_conversation_confirm(conversation["id"]),
             ),
+            border_radius="20px",
         ),
     )
 
@@ -132,8 +137,10 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     rx.hstack(
                         rx.icon("pencil", size=16),
                         rx.text("Editar título"),
+                        align="center",
                         spacing="2",
                     ),
+                    border_radius="18px",
                     on_select=lambda: State.open_edit_dialog(conversation["id"], conversation["title"]),
                 ),
                 rx.context_menu.separator(),
@@ -141,11 +148,14 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     rx.hstack(
                         rx.icon("trash-2", size=16),
                         rx.text("Eliminar"),
+                        align="center",
                         spacing="2",
                     ),
+                    border_radius="18px",
                     color_scheme="red",
                     on_select=lambda: State.delete_conversation_confirm(conversation["id"]),
                 ),
+                border_radius="20px",
             ),
         ),
         width="100%",
@@ -169,7 +179,7 @@ def conversations_list() -> rx.Component:
             width="100%",
         ),
         rx.divider(),
-        rx.text("Historial de conversaciones", size="2", weight="bold", color="gray", padding_left="0.5rem"),
+        rx.text("Conversaciones", size="2", weight="bold", color="gray", padding_left="0.5rem"),
         rx.vstack(
             rx.foreach(
                 State.conversations,
@@ -177,7 +187,7 @@ def conversations_list() -> rx.Component:
             ),
             spacing="1",
             width="100%",
-            max_height="calc(93dvh - 200px)",
+            max_height="calc(87dvh - 200px)",
             overflow_y="auto",
             padding_right="0.5rem",
         ),

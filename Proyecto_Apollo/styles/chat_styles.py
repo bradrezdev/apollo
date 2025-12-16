@@ -5,15 +5,13 @@ from .colors import ApolloTheme
 
 # === ESTILOS BASE ===
 base_message_style = {
-    "padding": "8px 16px 8px 16px",
+    "padding": "8px 16px",
     "border_radius": "26px",
     "display": "inline-block",
     "overflow_wrap": "break-word",
 }
 
 # === ESTILOS PARA MENSAJES ===
-chat_margin = "0%"
-
 question_style = {
     **base_message_style,
     "background_color": rx.color_mode_cond(
@@ -24,7 +22,6 @@ question_style = {
         light=ApolloTheme.light_colors()["question_text_color"],
         dark=ApolloTheme.dark_colors()["question_text_color"]
     ),
-    "margin_left": chat_margin,
     "margin_right": "10px",
     "max_width": "80%",
     "white_space": "pre-wrap",
@@ -41,8 +38,7 @@ answer_style = {
 
 # === ESTILOS PARA CONTAINERS - DESKTOP ===
 chat_container_desktop_style = {
-    "spacing": "0",
-    "width": "100vw",
+    "width": "100dvw",
 }
 
 chat_scroll_desktop_style = {

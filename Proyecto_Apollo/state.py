@@ -43,6 +43,17 @@ class State(DBState):
         """Número de mensajes en el historial"""
         return len(self.chat_history)
     
+    @rx.var
+    def current_conversation_title(self) -> str:
+        """Obtiene el título de la conversación actual"""
+        if not self.current_conversation_id:
+            return ""
+        
+        for conv in self.conversations:
+            if conv["id"] == self.current_conversation_id:
+                return conv["title"]
+        return ""
+    
     # === MÉTODOS DEL CHAT ===
     async def answer(self, form_data: dict = None):
         """

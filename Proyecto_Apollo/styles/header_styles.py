@@ -12,19 +12,38 @@ icon_sizes = {
 
 # === ESTILOS PARA HEADER DESKTOP ===
 header_desktop_style = {
-    "position": "fixed",
-    "top": 0,
+    "position": "absolute",
+    "top": "2rem",
     "z_index": 100,
     "bg": rx.color_mode_cond(
         light=ApolloTheme.light_colors()["header_background"],
         dark=ApolloTheme.dark_colors()["header_background"]
     ),
     "style": {
-        "backdropFilter": "blur(60px)",
-        "-webkit-backdrop-filter": "blur(60px)",
+        "backdropFilter": "blur(30px)",
+        "-webkit-backdrop-filter": "blur(30px)",
     },
-    "height": "8vh",
-    "width": "100dvw",
+    "border_radius": "24px",
+    "height": "auto",
+    "padding": "12px 24px",
+    "display": "flex",
+    "align_items": "center",
+    "justify_content": "center",
+    "left": "50%",
+    "transform": "translateX(-50%)",
+    "box_shadow": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["box_shadow"],
+        dark=ApolloTheme.dark_colors()["box_shadow"],
+    ),
+}
+
+header_text_style = {
+    "weight": "medium",
+    "size": "4",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["header_text_color"],
+        dark=ApolloTheme.dark_colors()["header_text_color"]
+    ),
 }
 
 # === ESTILOS PARA HEADER MOBILE ===

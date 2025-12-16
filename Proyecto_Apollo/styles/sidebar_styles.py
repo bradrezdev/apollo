@@ -6,18 +6,30 @@ from .colors import ApolloTheme
 # === ESTILOS PARA SIDEBAR ===
 sidebar_style = {
     "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["sidebar_background"],
-        dark=ApolloTheme.dark_colors()["sidebar_background"]
+        light=ApolloTheme.light_colors()["input_background"],
+        dark=ApolloTheme.dark_colors()["input_background"]
     ),
-    "padding": "1.5rem",
-    "height": "100vh",
-    "width": "280px",
-    "border_right": rx.color_mode_cond(
-        light="1px solid #E5E7EB",
-        dark="1px solid #2C2C2E",
+    "border": rx.color_mode_cond(
+        light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
+        dark="1px solid rgba(255, 255, 255, 0.1)",
+    ),
+    "border_radius": "24px",
+    "box_shadow": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["box_shadow"],
+        dark="0 4px 20px rgba(0, 0, 0, 0.4)",
     ),
     "display": ["none", "none", "flex", "flex", "flex"],
     "flex_direction": "column",
+    "height": "95vh",
+    "margin": "2.5vh 0 2.5vh 1rem",
+    "max_width": "320px",
+    "padding": "1.5rem",
+    "style": {
+        "backdropFilter": "blur(20px)",
+        "-webkit-backdrop-filter": "blur(20px)",
+    },
+    "width": "320px",
+    "z_index": "1000",
 }
 
 sidebar_item_hover_style = {
@@ -43,7 +55,7 @@ sidebar_item_hover_style = {
 
 # === ESTILOS PARA LOGO ===
 logo_style = {
-    "src": "/logoNNprotect.png",
+    "src": "/logotipo.png",
     "height": "auto",
     "margin_bottom": "1em",
     "width": "100%",

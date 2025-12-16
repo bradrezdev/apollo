@@ -26,16 +26,13 @@ def desktop_view() -> rx.Component:
     return rx.flex(
         desktop_sidebar(),
         rx.vstack(
-            desktop_header(),
             chat_container_desktop(),
             desktop_chat_input(),
-            spacing="0",
             width="100%",
-            height="100%",
+            height="100dvh",
         ),
-        spacing="0",
         width="100%",
-        height="100vh",
+        height="100dvh",
     )
 
 
