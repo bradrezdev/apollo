@@ -61,15 +61,34 @@ def chat_container_desktop() -> rx.Component:
         rx.cond(
             State.has_messages,
             rx.auto_scroll(
-                rx.foreach(
-                    State.chat_history,
-                    chat_message,  # Usar función nombrada en lugar de lambda
+                rx.vstack(
+                    rx.foreach(
+                        State.chat_history,
+                        chat_message,
+                    ),
+                    width="100%",
+                    max_width="900px",
+                    margin_x="auto",
+                    padding_bottom="4rem",
+                    spacing="4",
                 ),
                 autoscroll=State.auto_scroll_enabled,
                 **chat_styles.chat_scroll_desktop_style,
             ),
-            rx.text("No hay mensajes aún. ¡Escribe algo!", color="gray", padding="2em"),
+            rx.center(
+                rx.vstack(
+                    rx.icon("message-square", size=48, color="gray"),
+                    rx.text("¡Bienvenido a Apollo AI!", size="5", weight="bold"),
+                    rx.text("Escribe un mensaje para comenzar una conversación.", color="gray"),
+                    spacing="4",
+                    align="center",
+                ),
+                height="100%",
+            ),
         ),
+        width="100%",
+        height="100%",
+        padding_top="2rem",
     )
 
 
@@ -106,28 +125,49 @@ def desktop_chat_input() -> rx.Component:
                         **chat_styles.text_area_desktop_style,
                     ),
                     rx.icon_button(
-                        "arrow-up",
+                        rx.icon("arrow-up", size=20),
                         type="submit",
                         loading=State.is_loading,
                         **chat_styles.send_button_desktop_style,
                     ),
+                    align="end",
+                    spacing="3",
                 ),
                 on_submit=State.answer,
                 reset_on_submit=True,
                 width="100%",
             ),
-            bg="rgba(255, 255, 255, 0.35)",
+            bg=rx.color_mode_cond(
+                light=ApolloTheme.light_colors()["input_background"],
+                dark=ApolloTheme.dark_colors()["input_background"]
+            ),
             style={
-                "backdropFilter": "blur(60px)",
-                "-webkit-backdrop-filter": "blur(60px)",
+                "backdropFilter": "blur(20px)",
+                "-webkit-backdrop-filter": "blur(20px)",
             },
-            border_radius="40px",
+            border=rx.color_mode_cond(
+                light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
+                dark="1px solid rgba(255, 255, 255, 0.1)",
+            ),
+            border_radius="24px",
             padding="1rem",
-            box_shadow="0 4px 12px rgba(0, 0, 0, 0.1)",
-            width="95%",
-            margin_bottom="1rem",
+            box_shadow=rx.color_mode_cond(
+                light=ApolloTheme.light_colors()["box_shadow"],
+                dark="0 4px 20px rgba(0, 0, 0, 0.4)",
+            ),
+            width="60%",
+            min_width="600px",
+            margin_bottom="2rem",
+            transition="all 0.2s ease-in-out",
+            _hover={
+                "box_shadow": rx.color_mode_cond(
+                    light=ApolloTheme.light_colors()["box_shadow_hover"],
+                    dark="0 8px 30px rgba(0, 0, 0, 0.5)",
+                ),
+            },
         ),
         width="100%",
+        padding_bottom="1rem",
     )
 
 

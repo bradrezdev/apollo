@@ -78,14 +78,25 @@ chat_input_style = {
 }
 
 text_area_desktop_style = {
-    "rows": "3",
+    "rows": "1",
+    "auto_height": True,
+    "max_height": "150px",
     "resize": "none",
-    "placeholder": "Pregunta lo que quieras",
+    "placeholder": "Envía un mensaje a Apollo...",
     "width": "100%",
+    "variant": "soft",
+    "bg": "transparent",
+    "padding": "8px",
+    "font_size": "1rem",
     "color": rx.color_mode_cond(
         light=ApolloTheme.light_colors()["input_text_color"],
         dark=ApolloTheme.dark_colors()["input_text_color"]
     ),
+    "_focus": {
+        "outline": "none",
+        "box_shadow": "none",
+        "bg": "transparent",
+    },
 }
 
 text_area_mobile_style = {

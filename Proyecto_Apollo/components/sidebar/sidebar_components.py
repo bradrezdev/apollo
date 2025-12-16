@@ -45,7 +45,10 @@ def conversation_item(conversation: dict) -> rx.Component:
                     padding_y="0.75rem",
                     style={
                         "_hover": {
-                            "bg": colors.ACCENT_LIGHT,
+                            "bg": rx.color_mode_cond(
+                                light=ApolloTheme.light_colors()["sidebar_item_hover"],
+                                dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
+                            ),
                             "cursor": "pointer",
                         },
                         "border-radius": "0.5em",
@@ -100,7 +103,10 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
             padding_y="0.75rem",
             style={
                 "_hover": {
-                    "bg": colors.ACCENT_LIGHT,
+                    "bg": rx.color_mode_cond(
+                        light=ApolloTheme.light_colors()["sidebar_item_hover"],
+                        dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
+                    ),
                     "cursor": "pointer",
                 },
                 "border-radius": "0.5em",
@@ -149,18 +155,17 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
 def conversations_list() -> rx.Component:
     """Lista de conversaciones en el sidebar"""
     return rx.vstack(
-        rx.hstack(
-            rx.text("Conversaciones", size="4", weight="bold"),
-            rx.spacer(),
-            rx.icon_button(
-                rx.icon("plus"),
-                size="2",
-                on_click=State.start_new_conversation,
-            ),
+        rx.button(
+            rx.icon("plus", size=18),
+            "Nueva conversación",
             width="100%",
-            padding_x="0.5rem",
+            variant="surface",
+            color_scheme="indigo",
+            on_click=State.start_new_conversation,
+            cursor="pointer",
         ),
         rx.divider(),
+        rx.text("Historial", size="2", weight="bold", color="gray", padding_left="0.5rem"),
         rx.vstack(
             rx.foreach(
                 State.conversations,
@@ -168,10 +173,11 @@ def conversations_list() -> rx.Component:
             ),
             spacing="1",
             width="100%",
-            max_height="300px",
+            max_height="calc(100vh - 200px)",
             overflow_y="auto",
+            padding_right="0.5rem",
         ),
-        spacing="2",
+        spacing="3",
         width="100%",
     )
 
