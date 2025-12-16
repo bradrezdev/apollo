@@ -126,7 +126,7 @@ class State(DBState):
             
             # Auto-generar título si es el primer mensaje
             if len(self.chat_history) == 1 and self.current_conversation_id:
-                self.auto_generate_title(message)
+                await self.auto_generate_title(answer)
             
             # Recargar conversaciones para actualizar el orden
             self.load_conversations()
@@ -232,19 +232,43 @@ class State(DBState):
             self.chat_history = []
     
     # === MÉTODOS DE GESTIÓN DE CONVERSACIONES ===
-    def auto_generate_title(self, first_message: str):
+    async def auto_generate_title(self, answer_text: str):
         """
-        Genera automáticamente un título basado en el primer mensaje
+        Genera automáticamente un título basado en la respuesta del asistente
         
         Args:
-            first_message: Primer mensaje del usuario
+            answer_text: Respuesta del asistente
         """
         if not self.current_conversation_id:
             return
-        
-        # Usar el primer mensaje como título (máximo 50 caracteres)
-        title = first_message[:50] + "..." if len(first_message) > 50 else first_message
-        self.update_conversation_title(self.current_conversation_id, title)
+            
+        try:
+            client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+            
+            # Generar título usando GPT
+            response = await client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "Eres un experto creando títulos cortos y concisos para conversaciones."},
+                    {"role": "user", "content": f"Crea el título de la conversación con base a un resumen sobre la respuesta que el asistente dio. La respuesta es: {answer_text}"}
+                ],
+                max_tokens=15,
+                temperature=0.5,
+            )
+            
+            title = response.choices[0].message.content.strip().replace('"', '')
+            
+            # Asegurar que no sea muy largo
+            if len(title) > 40:
+                title = title[:37] + "..."
+                
+            self.update_conversation_title(self.current_conversation_id, title)
+            
+        except Exception as e:
+            print(f"Error generando título con IA: {e}")
+            # Fallback: Usar primeros caracteres
+            title = answer_text[:30] + "..." if len(answer_text) > 30 else answer_text
+            self.update_conversation_title(self.current_conversation_id, title)
     
     def start_new_conversation(self):
         """Inicia una nueva conversación limpiando el estado actual"""

@@ -44,8 +44,9 @@ sidebar_item_hover_style = {
 # === ESTILOS PARA LOGO ===
 logo_style = {
     "src": "/logoNNprotect.png",
-    "width": "100%",
     "height": "auto",
+    "margin_bottom": "1em",
+    "width": "100%",
 }
 
 # === ESTILOS PARA PERFIL DE USUARIO ===

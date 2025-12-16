@@ -24,16 +24,7 @@ header_desktop_style = {
         "-webkit-backdrop-filter": "blur(60px)",
     },
     "height": "8vh",
-    "width": "85%",
-}
-
-title_style = {
-    "align": "center",
-    "weight": "bold",
-    "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["header_text_color"],
-        dark=ApolloTheme.dark_colors()["header_text_color"]
-    ),
+    "width": "100dvw",
 }
 
 # === ESTILOS PARA HEADER MOBILE ===

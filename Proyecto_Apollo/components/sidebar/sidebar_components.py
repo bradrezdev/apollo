@@ -2,7 +2,10 @@
 
 import reflex as rx
 from Proyecto_Apollo.state import State
-from Proyecto_Apollo.styles import sidebar_styles, colors
+from Proyecto_Apollo.styles import sidebar_styles
+
+# Import de colores personalizados
+from ...styles.colors import ApolloTheme
 
 
 def sidebar_item(text: str, icon: str, href: str) -> rx.Component:
@@ -41,8 +44,7 @@ def conversation_item(conversation: dict) -> rx.Component:
                         }
                     ),
                     width="100%",
-                    padding_x="0.5rem",
-                    padding_y="0.75rem",
+                    padding="0.5em",
                     style={
                         "_hover": {
                             "bg": rx.color_mode_cond(
@@ -51,7 +53,7 @@ def conversation_item(conversation: dict) -> rx.Component:
                             ),
                             "cursor": "pointer",
                         },
-                        "border-radius": "0.5em",
+                        "border-radius": "16px",
                     },
                     on_click=lambda: [
                         State.load_conversation_and_messages(conversation["id"]),
@@ -157,15 +159,17 @@ def conversations_list() -> rx.Component:
     return rx.vstack(
         rx.button(
             rx.icon("plus", size=18),
-            "Nueva conversación",
-            width="100%",
-            variant="surface",
-            color_scheme="indigo",
-            on_click=State.start_new_conversation,
+            "Nuevo chat",
+            border_radius="32px",
+            padding_y="20px",
             cursor="pointer",
+            margin_bottom="2em",
+            on_click=State.start_new_conversation,
+            variant="surface",
+            width="100%",
         ),
         rx.divider(),
-        rx.text("Historial", size="2", weight="bold", color="gray", padding_left="0.5rem"),
+        rx.text("Historial de conversaciones", size="2", weight="bold", color="gray", padding_left="0.5rem"),
         rx.vstack(
             rx.foreach(
                 State.conversations,
@@ -173,7 +177,7 @@ def conversations_list() -> rx.Component:
             ),
             spacing="1",
             width="100%",
-            max_height="calc(100vh - 200px)",
+            max_height="calc(93dvh - 200px)",
             overflow_y="auto",
             padding_right="0.5rem",
         ),
@@ -277,9 +281,7 @@ def desktop_sidebar() -> rx.Component:
     return rx.fragment(
         rx.vstack(
             rx.image(**sidebar_styles.logo_style),
-            rx.spacer(),
             conversations_list(),
-            rx.spacer(),
             #user_profile_section(),
             **sidebar_styles.sidebar_style,
         ),

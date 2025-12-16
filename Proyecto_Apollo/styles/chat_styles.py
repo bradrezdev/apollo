@@ -32,7 +32,6 @@ question_style = {
 
 answer_style = {
     **base_message_style,
-    "margin_left": "10px",
     "max_width": "100%",
     "color": rx.color_mode_cond(
         light=ApolloTheme.light_colors()["answer_text_color"],
@@ -100,11 +99,26 @@ text_area_desktop_style = {
 }
 
 text_area_mobile_style = {
-    "max_length": 150,
-    "placeholder": "Chat con Apollo",
     "rows": "1",
-    "resize": "vertical",
+    "auto_height": True,
+    "max_height": "120px",
+    "resize": "none",
+    "placeholder": "Chat con Apollo",
     "width": "100%",
+    "variant": "soft",
+    "bg": "transparent",
+    "padding": "6px",
+    "font_size": "1em",
+    "border_radius": "14px",
+    "color": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["input_text_color"],
+        dark=ApolloTheme.dark_colors()["input_text_color"]
+    ),
+    "_focus": {
+        "outline": "none",
+        "box_shadow": "none",
+        "bg": "transparent",
+    },
 }
 
 send_button_desktop_style = {

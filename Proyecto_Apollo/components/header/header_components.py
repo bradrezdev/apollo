@@ -13,7 +13,7 @@ from Proyecto_Apollo.components.sidebar import (
 def desktop_header() -> rx.Component:
     """Header para vista desktop"""
     return rx.container(
-        rx.text("TelemedicinAI", style=header_styles.title_style),
+        rx.text("Apollo AI"),
         **header_styles.header_desktop_style,
     )
 

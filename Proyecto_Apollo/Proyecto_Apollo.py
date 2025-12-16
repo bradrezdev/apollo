@@ -63,10 +63,8 @@ def index() -> rx.Component:
 
 app = rx.App(
     theme=rx.theme(
-        appearance="dark",
-        has_background=True,
-        accent_color="indigo",
+        appearance="inherit",
     ),
 )
 
-app.add_page(index)
+app.add_page(index, title="Apollo AI - ChatBot con IA")

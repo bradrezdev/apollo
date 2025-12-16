@@ -36,22 +36,26 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
                     spacing="2",
                 ),
                 # Mostrar respuesta completa con botón de copiar
-                rx.hstack(
-                    rx.markdown(answer, style=chat_styles.answer_style),
+                rx.box(
+                    rx.markdown(answer, style=chat_styles.answer_style, width="100%"),
                     rx.icon_button(
-                        rx.icon("copy", size=16),
+                        rx.icon("copy", size=16, margin_right="4px"),
+                        rx.text("Copiar respuesta", size="1"),
                         on_click=rx.set_clipboard(answer),
                         size="1",
                         variant="ghost",
                         color_scheme="gray",
+                        margin_left="16px",
+                        margin_top="-16px",
+                        cursor="pointer",
+                        border_radius="16px",
                     ),
-                    align="start",
-                    width="100%",
+                    width="97%",
                 ),
             ),
-            text_align="left"
         ),
-        margin_y="1em",
+        margin_y=["1em", "1em", "2em", "2em", "2em"],
+        height="auto",
     )
 
 
@@ -87,14 +91,14 @@ def chat_container_desktop() -> rx.Component:
             ),
         ),
         width="100%",
-        height="100%",
+        flex="1",
+        overflow="hidden",
         padding_top="2rem",
     )
 
 
 def chat_container_mobile() -> rx.Component:
     """Contenedor de chat para mobile que ocupa todo el espacio disponible"""
-    
     return rx.box(
         rx.cond(
             State.has_messages,
@@ -106,7 +110,17 @@ def chat_container_mobile() -> rx.Component:
                 autoscroll=State.auto_scroll_enabled,
                 **chat_styles.chat_scroll_mobile_style,
             ),
-            rx.text("No hay mensajes aún. ¡Escribe algo!", color="gray", padding="2em"),
+            rx.center(
+                rx.vstack(
+                    rx.icon("message-square", size=48, color="gray"),
+                    rx.text("¡Bienvenido a Apollo AI!", size="5", weight="bold", text_align="center"),
+                    rx.text("Escribe un mensaje para comenzar una conversación.", color="gray", text_align="center"),
+                    spacing="4",
+                    align="center",
+                    padding="2em",
+                ),
+                height="100%",
+            ),
         ),
         **chat_styles.chat_container_mobile_style,
     )
@@ -120,6 +134,7 @@ def desktop_chat_input() -> rx.Component:
                 rx.hstack(
                     rx.text_area(
                         name="question",
+                        border_radius="14px",
                         value=State.question,
                         on_change=State.set_question,
                         **chat_styles.text_area_desktop_style,
@@ -150,7 +165,7 @@ def desktop_chat_input() -> rx.Component:
                 dark="1px solid rgba(255, 255, 255, 0.1)",
             ),
             border_radius="24px",
-            padding="1rem",
+            padding="10px",
             box_shadow=rx.color_mode_cond(
                 light=ApolloTheme.light_colors()["box_shadow"],
                 dark="0 4px 20px rgba(0, 0, 0, 0.4)",
@@ -175,35 +190,39 @@ def mobile_chat_input() -> rx.Component:
     """Input de chat para vista mobile"""
     return rx.box(
         rx.form(
-            rx.flex(
-                rx.input(
+            rx.hstack(
+                rx.text_area(
                     name="question",
-                    border_radius="40px",
-                    padding="4px",
-                    height="3em",
-                    font_size="1em",
-                    bg=rx.color_mode_cond(
-                        light="rgba(25, 25, 25, 0.15)",
-                        dark=ApolloTheme.dark_colors()["input_background"]
-                    ),
                     value=State.question,
                     on_change=State.set_question,
                     **chat_styles.text_area_mobile_style,
                 ),
                 rx.icon_button(
-                    "arrow-up",
+                    rx.icon("arrow-up", size=20),
                     type="submit",
                     loading=State.is_loading,
                     **chat_styles.send_button_mobile_style,
                 ),
-                **chat_styles.chat_input_style,
+                align="end",
+                spacing="2",
+                width="100%",
             ),
             on_submit=State.answer,
             reset_on_submit=True,
-            width="90%",
-            margin_left="auto",
-            margin_right="auto",
-            margin_bottom="1rem",
+            width="100%",
         ),
-        width="100%",
+        bg=rx.color_mode_cond(
+            light=ApolloTheme.light_colors()["input_background"],
+            dark=ApolloTheme.dark_colors()["input_background"]
+        ),
+        style={
+            "backdropFilter": "blur(20px)",
+            "-webkit-backdrop-filter": "blur(20px)",
+        },
+        border_radius="24px",
+        padding="10px",
+        margin_x="1rem",
+        margin_bottom="1rem",
+        box_shadow="0 4px 12px rgba(0, 0, 0, 0.1)",
+        width="calc(100% - 2em)",
     )
