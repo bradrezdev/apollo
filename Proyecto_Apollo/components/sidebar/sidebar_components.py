@@ -63,30 +63,31 @@ def conversation_item(conversation: dict) -> rx.Component:
             ),
         ),
         rx.context_menu.content(
-            rx.context_menu.item(
-                rx.hstack(
-                    rx.icon("pencil", size=16),
-                    rx.text("Editar título"),
-                    align="center",
-                    spacing="2",
+                rx.context_menu.item(
+                    rx.hstack(
+                        rx.icon("pencil", size=16),
+                        rx.text("Editar título"),
+                        align="center",
+                        spacing="2",
+                    ),
+                    border_radius="18px",
+                    on_select=lambda: [State.set_should_reopen_drawer(False), State.open_edit_dialog(conversation["id"], conversation["title"])],
                 ),
-                border_radius="18px",
-                on_select=lambda: State.open_edit_dialog(conversation["id"], conversation["title"]),
-            ),
-            rx.context_menu.separator(),
-            rx.context_menu.item(
-                rx.hstack(
-                    rx.icon("trash-2", size=16),
-                    rx.text("Eliminar"),
-                    align="center",
-                    spacing="2",
+                rx.context_menu.separator(),
+                rx.context_menu.item(
+                    rx.hstack(
+                        rx.icon("trash-2", size=16),
+                        rx.text("Eliminar"),
+                        align="center",
+                        spacing="2",
+                    ),
+                    border_radius="18px",
+                    color_scheme="red",
+                    on_select=lambda: [State.set_should_reopen_drawer(False), State.open_delete_dialog(conversation["id"])],
                 ),
-                border_radius="18px",
-                color_scheme="red",
-                on_select=lambda: State.delete_conversation_confirm(conversation["id"]),
-            ),
             border_radius="20px",
         ),
+        on_open_change=State.log_context_menu_open,
     )
 
 
@@ -97,17 +98,16 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
             rx.text(
                 conversation["title"],
                 size="3",
-                weight="medium",
                 style={
                     "overflow": "hidden",
                     "text_overflow": "ellipsis",
                     "white_space": "nowrap",
-                    "max_width": "24ch",
-                }
+                    "max_width": "20ch",
+                },
             ),
             flex="1",
             padding_x="0.5rem",
-            padding_y="0.75rem",
+            padding_y="0.5rem",
             style={
                 "_hover": {
                     "bg": rx.color_mode_cond(
@@ -123,8 +123,8 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                 State.set_is_open(False)
             ],
         ),
-        rx.context_menu.root(
-            rx.context_menu.trigger(
+        rx.menu.root(
+            rx.menu.trigger(
                 rx.icon_button(
                     rx.icon("circle-ellipsis", size=18),
                     size="2",
@@ -132,8 +132,8 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     color_scheme="gray",
                 ),
             ),
-            rx.context_menu.content(
-                rx.context_menu.item(
+            rx.menu.content(
+                rx.menu.item(
                     rx.hstack(
                         rx.icon("pencil", size=16),
                         rx.text("Editar título"),
@@ -141,10 +141,10 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                         spacing="2",
                     ),
                     border_radius="18px",
-                    on_select=lambda: State.open_edit_dialog(conversation["id"], conversation["title"]),
+                    on_select=lambda: [State.set_should_reopen_drawer(True), State.set_is_open(False), State.open_edit_dialog(conversation["id"], conversation["title"])],
                 ),
-                rx.context_menu.separator(),
-                rx.context_menu.item(
+                rx.menu.separator(),
+                rx.menu.item(
                     rx.hstack(
                         rx.icon("trash-2", size=16),
                         rx.text("Eliminar"),
@@ -153,10 +153,12 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     ),
                     border_radius="18px",
                     color_scheme="red",
-                    on_select=lambda: State.delete_conversation_confirm(conversation["id"]),
+                    on_select=lambda: [State.set_should_reopen_drawer(True), State.set_is_open(False), State.open_delete_dialog(conversation["id"])],
                 ),
                 border_radius="20px",
+                z_index="50",
             ),
+            on_open_change=State.log_context_menu_open,
         ),
         width="270px",
         align="center",
@@ -221,8 +223,8 @@ def conversations_list_mobile() -> rx.Component:
                 conversation_item_mobile
             ),
             spacing="1",
-            width="270px",
-            max_height="75dvh",
+            width="290px",
+            max_height="76dvh",
             overflow_y="auto",
         ),
         spacing="2",
@@ -256,6 +258,7 @@ def edit_conversation_dialog() -> rx.Component:
             ),
             rx.flex(
                 rx.input(
+                    border_radius="32px",
                     value=State.new_conversation_title,
                     on_change=State.set_new_conversation_title,
                     placeholder="Título de la conversación",
@@ -270,23 +273,71 @@ def edit_conversation_dialog() -> rx.Component:
                 rx.dialog.close(
                     rx.button(
                         "Cancelar",
+                        border_radius="32px",
+                        padding_x="32px",
                         variant="soft",
                         color_scheme="gray",
-                        on_click=State.close_edit_dialog,
+                        on_click=lambda: [State.close_edit_dialog(), State.reopen_drawer_if_needed()],
                     ),
                 ),
                 rx.dialog.close(
                     rx.button(
                         "Guardar",
-                        on_click=State.save_conversation_title,
+                        border_radius="32px",
+                        padding_x="32px",
+                        on_click=lambda: [State.save_conversation_title(), State.reopen_drawer_if_needed()],
                     ),
                 ),
                 spacing="3",
-                justify="end",
+                justify="center",
             ),
+            border_radius="30px",
+            z_index="10000",
         ),
         open=State.is_edit_dialog_open,
         on_open_change=State.set_is_edit_dialog_open,
+    )
+
+
+def delete_conversation_dialog() -> rx.Component:
+    """Diálogo para confirmar la eliminación de una conversación"""
+    return rx.dialog.root(
+        rx.dialog.content(
+            rx.dialog.title("¿Eliminar conversación?"),
+            rx.dialog.description(
+                "Esta acción no se puede deshacer. ¿Estás seguro de que quieres eliminar esta conversación?",
+                size="2",
+                margin_bottom="16px",
+            ),
+            rx.flex(
+                rx.dialog.close(
+                    rx.button(
+                        "Cancelar",
+                        border_radius="32px",
+                        padding_x="32px",
+                        variant="soft",
+                        color_scheme="gray",
+                        on_click=lambda: [State.close_delete_dialog(), State.reopen_drawer_if_needed()],
+                    ),
+                ),
+                rx.dialog.close(
+                    rx.button(
+                        "Eliminar",
+                        border_radius="32px",
+                        padding_x="32px",
+                        color_scheme="red",
+                        on_click=lambda: [State.confirm_delete_conversation(), State.reopen_drawer_if_needed()],
+                    ),
+                ),
+                spacing="3",
+                justify="center",
+                margin_top="16px",
+            ),
+            border_radius="30px",
+            z_index="10000",
+        ),
+        open=State.is_delete_dialog_open,
+        on_open_change=State.set_is_delete_dialog_open,
     )
 
 
@@ -299,5 +350,4 @@ def desktop_sidebar() -> rx.Component:
             #user_profile_section(),
             **sidebar_styles.sidebar_style,
         ),
-        edit_conversation_dialog(),
     )

@@ -15,7 +15,7 @@ from Proyecto_Apollo.components.chat import (
     desktop_chat_input,
     mobile_chat_input,
 )
-from Proyecto_Apollo.components.sidebar import desktop_sidebar
+from Proyecto_Apollo.components.sidebar import desktop_sidebar, edit_conversation_dialog, delete_conversation_dialog
 from Proyecto_Apollo.components.header import desktop_header, mobile_header
 
 
@@ -53,6 +53,8 @@ def index() -> rx.Component:
     return rx.fragment(
         rx.desktop_only(desktop_view()),
         rx.mobile_only(mobile_view()),
+        edit_conversation_dialog(),
+        delete_conversation_dialog(),
     )
 
 

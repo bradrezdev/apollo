@@ -21,11 +21,16 @@ class State(DBState):
     
     # === VARIABLES DEL DRAWER ===
     is_open: bool = False
+    should_reopen_drawer: bool = False
     
     # === VARIABLES DE EDICIÓN DE CONVERSACIONES ===
     is_edit_dialog_open: bool = False
     conversation_to_edit_id: int | None = None
     new_conversation_title: str = ""
+    
+    # === VARIABLES DE ELIMINACIÓN DE CONVERSACIONES ===
+    is_delete_dialog_open: bool = False
+    conversation_to_delete_id: int | None = None
     
     # === VARIABLES DE UI ===
     auto_scroll_enabled: bool = True
@@ -54,6 +59,12 @@ class State(DBState):
                 return conv["title"]
         return ""
     
+    # === MÉTODOS DE INICIALIZACIÓN ===
+    def on_load(self):
+        """Carga inicial de la aplicación"""
+        super().on_load()
+        print("[DEBUG] Todo listo para usarse")
+
     # === MÉTODOS DEL CHAT ===
     async def answer(self, form_data: dict = None):
         """
@@ -75,7 +86,7 @@ class State(DBState):
             return
         
         message = question_text.strip()
-        print(f"🚀 Iniciando respuesta para: '{message}'")
+        print(f"[DEBUG] Usuario envio mensaje: {message}")
         
         # Agregar mensaje del usuario inmediatamente al historial
         self.chat_history = self.chat_history + [(message, "")]
@@ -91,16 +102,13 @@ class State(DBState):
             
             # Si no hay conversación activa, crear una nueva
             if not self.current_thread_id:
-                print("🆕 Creando nuevo thread...")
                 thread = await client.beta.threads.create()
                 self.create_new_conversation(
                     thread_id=thread.id,
                     title="Nueva conversación"
                 )
-                print(f"✅ Thread creado: {thread.id}")
             
             # Enviar mensaje del usuario al thread actual
-            print(f"📤 Enviando mensaje al thread {self.current_thread_id}...")
             await client.beta.threads.messages.create(
                 thread_id=self.current_thread_id,
                 role="user",
@@ -109,28 +117,22 @@ class State(DBState):
             
             # Inicializar variable para respuesta en streaming
             answer = ""
-            print(f"📋 Mensaje agregado al historial. Total: {len(self.chat_history)}")
             yield
             
             # Usar create_and_stream() para streaming en tiempo real
-            print(f"🤖 Iniciando streaming con assistant {API_ASSISTANT_ID}...")
             async with client.beta.threads.runs.create_and_stream(
                 thread_id=self.current_thread_id,
                 assistant_id=API_ASSISTANT_ID,
             ) as stream:
                 # Iterar sobre text_deltas - streaming palabra por palabra
-                print("📥 Procesando text deltas en streaming...")
                 async for text_delta in stream.text_deltas:
                     answer += text_delta
                     # Reasignar la lista completa para que Reflex detecte el cambio
                     updated_history = self.chat_history.copy()
                     updated_history[-1] = (updated_history[-1][0], answer)
                     self.chat_history = updated_history
-                    print(f"📝 Streaming: '{text_delta}' | Total: {len(answer)} caracteres")
                     yield
                 
-                print("✅ Streaming completado exitosamente")
-            
             # Actualizar timestamp de la conversación
             if self.current_conversation_id:
                 self.update_conversation_timestamp(self.current_conversation_id)
@@ -142,7 +144,7 @@ class State(DBState):
             # Recargar conversaciones para actualizar el orden
             self.load_conversations()
             
-            print("🎉 Respuesta completada")
+            print(f"[DEBUG] Chatbot respondio: {answer}")
                             
         except Exception as e:
             # Manejo de errores detallado
@@ -170,16 +172,27 @@ class State(DBState):
     def toggle_drawer(self):
         """Alterna el estado del drawer"""
         self.is_open = not self.is_open
+        if self.is_open:
+            print("[DEBUG] Drawer abierto")
+        else:
+            print("[DEBUG] Drawer cerrado")
     
     @rx.event
     def open_drawer(self):
         """Abre el drawer"""
         self.is_open = True
+        print("[DEBUG] Drawer abierto")
     
     @rx.event
     def close_drawer(self):
         """Cierra el drawer"""
         self.is_open = False
+        print("[DEBUG] Drawer cerrado")
+    
+    @rx.event
+    def log_copy_event(self):
+        """Registra evento de copiado"""
+        print("[DEBUG] Respuesta copiada exitosamente")
     
     # === MÉTODOS DE UI ===
     @rx.event
@@ -198,7 +211,20 @@ class State(DBState):
         self.user_name = name
         self.user_email = email
     
+    @rx.event
+    def log_context_menu_open(self, is_open: bool):
+        """Registra cuando se abre el menú contextual"""
+        if is_open:
+            print("[DEBUG] Context menu abierto")
+
     # === MÉTODOS DE GESTIÓN DE CONVERSACIONES (CRUD) ===
+    @rx.event
+    def reopen_drawer_if_needed(self):
+        """Reabre el drawer solo si la bandera should_reopen_drawer es True"""
+        if self.should_reopen_drawer:
+            self.is_open = True
+            self.should_reopen_drawer = False
+
     @rx.event
     def open_edit_dialog(self, conversation_id: int, current_title: str):
         """
@@ -208,6 +234,7 @@ class State(DBState):
             conversation_id: ID de la conversación a editar
             current_title: Título actual de la conversación
         """
+        print("[DEBUG] Opcion seleccionada: Editar título")
         self.conversation_to_edit_id = conversation_id
         self.new_conversation_title = current_title
         self.is_edit_dialog_open = True
@@ -223,24 +250,41 @@ class State(DBState):
     def save_conversation_title(self):
         """Guarda el nuevo título de la conversación"""
         if self.conversation_to_edit_id and self.new_conversation_title.strip():
+            new_title = self.new_conversation_title.strip()
             self.update_conversation_title(
                 self.conversation_to_edit_id,
-                self.new_conversation_title.strip()
+                new_title
             )
+            print(f"[DEBUG] Titulo actualizado exitosamente a: {new_title}")
             self.close_edit_dialog()
     
     @rx.event
-    def delete_conversation_confirm(self, conversation_id: int):
+    def open_delete_dialog(self, conversation_id: int):
         """
-        Elimina una conversación
+        Abre el diálogo de confirmación de eliminación
         
         Args:
             conversation_id: ID de la conversación a eliminar
         """
-        self.delete_conversation(conversation_id)
-        # Si eliminamos la conversación actual, limpiar el chat
-        if self.current_conversation_id == conversation_id:
-            self.chat_history = []
+        print("[DEBUG] Opcion seleccionada: Eliminar conversación")
+        self.conversation_to_delete_id = conversation_id
+        self.is_delete_dialog_open = True
+
+    @rx.event
+    def close_delete_dialog(self):
+        """Cierra el diálogo de eliminación"""
+        self.is_delete_dialog_open = False
+        self.conversation_to_delete_id = None
+
+    @rx.event
+    def confirm_delete_conversation(self):
+        """Confirma la eliminación de la conversación"""
+        if self.conversation_to_delete_id:
+            self.delete_conversation(self.conversation_to_delete_id)
+            # Si eliminamos la conversación actual, limpiar el chat
+            if self.current_conversation_id == self.conversation_to_delete_id:
+                self.chat_history = []
+            self.close_delete_dialog()
     
     # === MÉTODOS DE GESTIÓN DE CONVERSACIONES ===
     async def auto_generate_title(self, answer_text: str):
@@ -286,6 +330,7 @@ class State(DBState):
         self.current_conversation_id = None
         self.current_thread_id = ""
         self.chat_history = []
+        print("[DEBUG] Nueva conversacion iniciada")
     
     async def load_conversation_and_messages(self, conversation_id: int):
         """
@@ -300,6 +345,8 @@ class State(DBState):
             
             if not conversation:
                 return
+            
+            print(f"[DEBUG] Cambio de conversacion a: {conversation['title']}")
             
             # Obtener mensajes del thread desde OpenAI
             client = AsyncOpenAI(api_key=OPENAI_API_KEY)

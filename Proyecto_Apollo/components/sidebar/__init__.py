@@ -8,6 +8,8 @@ from .sidebar_components import (
     conversations_list_mobile,
     user_profile_section,
     desktop_sidebar,
+    edit_conversation_dialog,
+    delete_conversation_dialog,
 )
 
 __all__ = [
@@ -18,4 +20,6 @@ __all__ = [
     "conversations_list_mobile",
     "user_profile_section",
     "desktop_sidebar",
+    "edit_conversation_dialog",
+    "delete_conversation_dialog",
 ]

@@ -167,8 +167,10 @@ class DBState(rx.State):
                 conversation = session.exec(statement).first()
                 
                 if conversation:
+                    title = conversation.title
                     session.delete(conversation)
                     session.commit()
+                    print(f"[DEBUG] Conversacion eliminada exitosamente: {title}")
                     
                     # Si era la conversación actual, limpiar estado
                     if self.current_conversation_id == conversation_id:
