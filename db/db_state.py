@@ -23,10 +23,12 @@ class DBState(rx.State):
     # === MÉTODOS DE CONVERSACIONES ===
     def load_conversations(self):
         """Carga todas las conversaciones desde la base de datos ordenadas por fecha"""
+        print("[DEBUG] Iniciando carga de conversaciones...")
         try:
             with Session(Model.get_db_engine()) as session:
                 statement = select(Conversations).order_by(Conversations.updated_at.desc())
                 results = session.exec(statement).all()
+                print(f"[DEBUG] Conversaciones encontradas en BD: {len(results)}")
                 
                 # Convertir a diccionarios para el frontend
                 self.conversations = [
@@ -39,9 +41,10 @@ class DBState(rx.State):
                     }
                     for conv in results
                 ]
+                print(f"[DEBUG] Conversaciones cargadas en estado: {len(self.conversations)}")
                 
         except Exception as e:
-            print(f"Error cargando conversaciones: {e}")
+            print(f"[ERROR] Error cargando conversaciones: {e}")
     
     def create_new_conversation(self, thread_id: str, title: str = "Nueva conversación") -> int | None:
         """

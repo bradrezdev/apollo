@@ -66,4 +66,4 @@ app = rx.App(
     ),
 )
 
-app.add_page(index, title="Apollo AI - ChatBot con IA")
+app.add_page(index, title="Apollo AI - ChatBot con IA", on_load=State.on_load)

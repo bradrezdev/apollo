@@ -62,7 +62,8 @@ class State(DBState):
     # === MÉTODOS DE INICIALIZACIÓN ===
     def on_load(self):
         """Carga inicial de la aplicación"""
-        super().on_load()
+        print("[DEBUG] Ejecutando State.on_load")
+        self.load_conversations()
         print("[DEBUG] Todo listo para usarse")
 
     # === MÉTODOS DEL CHAT ===

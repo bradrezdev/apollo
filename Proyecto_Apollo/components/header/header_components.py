@@ -22,6 +22,10 @@ def desktop_header() -> rx.Component:
                     "Apollo AI - " + State.current_conversation_title,
                     "Apollo AI"
                 ),
+                overflow="hidden",
+                text_overflow="ellipsis",
+                white_space="nowrap",
+                max_width="50ch",
                 **header_styles.header_text_style,
             ),
             **header_styles.header_desktop_style,
