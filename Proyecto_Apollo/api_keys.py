@@ -1,2 +1,0 @@
-OPENAI_API_KEY = "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"
-API_ASSISTANT_ID = "asst_wbg01t4JFYx0AVal09mtljlS"

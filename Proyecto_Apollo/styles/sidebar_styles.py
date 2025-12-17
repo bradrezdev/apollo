@@ -2,32 +2,18 @@
 
 import reflex as rx
 from .colors import ApolloTheme
+from .common_styles import glassmorphism_style
 
 # === ESTILOS PARA SIDEBAR ===
 sidebar_style = {
-    "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_background"],
-        dark=ApolloTheme.dark_colors()["input_background"]
-    ),
-    "border": rx.color_mode_cond(
-        light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
-        dark="1px solid rgba(255, 255, 255, 0.1)",
-    ),
+    **glassmorphism_style,
     "border_radius": "24px",
-    "box_shadow": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["box_shadow"],
-        dark="0 4px 20px rgba(0, 0, 0, 0.4)",
-    ),
     "display": ["none", "none", "flex", "flex", "flex"],
     "flex_direction": "column",
     "height": "95vh",
     "margin": "2.5vh 0 2.5vh 1rem",
     "max_width": "320px",
     "padding": "1.5rem",
-    "style": {
-        "backdropFilter": "blur(20px)",
-        "-webkit-backdrop-filter": "blur(20px)",
-    },
     "width": "320px",
     "z_index": "1000",
 }

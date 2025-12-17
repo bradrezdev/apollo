@@ -1,6 +1,5 @@
 # state.py
 
-import os
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import reflex as rx

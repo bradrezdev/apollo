@@ -2,6 +2,7 @@
 
 import reflex as rx
 from .colors import ApolloTheme
+from .common_styles import glassmorphism_style
 
 # === TAMAÑOS DE ICONOS ===
 icon_sizes = {
@@ -10,29 +11,9 @@ icon_sizes = {
     "large": 30,
 }
 
-# === ESTILOS COMPARTIDOS ===
-traslucid_style = {
-    "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_background"],
-        dark=ApolloTheme.dark_colors()["input_background"]
-    ),
-    "border": rx.color_mode_cond(
-        light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
-        dark="1px solid rgba(255, 255, 255, 0.1)",
-    ),
-    "box_shadow": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["box_shadow"],
-        dark="0 4px 20px rgba(0, 0, 0, 0.4)",
-    ),
-    "style": {
-        "backdropFilter": "blur(20px)",
-        "-webkit-backdrop-filter": "blur(20px)",
-    },
-}
-
 # === ESTILOS PARA HEADER DESKTOP ===
 header_desktop_style = {
-    **traslucid_style,
+    **glassmorphism_style,
     "position": "absolute",
     "top": "2rem",
     "z_index": 100,
@@ -78,7 +59,7 @@ header_mobile_content_style = {
 
 # Estilos para los boxes dentro del header mobile
 header_mobile_box_style = {
-    **traslucid_style,
+    **glassmorphism_style,
 }
 
 header_mobile_round_box_style = {
@@ -109,7 +90,7 @@ drawer_trigger_style = {
 }
 
 drawer_content_style = {
-    **traslucid_style,
+    **glassmorphism_style,
     "top": "auto",
     "right": "auto",
     "height": "96%",

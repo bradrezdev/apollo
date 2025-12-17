@@ -1,4 +1,4 @@
-# 🚀 Proyecto Apollo - Chatbot con IA
+# 🚀 Proyecto Apollo - Asistente Virtual Inteligente
 
 <div align="center">
 
@@ -7,304 +7,175 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-Assistants-green.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-orange.svg)
 
-Un chatbot inteligente construido con Reflex y OpenAI Assistants API, con arquitectura modular y clean code.
-
-[Demo](#) • [Documentación](ARCHITECTURE.md) • [Instalación](#-instalación)
+**Un chatbot inteligente construido con Reflex y OpenAI Assistants API, modular y escalable.**
 
 </div>
 
 ---
 
-## 📋 Tabla de Contenidos
+## 📋 Descripción
 
-- [Características](#-características)
-- [Instalación](#-instalación)
-- [Uso](#-uso)
-- [Arquitectura](#-arquitectura)
-- [Desarrollo](#-desarrollo)
-- [Roadmap](#-roadmap)
+**Proyecto Apollo** es una aplicación de chat de última generación construida con **Reflex** (framework Full-Stack para Python). Integra la potencia de **OpenAI Assistants API** para ofrecer respuestas inteligentes y contextuales, respaldada por una base de datos **PostgreSQL** (vía Supabase) para una persistencia de datos robusta.
+
+Este proyecto ha sido diseñado siguiendo principios de **Clean Architecture** y **SOLID**, garantizando un código mantenible, escalable y profesional.
 
 ---
 
-## ✨ Características
+## ✨ Características Principales
 
-### MVP Actual
+El sistema cuenta con un conjunto robusto de funcionalidades diseñadas para ofrecer la mejor experiencia de usuario:
 
-- ✅ **Chat con IA**: Envía mensajes y recibe respuestas en tiempo real usando OpenAI Assistants
-- ✅ **Historial de Conversaciones**: Visualiza todas tus conversaciones anteriores
-- ✅ **Continuación de Conversaciones**: Retoma conversaciones antiguas donde las dejaste
-- ✅ **Títulos Editables**: Cada conversación tiene un título que puedes personalizar
-- ✅ **Orden Cronológico**: Las conversaciones más recientes aparecen primero
-- ✅ **Nueva Conversación Rápida**: Inicia un nuevo chat desde cualquier lugar
-- ✅ **Responsive Design**: Funciona perfectamente en desktop y móvil
-
-### Características Técnicas
-
-- 🏗️ **Arquitectura Modular**: Componentes separados y reutilizables
-- 🎨 **Sistema de Estilos Centralizado**: Estilos organizados por categoría
-- 🗄️ **Base de Datos PostgreSQL**: Persistencia de conversaciones en Supabase
-- 🔄 **Migraciones Automáticas**: Alembic integrado con Reflex
-- 🧠 **Estado Jerárquico**: DBState → State → rx.State
-- 📱 **Mobile-First**: Diseño optimizado para todos los dispositivos
+- 🤖 **Inteligencia Artificial Avanzada**: Integración directa con OpenAI Assistants para conversaciones fluidas y con contexto.
+- 🗂️ **Historial Persistente**: Almacenamiento seguro de todas las conversaciones y mensajes en base de datos.
+- 📱 **Diseño Responsive (Mobile-First)**: Interfaz optimizada que se adapta perfectamente a dispositivos móviles y de escritorio.
+- ✏️ **Gestión de Conversaciones**:
+  - Creación de nuevos chats instantáneos.
+  - Edición de títulos de conversación para mejor organización.
+  - Eliminación de conversaciones obsoletas.
+- 🔄 **Continuidad de Sesión**: Capacidad para retomar cualquier conversación antigua en el punto exacto donde se dejó.
+- 🎨 **UI/UX Moderna**: Interfaz limpia, intuitiva y con feedback visual en tiempo real (streaming de respuestas).
 
 ---
 
-## 🛠️ Instalación
+## 🛠️ Requisitos Previos
 
-### Prerrequisitos
+Antes de comenzar, asegúrate de tener instalado lo siguiente en tu sistema:
 
-- Python 3.13+
-- PostgreSQL (o cuenta en Supabase)
-- Cuenta en OpenAI con API key
+- **Python 3.13** o superior.
+- **Git** para el control de versiones.
+- Una cuenta en **OpenAI** (con API Key y Assistant ID).
+- Una cuenta en **Supabase** (o una base de datos PostgreSQL local).
 
-### Pasos
+---
 
-1. **Clonar el repositorio**
+## 🚀 Guía de Instalación y Ejecución
+
+Sigue estos pasos para desplegar el proyecto en tu entorno local.
+
+### 1. Clonar el Repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/Proyecto_Apollo.git
+git clone https://github.com/bradrezdev/apollo.git
 cd Proyecto_Apollo
 ```
 
-2. **Crear y activar entorno virtual**
+### 2. Configurar el Entorno Virtual
 
+Es **indispensable** crear un entorno virtual para aislar las dependencias del proyecto.
+
+**En macOS / Linux:**
 ```bash
-python -m venv apollo
-source apollo/bin/activate  # En Windows: apollo\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-3. **Instalar dependencias**
+**En Windows:**
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### 3. Instalar Dependencias
+
+Con el entorno virtual activo, instala todas las librerías necesarias listadas en `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Configurar variables de entorno**
+### 4. Ejecución (Modo Rápido)
 
-Crea un archivo `.env` en la raíz del proyecto:
+El proyecto viene pre-configurado con credenciales de demostración. Una vez instaladas las dependencias, **no es necesario configurar nada más**.
 
-```env
-# OpenAI
-OPENAI_API_KEY=sk-tu-api-key-aqui
-API_ASSISTANT_ID=asst_tu-assistant-id
-
-# Supabase
-SUPABASE_URL=https://tu-proyecto.supabase.co
-SUPABASE_KEY=tu-supabase-key
-
-# Database
-DATABASE_URL=postgresql://usuario:password@host:5432/database
-```
-
-5. **Ejecutar migraciones**
-
-```bash
-reflex db migrate
-```
-
-6. **Iniciar la aplicación**
+Simplemente inicia la aplicación:
 
 ```bash
 reflex run
 ```
 
-La aplicación estará disponible en `http://localhost:3000`
+La aplicación estará disponible en `http://localhost:3000`.
 
 ---
 
-## 🎮 Uso
+### ⚙️ Configuración Personalizada (Opcional)
 
-### Interfaz Desktop
+Si deseas conectar tu propia infraestructura de OpenAI y Supabase:
 
-1. **Sidebar Izquierdo**: Muestra todas tus conversaciones
-2. **Área Central**: Chat activo con mensajes
-3. **Input Inferior**: Escribe tu mensaje y presiona Enter
+1. **Configurar Variables de Entorno**:
+   Crea un archivo `.env` en la raíz y define tus credenciales:
+   ```env
+   # OpenAI Configuration
+   OPENAI_API_KEY=sk-tu-api-key-aqui
+   API_ASSISTANT_ID=asst_tu-assistant-id-aqui
 
-### Interfaz Móvil
+   # Supabase / Database Configuration
+   SUPABASE_URL=https://tu-proyecto.supabase.co
+   SUPABASE_KEY=tu-supabase-anon-key
+   DATABASE_URL=postgresql://usuario:password@host:5432/database
+   ```
 
-1. **Menú Hamburguesa**: Accede al historial de conversaciones
-2. **Chat**: Área principal optimizada para táctil
-3. **Input Fijo**: Siempre accesible en la parte inferior
+2. **Inicializar Base de Datos**:
+   Si usas tu propia BD, ejecuta las migraciones:
+   ```bash
+   reflex db migrate
+   ```
 
-### Acciones Rápidas
-
-- **Nueva Conversación**: Clic en "Nueva conversación" en el header
-- **Cargar Conversación**: Clic en cualquier conversación del historial
-- **Editar Título**: Clic en el ícono de edición junto al título (próximamente)
+3. **Ejecutar**:
+   ```bash
+   reflex run
+   ```
 
 ---
 
-## 🏗️ Arquitectura
+## 🏗️ Arquitectura del Proyecto
 
-Este proyecto sigue una arquitectura modular basada en **principios SOLID** y **clean code**.
+El proyecto sigue una estructura modular para facilitar el mantenimiento y la escalabilidad:
 
-### Estructura de Directorios
-
-```
+```text
 Proyecto_Apollo/
-├── Proyecto_Apollo.py          # Punto de entrada
-├── state.py                    # Lógica de chat
-├── components/                 # Componentes UI
-│   ├── chat/                   # Componentes de mensajes
-│   ├── sidebar/                # Navegación e historial
-│   ├── header/                 # Encabezados
-│   └── layout/                 # Componentes estructurales
-├── styles/                     # Sistema de estilos
-│   ├── colors.py               # Paleta de colores
-│   ├── chat_styles.py
-│   ├── sidebar_styles.py
+├── Proyecto_Apollo.py          # 🚪 Punto de entrada (Entry Point)
+├── state.py                    # 🧠 Lógica de negocio y Estado de la UI
+├── components/                 # 🧩 Componentes UI Reutilizables
+│   ├── chat/                   # Componentes del área de chat
+│   ├── sidebar/                # Barra lateral y gestión de historial
+│   ├── header/                 # Encabezados y navegación
 │   └── ...
-├── config/                     # Configuración
-│   └── settings.py             # API keys y constantes
-└── db/                         # Capa de datos
-    ├── conversations.py        # Modelo
-    └── db_state.py             # Operaciones BD
+├── styles/                     # 🎨 Sistema de Diseño y Estilos
+├── config/                     # ⚙️ Configuraciones globales
+└── db/                         # 🗄️ Capa de Datos (Modelos y CRUD)
 ```
 
-Para una **guía completa de arquitectura**, consulta [ARCHITECTURE.md](ARCHITECTURE.md).
-
-### Principios de Diseño
-
-- **KISS**: Keep It Simple, Stupid
-- **DRY**: Don't Repeat Yourself
-- **YAGNI**: You Aren't Gonna Need It
-- **POO**: Programación Orientada a Objetos
-
 ---
 
-## 👨‍💻 Desarrollo
+## 💻 Tecnologías Utilizadas
 
-### Scripts Útiles
-
-```bash
-# Desarrollo con hot reload
-reflex run --env dev
-
-# Limpiar cache
-reflex clean
-
-# Crear migración
-reflex db makemigrations --message "descripción"
-
-# Aplicar migraciones
-reflex db migrate
-
-# Verificar sintaxis de Python
-python -m py_compile archivo.py
-```
-
-### Agregar una Nueva Feature
-
-1. Lee [ARCHITECTURE.md](ARCHITECTURE.md) completo
-2. Identifica en qué módulo va tu feature
-3. Crea el componente en la carpeta correcta
-4. Define estilos en `styles/`
-5. Agrega lógica en `state.py` o `db_state.py`
-6. Actualiza `__init__.py` para exports
-7. Integra en el layout principal
-8. Prueba en desktop Y móvil
-
-**Consulta la sección "Cómo Agregar Nuevas Features" en [ARCHITECTURE.md](ARCHITECTURE.md) para un ejemplo completo.**
-
-### Reglas de Contribución
-
-- ✅ Un archivo, un propósito
-- ✅ Estilos siempre en archivos separados
-- ✅ Nombres descriptivos en español
-- ✅ Docstrings en todas las funciones
-- ✅ Probar en múltiples dispositivos
-- ❌ No estilos inline
-- ❌ No código duplicado
-- ❌ No features innecesarias
-
----
-
-## 🗺️ Roadmap
-
-### Fase 1: MVP ✅ (Completado)
-
-- [x] Enviar mensajes al chatbot
-- [x] Ver historial de conversaciones
-- [x] Continuar conversaciones antiguas
-- [x] Títulos de conversaciones
-- [x] Editar títulos
-- [x] Orden cronológico
-- [x] Nueva conversación desde anywhere
-
-### Fase 2: Mejoras de UX (En Progreso)
-
-- [ ] Edición de títulos desde UI
-- [ ] Eliminación de conversaciones
-- [ ] Búsqueda en historial
-- [ ] Etiquetas/categorías
-- [ ] Modo oscuro
-
-### Fase 3: Autenticación
-
-- [ ] Sistema de login
-- [ ] Registro de usuarios
-- [ ] Gestión de sesiones
-- [ ] Perfiles de usuario
-
-### Fase 4: Features Avanzadas
-
-- [ ] Compartir conversaciones
-- [ ] Exportar chat a PDF/MD
-- [ ] Comandos slash (/)
-- [ ] Shortcuts de teclado
-- [ ] Respuestas sugeridas
-
----
-
-## 📚 Recursos
-
-- [Reflex Documentation](https://reflex.dev/docs)
-- [OpenAI Assistants Guide](https://platform.openai.com/docs/assistants)
-- [Supabase Quickstart](https://supabase.com/docs/guides/getting-started)
-- [SQLModel Documentation](https://sqlmodel.tiangolo.com/)
+- **Frontend & Backend**: [Reflex](https://reflex.dev) (Python)
+- **Base de Datos**: PostgreSQL, SQLModel, Alembic
+- **IA / LLM**: OpenAI API (Assistants)
+- **Infraestructura**: Supabase
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
+MIT License
 
----
+Copyright (c) 2025 Bryan Núñez
 
-## 🤝 Contribuciones
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Las contribuciones son bienvenidas. Por favor:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add: AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-**Antes de contribuir, lee [ARCHITECTURE.md](ARCHITECTURE.md) para entender la estructura del proyecto.**
-
----
-
-## 👤 Autor
-
-**BradRez**
-
-- GitHub: [@bradrezdev](https://github.com/bradrezdev)
-
----
-
-## 🙏 Agradecimientos
-
-- [Reflex](https://reflex.dev) - Por el increíble framework
-- [OpenAI](https://openai.com) - Por la API de Assistants
-- [Supabase](https://supabase.com) - Por la infraestructura de BD
-
----
-
-<div align="center">
-
-**Hecho con ❤️ y Python**
-
-[⬆️ Volver arriba](#-proyecto-apollo---chatbot-con-ia)
-
-</div>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
