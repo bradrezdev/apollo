@@ -206,7 +206,6 @@ def conversations_list_mobile() -> rx.Component:
                 rx.icon(
                     "message-circle-plus",
                     size=header_styles.icon_sizes["small"],
-                    color="white",
                     on_click=State.start_new_conversation,
                 ),
                 **header_styles.header_mobile_round_box_style,

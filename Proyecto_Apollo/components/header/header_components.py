@@ -37,7 +37,12 @@ def mobile_drawer_content() -> rx.Component:
     return rx.vstack(
         # Botón de cerrar
         rx.box(
-            rx.drawer.close(rx.icon("x", size=header_styles.icon_sizes["large"])), 
+            rx.drawer.close(
+                rx.icon(
+                    "x",
+                    size=header_styles.icon_sizes["large"],
+                    )
+                ), 
             width="100%"
         ),
         # Lista de conversaciones para móvil con botones visibles
