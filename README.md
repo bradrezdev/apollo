@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.13-blue.svg)
-![Reflex](https://img.shields.io/badge/Reflex-0.7.11-purple.svg)
+![Reflex](https://img.shields.io/badge/Reflex-0.8.22-purple.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-Assistants-green.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-orange.svg)
 
