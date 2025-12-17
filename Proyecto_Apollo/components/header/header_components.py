@@ -45,34 +45,34 @@ def mobile_drawer_content() -> rx.Component:
         rx.divider(),
         rx.spacer(),
         # Sección inferior del drawer
-        rx.vstack(
-            rx.vstack(
-                sidebar_item("Settings", "settings", "/#"),
-                sidebar_item("Log out", "log-out", "/#"),
-                spacing="1",
-                width="100%",
-            ),
-            rx.divider(margin="0"),
-            rx.hstack(
-                rx.icon_button(rx.icon("user"), size="3", radius="full"),
-                rx.vstack(
-                    rx.box(
-                        rx.text("My account", style=header_styles.user_name_style),
-                        rx.text("user@reflex.dev", size="2", weight="medium"),
-                        width="100%",
-                    ),
-                    spacing="0",
-                    justify="start",
-                    width="100%",
-                ),
-                padding_x="0.5rem",
-                align="center",
-                justify="start",
-                width="100%",
-            ),
-            spacing="5",
-            width="100%",
-        ),
+        # rx.vstack(
+        #     rx.vstack(
+        #         sidebar_item("Settings", "settings", "/#"),
+        #         sidebar_item("Log out", "log-out", "/#"),
+        #         spacing="1",
+        #         width="100%",
+        #     ),
+        #     rx.divider(margin="0"),
+        #     rx.hstack(
+        #         rx.icon_button(rx.icon("user"), size="3", radius="full"),
+        #         rx.vstack(
+        #             rx.box(
+        #                 rx.text("My account", style=header_styles.user_name_style),
+        #                 rx.text("user@reflex.dev", size="2", weight="medium"),
+        #                 width="100%",
+        #             ),
+        #             spacing="0",
+        #             justify="start",
+        #             width="100%",
+        #         ),
+        #         padding_x="0.5rem",
+        #         align="center",
+        #         justify="start",
+        #         width="100%",
+        #     ),
+        #     spacing="5",
+        #     width="100%",
+        # ),
         spacing="5",
         width="100%",
     )
@@ -88,7 +88,7 @@ def mobile_header() -> rx.Component:
                     rx.drawer.trigger(
                         rx.box(
                             rx.icon("panel-right-close", **header_styles.drawer_trigger_style),
-                            color=colors.WHITE,
+                            style=header_styles.mobile_title_style,
                         )
                     ),
                     rx.drawer.overlay(z_index="5"),
@@ -120,7 +120,7 @@ def mobile_header() -> rx.Component:
                 rx.icon(
                     "message-circle-plus",
                     size=header_styles.icon_sizes["small"],
-                    color=colors.WHITE,
+                    style=header_styles.mobile_title_style,
                     on_click=State.start_new_conversation,
                 ),
                 **header_styles.header_mobile_round_box_style,

@@ -10,19 +10,32 @@ icon_sizes = {
     "large": 30,
 }
 
+# === ESTILOS COMPARTIDOS ===
+traslucid_style = {
+    "bg": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["input_background"],
+        dark=ApolloTheme.dark_colors()["input_background"]
+    ),
+    "border": rx.color_mode_cond(
+        light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
+        dark="1px solid rgba(255, 255, 255, 0.1)",
+    ),
+    "box_shadow": rx.color_mode_cond(
+        light=ApolloTheme.light_colors()["box_shadow"],
+        dark="0 4px 20px rgba(0, 0, 0, 0.4)",
+    ),
+    "style": {
+        "backdropFilter": "blur(20px)",
+        "-webkit-backdrop-filter": "blur(20px)",
+    },
+}
+
 # === ESTILOS PARA HEADER DESKTOP ===
 header_desktop_style = {
+    **traslucid_style,
     "position": "absolute",
     "top": "2rem",
     "z_index": 100,
-    "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["header_background"],
-        dark=ApolloTheme.dark_colors()["header_background"]
-    ),
-    "style": {
-        "backdropFilter": "blur(30px)",
-        "-webkit-backdrop-filter": "blur(30px)",
-    },
     "border_radius": "24px",
     "height": "auto",
     "padding": "12px 24px",
@@ -31,10 +44,6 @@ header_desktop_style = {
     "justify_content": "center",
     "left": "50%",
     "transform": "translateX(-50%)",
-    "box_shadow": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["box_shadow"],
-        dark=ApolloTheme.dark_colors()["box_shadow"],
-    ),
 }
 
 header_text_style = {
@@ -69,11 +78,7 @@ header_mobile_content_style = {
 
 # Estilos para los boxes dentro del header mobile
 header_mobile_box_style = {
-    "bg": "rgba(25, 25, 25, 0.35)",
-    "style": {
-        "backdropFilter": "blur(30px)",
-        "-webkit-backdrop-filter": "blur(30px)",
-    },
+    **traslucid_style,
 }
 
 header_mobile_round_box_style = {
@@ -92,8 +97,8 @@ header_mobile_title_box_style = {
 mobile_title_style = {
     "align": "center",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["header_icon_color"],
-        dark=ApolloTheme.dark_colors()["header_icon_color"]
+        light=ApolloTheme.light_colors()["header_text_color"],
+        dark=ApolloTheme.dark_colors()["header_text_color"]
     ),
     "size": "4",
 }
@@ -104,15 +109,14 @@ drawer_trigger_style = {
 }
 
 drawer_content_style = {
+    **traslucid_style,
     "top": "auto",
     "right": "auto",
-    "height": "100%",
+    "height": "96%",
     "width": "20em",
     "padding": "1.5em",
-    "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["sidebar_background"],
-        dark=ApolloTheme.dark_colors()["sidebar_background"]
-    ),
+    "margin": "2dvh",
+    "border_radius": "24px",
 }
 
 # === ESTILOS COMPARTIDOS CON SIDEBAR ===

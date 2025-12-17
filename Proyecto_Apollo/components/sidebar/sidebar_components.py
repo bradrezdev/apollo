@@ -2,7 +2,7 @@
 
 import reflex as rx
 from Proyecto_Apollo.state import State
-from Proyecto_Apollo.styles import sidebar_styles
+from Proyecto_Apollo.styles import sidebar_styles, header_styles, colors
 
 # Import de colores personalizados
 from ...styles.colors import ApolloTheme
@@ -22,7 +22,6 @@ def sidebar_item(text: str, icon: str, href: str) -> rx.Component:
         ),
         href=href,
         underline="none",
-        weight="medium",
         width="100%",
     )
 
@@ -103,6 +102,7 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     "overflow": "hidden",
                     "text_overflow": "ellipsis",
                     "white_space": "nowrap",
+                    "max_width": "24ch",
                 }
             ),
             flex="1",
@@ -158,7 +158,7 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                 border_radius="20px",
             ),
         ),
-        width="100%",
+        width="270px",
         align="center",
         spacing="2",
     )
@@ -202,13 +202,18 @@ def conversations_list_mobile() -> rx.Component:
         rx.hstack(
             rx.text("Conversaciones", size="4", weight="bold"),
             rx.spacer(),
-            rx.icon_button(
-                rx.icon("plus"),
-                size="2",
-                on_click=State.start_new_conversation,
+            rx.box(
+                rx.icon(
+                    "message-circle-plus",
+                    size=header_styles.icon_sizes["small"],
+                    color="white",
+                    on_click=State.start_new_conversation,
+                ),
+                **header_styles.header_mobile_round_box_style,
             ),
             width="100%",
             padding_x="0.5rem",
+            align="center",
         ),
         rx.divider(),
         rx.vstack(
@@ -217,8 +222,8 @@ def conversations_list_mobile() -> rx.Component:
                 conversation_item_mobile
             ),
             spacing="1",
-            width="100%",
-            max_height="300px",
+            width="270px",
+            max_height="75dvh",
             overflow_y="auto",
         ),
         spacing="2",

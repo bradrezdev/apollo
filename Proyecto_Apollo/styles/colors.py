@@ -28,7 +28,7 @@ class ApolloTheme:
             
             # === HEADER ===
             "header_background": "rgba(25, 25, 25, 0.35)",
-            "header_text_color": "#FFFFFF",
+            "header_text_color": "#000000",
             "header_icon_color": "#FFFFFF",
             
             # === CHAT ===
