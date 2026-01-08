@@ -3,7 +3,7 @@
 import reflex as rx
 from sqlmodel import Session, select
 from db.conversations import Conversations
-from reflex.model import Model
+from db.engine import get_db_engine
 from datetime import datetime, timezone
 
 
@@ -14,21 +14,29 @@ class DBState(rx.State):
     conversations: list[dict] = []
     current_conversation_id: int | None = None
     current_thread_id: str = ""
+    is_loading_conversations: bool = False
+    is_initial_load: bool = True  # Variable para controlar el splash screen
     
     # === MÉTODOS DE INICIALIZACIÓN ===
     def on_load(self):
         """Carga las conversaciones al iniciar la aplicación"""
-        self.load_conversations()
+        return self.load_conversations()
     
     # === MÉTODOS DE CONVERSACIONES ===
     def load_conversations(self):
         """Carga todas las conversaciones desde la base de datos ordenadas por fecha"""
-        print("[DEBUG] Iniciando carga de conversaciones...")
+        print("[DEBUG] Iniciando carga de conversaciones...", flush=True)
+        
+        self.is_loading_conversations = True
+        yield
+        
         try:
-            with Session(Model.get_db_engine()) as session:
+            engine = get_db_engine()
+            print(f"[DEBUG] Conectando a BD con engine: {engine}", flush=True)
+            with Session(engine) as session:
                 statement = select(Conversations).order_by(Conversations.updated_at.desc())
                 results = session.exec(statement).all()
-                print(f"[DEBUG] Conversaciones encontradas en BD: {len(results)}")
+                print(f"[DEBUG] Conversaciones encontradas en BD: {len(results)}", flush=True)
                 
                 # Convertir a diccionarios para el frontend
                 self.conversations = [
@@ -41,10 +49,17 @@ class DBState(rx.State):
                     }
                     for conv in results
                 ]
-                print(f"[DEBUG] Conversaciones cargadas en estado: {len(self.conversations)}")
+                print(f"[DEBUG] Conversaciones cargadas en estado: {len(self.conversations)}", flush=True)
+            
+            # Marcamos la carga inicial como completada
+            self.is_initial_load = False
                 
         except Exception as e:
-            print(f"[ERROR] Error cargando conversaciones: {e}")
+            print(f"[ERROR] Error cargando conversaciones: {e}", flush=True)
+            import traceback
+            traceback.print_exc()
+        finally:
+            self.is_loading_conversations = False
     
     def create_new_conversation(self, thread_id: str, title: str = "Nueva conversación") -> int | None:
         """
@@ -57,8 +72,9 @@ class DBState(rx.State):
         Returns:
             ID de la conversación creada o None si hay error
         """
+        print(f"[DEBUG] Creando nueva conversación. Thread ID: {thread_id}")
         try:
-            with Session(Model.get_db_engine()) as session:
+            with Session(get_db_engine()) as session:
                 conversation = Conversations(
                     thread_id=thread_id,
                     title=title
@@ -67,17 +83,22 @@ class DBState(rx.State):
                 session.commit()
                 session.refresh(conversation)
                 
+                print(f"[DEBUG] Conversación creada exitosamente. ID: {conversation.id}")
+                
                 # Actualizar estado actual
                 self.current_conversation_id = conversation.id
                 self.current_thread_id = conversation.thread_id
                 
-                # Recargar lista de conversaciones
-                self.load_conversations()
-                
+                # Recargar lista de conversaciones (retornamos el generador para que Reflex lo maneje si es posible, 
+                # aunque al ser llamado desde otro método puede que no se ejecute inmediatamente la parte del yield)
+                # Para asegurar consistencia inmediata en variables, ya las seteamos arriba.
+                # La actualización de la lista visual puede esperar.
                 return conversation.id
                 
         except Exception as e:
-            print(f"Error creando conversación: {e}")
+            print(f"[ERROR] Error creando conversación: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def load_conversation_by_id(self, conversation_id: int) -> dict | None:

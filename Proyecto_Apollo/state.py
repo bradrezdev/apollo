@@ -61,9 +61,9 @@ class State(DBState):
     # === MÉTODOS DE INICIALIZACIÓN ===
     def on_load(self):
         """Carga inicial de la aplicación"""
-        print("[DEBUG] Ejecutando State.on_load")
-        self.load_conversations()
-        print("[DEBUG] Todo listo para usarse")
+        print("[DEBUG] Ejecutando State.on_load", flush=True)
+        return self.load_conversations()
+        print("[DEBUG] Todo listo para usarse", flush=True)
 
     # === MÉTODOS DEL CHAT ===
     async def answer(self, form_data: dict = None):
@@ -102,11 +102,21 @@ class State(DBState):
             
             # Si no hay conversación activa, crear una nueva
             if not self.current_thread_id:
+                print("[DEBUG] No hay thread_id activo. Creando nuevo thread en OpenAI...")
                 thread = await client.beta.threads.create()
-                self.create_new_conversation(
+                print(f"[DEBUG] Thread creado en OpenAI: {thread.id}")
+                
+                new_id = self.create_new_conversation(
                     thread_id=thread.id,
                     title="Nueva conversación"
                 )
+                
+                if not new_id:
+                    raise Exception("Fallo al guardar la conversación en base de datos")
+                    
+                print(f"[DEBUG] Conversación guardada en BD. ID: {new_id}, Thread: {self.current_thread_id}")
+            
+            print(f"[DEBUG] Enviando mensaje al thread: {self.current_thread_id}")
             
             # Enviar mensaje del usuario al thread actual
             await client.beta.threads.messages.create(

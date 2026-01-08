@@ -183,11 +183,24 @@ def conversations_list() -> rx.Component:
         rx.divider(),
         rx.text("Conversaciones", size="2", weight="bold", color="gray", padding_left="0.5rem"),
         rx.vstack(
-            rx.foreach(
-                State.conversations,
-                conversation_item
+            rx.cond(
+                State.is_loading_conversations,
+                rx.vstack(
+                    rx.skeleton(height="40px", width="100%"),
+                    rx.skeleton(height="40px", width="100%"),
+                    rx.skeleton(height="40px", width="100%"),
+                    spacing="2",
+                    width="100%"
+                ),
+                rx.vstack(
+                    rx.foreach(
+                        State.conversations,
+                        conversation_item
+                    ),
+                    spacing="1",
+                    width="100%",
+                )
             ),
-            spacing="1",
             width="100%",
             max_height="calc(87dvh - 200px)",
             overflow_y="auto",

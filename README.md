@@ -55,7 +55,7 @@ Sigue estos pasos para desplegar el proyecto en tu entorno local.
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone https://github.com/bradrezdev/apollo.git
+git clone https://github.com/HyEd-IA/llm-bradrezdev.git
 cd Proyecto_Apollo
 ```
 

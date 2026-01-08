@@ -5,6 +5,9 @@ Este archivo orquesta todos los componentes modulares para crear la interfaz del
 En el futuro, este archivo manejará el sistema de login antes de acceder al chat.
 """
 
+import sys
+print("[DEBUG] Cargando módulo Proyecto_Apollo.py", flush=True)
+
 import reflex as rx
 from Proyecto_Apollo.state import State
 
@@ -17,7 +20,7 @@ from Proyecto_Apollo.components.chat import (
 )
 from Proyecto_Apollo.components.sidebar import desktop_sidebar, edit_conversation_dialog, delete_conversation_dialog
 from Proyecto_Apollo.components.header import desktop_header, mobile_header
-
+from Proyecto_Apollo.components.layout.splash_screen import splash_screen
 
 # === COMPOSICIÓN DE VISTAS ===
 
@@ -51,6 +54,7 @@ def mobile_view() -> rx.Component:
 def index() -> rx.Component:
     """Punto de entrada principal - Renderiza vista según el dispositivo"""
     return rx.fragment(
+        splash_screen(),
         rx.desktop_only(desktop_view()),
         rx.mobile_only(mobile_view()),
         edit_conversation_dialog(),
