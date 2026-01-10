@@ -10,7 +10,7 @@ class Conversations(rx.Model, table=True):
     """
     
     # Clave primaria
-    id: int | None = Field(default=None, primary_key=True, index=True)
+    id: int | None = Field(default=None, primary_key=True)
     
     # Thread ID único de OpenAI (cada conversación tiene su propio thread)
     thread_id: str = Field(unique=True, index=True, max_length=255)
@@ -21,11 +21,13 @@ class Conversations(rx.Model, table=True):
     # Timestamps en UTC puro (conversión a timezone local en UI)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        sa_column_kwargs={"server_default": func.now()}
+        sa_column_kwargs={"server_default": func.now()},
+        index=True
     )
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
-        sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()}
+        sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()},
+        index=True
     )
     
     def __repr__(self) -> str:

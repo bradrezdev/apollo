@@ -104,7 +104,9 @@ text_area_mobile_style = {
     "variant": "soft",
     "bg": "transparent",
     "padding": "6px",
-    "font_size": "1em",
+    "input_mode": "text",
+    "auto_capitalize": "sentences",
+    "font_size": "16px",
     "border_radius": "14px",
     "color": rx.color_mode_cond(
         light=ApolloTheme.light_colors()["input_text_color"],

@@ -64,6 +64,40 @@ def index() -> rx.Component:
 
 # === CONFIGURACIÓN DE LA APLICACIÓN ===
 
+head_config = [
+    # Enlace al manifest para PWA
+    rx.el.link(
+        rel="manifest",
+        href="manifest.json"
+    ),
+
+    # Icono para iOS (Safari)
+    rx.el.link(
+        rel="apple-touch-icon",
+        href="apple-touch-icon.png"
+    ),
+],
+
+ # Meta tags para PWA, SEO y redes sociales
+meta = [
+    {"name": "viewport", "content": "initial-scale=1, viewport-fit=cover, width=device-width"},
+    {"name": "apple-mobile-web-app-status-bar-style", "content": "black-translucent"}, 
+    {"name": "apple-mobile-web-app-capable", "content": "yes"},
+    {"name": "theme-color", "content": "#001F3F"},
+    
+    # --- SEO & DESCRIPTION ---
+    {"name": "description", "content": "ONANO | Nanotecnología aplicada al bienestar y la libertad financiera. Únete a la revolución de la nanotecnología y proyecta tu éxito."},
+    {"name": "keywords", "content": "nanotecnología, bienestar, simulador financiero, onano, red de mercadeo, salud, tecnología cuántica"},
+    {"name": "author", "content": "ONANO Global"},
+
+    # --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ---
+    {"property": "og:type", "content": "website"},
+    {"property": "og:url", "content": "https://onano-web-teal-apple.reflex.run"}, # URL placeholder
+    {"property": "og:title", "content": "ONANO | Proyecta tu Éxito"},
+    {"property": "og:description", "content": "Innovación en bienestar y libertad financiera. Descubre el futuro de la nanotecnología."},
+    {"property": "og:image", "content": "https://onano-web-teal-apple.reflex.run/logotipo-onano.svg"},
+]
+
 app = rx.App(
     theme=rx.theme(
         appearance="inherit",
