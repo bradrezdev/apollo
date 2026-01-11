@@ -1,7 +1,7 @@
 import reflex as rx
-from sqlmodel import Field, func
+from sqlmodel import Field, func, Relationship
 from datetime import datetime, timezone
-
+from typing import List, Optional
 
 class Conversations(rx.Model, table=True):
     """
@@ -11,6 +11,9 @@ class Conversations(rx.Model, table=True):
     
     # Clave primaria
     id: int | None = Field(default=None, primary_key=True)
+    
+    # Relación con mensajes (One-to-Many)
+    messages: List["Messages"] = Relationship(back_populates="conversation")
     
     # Thread ID único de OpenAI (cada conversación tiene su propio thread)
     thread_id: str = Field(unique=True, index=True, max_length=255)

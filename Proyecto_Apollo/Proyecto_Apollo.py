@@ -80,7 +80,8 @@ head_config = [
 
  # Meta tags para PWA, SEO y redes sociales
 meta = [
-    {"name": "viewport", "content": "initial-scale=1, viewport-fit=cover, width=device-width"},
+    # Evitar zoom automático en inputs (maximum-scale=1, user-scalable=no)
+    {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"},
     {"name": "apple-mobile-web-app-status-bar-style", "content": "black-translucent"}, 
     {"name": "apple-mobile-web-app-capable", "content": "yes"},
     {"name": "theme-color", "content": "#001F3F"},
@@ -98,7 +99,17 @@ meta = [
     {"property": "og:image", "content": "https://onano-web-teal-apple.reflex.run/logotipo-onano.svg"},
 ]
 
+# Estilos globales para forzar comportamiento en móviles
+global_styles = {
+    "@media screen and (max-width: 480px)": {
+        "textarea, input": {
+            "font-size": "16px !important",
+        }
+    }
+}
+
 app = rx.App(
+    style=global_styles,
     theme=rx.theme(
         appearance="inherit",
     ),

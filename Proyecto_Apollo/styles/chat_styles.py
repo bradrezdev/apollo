@@ -112,11 +112,6 @@ text_area_mobile_style = {
         light=ApolloTheme.light_colors()["input_text_color"],
         dark=ApolloTheme.dark_colors()["input_text_color"]
     ),
-    "_focus": {
-        "outline": "none",
-        "box_shadow": "none",
-        "bg": "transparent",
-    },
 }
 
 send_button_desktop_style = {

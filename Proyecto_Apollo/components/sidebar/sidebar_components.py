@@ -102,10 +102,14 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     "overflow": "hidden",
                     "text_overflow": "ellipsis",
                     "white_space": "nowrap",
-                    "max_width": "20ch",
+                    "color": rx.color_mode_cond(
+                        light=ApolloTheme.light_colors()["header_text_color"],
+                        dark=ApolloTheme.dark_colors()["header_text_color"]
+                    ),
                 },
             ),
             flex="1",
+            min_width="0",
             padding_x="0.5rem",
             padding_y="0.5rem",
             style={
