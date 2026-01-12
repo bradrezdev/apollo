@@ -64,7 +64,7 @@ header_mobile_box_style = {
 
 header_mobile_round_box_style = {
     **header_mobile_box_style,
-    "border_radius": "50%",
+    "border_radius": "50px",
     "padding": "1rem",
 }
 

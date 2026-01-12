@@ -42,12 +42,9 @@ def desktop_view() -> rx.Component:
 def mobile_view() -> rx.Component:
     """Vista principal para mobile con drawer"""
     return rx.vstack(
-        mobile_header(),
         chat_container_mobile(),
-        mobile_chat_input(),
-        spacing="0",
         width="100%",
-        height="100vh",
+        height="100%",
     )
 
 

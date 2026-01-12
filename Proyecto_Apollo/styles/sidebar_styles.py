@@ -36,12 +36,12 @@ sidebar_item_hover_style = {
         "cursor": "pointer",
         "transform": "translateX(4px)",
     },
-    "border-radius": "8px",
+    "border-radius": "24px",
 }
 
 # === ESTILOS PARA LOGO ===
 logo_style = {
-    "src": "/logotipo.png",
+    "src": "/logotipo.svg",
     "height": "auto",
     "margin_bottom": "1em",
     "width": "100%",

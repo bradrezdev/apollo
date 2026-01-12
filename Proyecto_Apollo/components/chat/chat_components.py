@@ -3,7 +3,7 @@
 import reflex as rx
 from Proyecto_Apollo.state import State
 from Proyecto_Apollo.styles import chat_styles
-from Proyecto_Apollo.components.header.header_components import desktop_header
+from Proyecto_Apollo.components.header.header_components import desktop_header, mobile_header
 
 # Import de colores personalizados
 from ...styles.colors import ApolloTheme
@@ -108,12 +108,21 @@ def chat_container_desktop() -> rx.Component:
 def chat_container_mobile() -> rx.Component:
     """Contenedor de chat para mobile que ocupa todo el espacio disponible"""
     return rx.box(
+        mobile_header(),
         rx.cond(
             State.has_messages,
             rx.auto_scroll(
-                rx.foreach(
-                    State.chat_history,
-                    chat_message,
+                rx.vstack(
+                    rx.foreach(
+                        State.chat_history,
+                        chat_message,
+                    ),
+                    width="100%",
+                    max_width="900px",
+                    margin_x="auto",
+                    padding_top="4em",
+                    padding_bottom="6em",
+                    spacing="4",
                 ),
                 autoscroll=State.auto_scroll_enabled,
                 **chat_styles.chat_scroll_mobile_style,
@@ -132,11 +141,12 @@ def chat_container_mobile() -> rx.Component:
                     ),
                     spacing="2",
                     align="center",
-                    padding="2em",
+                    #padding="2em",
                 ),
                 height="100%",
             ),
         ),
+        mobile_chat_input(),
         **chat_styles.chat_container_mobile_style,
     )
 
@@ -175,10 +185,6 @@ def desktop_chat_input() -> rx.Component:
                 "backdropFilter": "blur(20px)",
                 "-webkit-backdrop-filter": "blur(20px)",
             },
-            border=rx.color_mode_cond(
-                light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
-                dark="1px solid rgba(255, 255, 255, 0.1)",
-            ),
             border_radius="24px",
             padding="10px",
             box_shadow=rx.color_mode_cond(
@@ -202,41 +208,46 @@ def desktop_chat_input() -> rx.Component:
 
 def mobile_chat_input() -> rx.Component:
     """Input de chat para vista mobile"""
-    return rx.box(
-        rx.form(
-            rx.hstack(
-                rx.text_area(
-                    name="question",
-                    value=State.question,
-                    on_change=State.set_question,
-                    **chat_styles.text_area_mobile_style,
+    return rx.center(
+        rx.box(
+            rx.form(
+                rx.hstack(
+                    rx.text_area(
+                        name="question",
+                        value=State.question,
+                        on_change=State.set_question,
+                        **chat_styles.text_area_mobile_style,
+                    ),
+                    rx.icon_button(
+                        rx.icon("arrow-up", size=20),
+                        type="submit",
+                        loading=State.is_loading,
+                        **chat_styles.send_button_mobile_style,
+                    ),
+                    align="end",
+                    spacing="2",
+                    width="100%",
                 ),
-                rx.icon_button(
-                    rx.icon("arrow-up", size=20),
-                    type="submit",
-                    loading=State.is_loading,
-                    **chat_styles.send_button_mobile_style,
-                ),
-                align="end",
-                spacing="2",
+                on_submit=State.answer,
+                reset_on_submit=True,
                 width="100%",
             ),
-            on_submit=State.answer,
-            reset_on_submit=True,
-            width="100%",
+            bg=rx.color_mode_cond(
+                light=ApolloTheme.light_colors()["input_background"],
+                dark=ApolloTheme.dark_colors()["input_background"]
+            ),
+            style={
+                "backdropFilter": "blur(20px)",
+                "-webkit-backdrop-filter": "blur(20px)",
+            },
+            border_radius="24px",
+            padding="10px",
+            margin_bottom="1rem",
+            box_shadow="0 4px 12px rgba(0, 0, 0, 0.1)",
+            width="calc(100% - 1em)",
         ),
-        bg=rx.color_mode_cond(
-            light=ApolloTheme.light_colors()["input_background"],
-            dark=ApolloTheme.dark_colors()["input_background"]
-        ),
-        style={
-            "backdropFilter": "blur(20px)",
-            "-webkit-backdrop-filter": "blur(20px)",
-        },
-        border_radius="24px",
-        padding="10px",
-        margin_x="1rem",
-        margin_bottom="1rem",
-        box_shadow="0 4px 12px rgba(0, 0, 0, 0.1)",
-        width="calc(100% - 2em)",
+        position="fixed",
+        width="100%",
+        z_index="1000",
+        bottom="0",
     )

@@ -40,15 +40,15 @@ def mobile_drawer_content() -> rx.Component:
     """Contenido del drawer para vista mobile"""
     return rx.vstack(
         # Botón de cerrar
-        rx.box(
-            rx.drawer.close(
-                rx.icon(
-                    "x",
-                    size=header_styles.icon_sizes["large"],
-                    )
-                ), 
-            width="100%"
-        ),
+        #rx.box(
+        #    rx.drawer.close(
+        #        rx.icon(
+        #            "x",
+        #            size=header_styles.icon_sizes["large"],
+        #            )
+        #        ), 
+        #    width="100%"
+        #),
         # Lista de conversaciones para móvil con botones visibles
         conversations_list_mobile(),
         rx.divider(),
@@ -98,7 +98,7 @@ def mobile_header() -> rx.Component:
                         rx.box(
                             rx.icon("panel-right-close", **header_styles.drawer_trigger_style),
                             style=header_styles.mobile_title_style,
-                        )
+                        ),
                     ),
                     rx.drawer.overlay(z_index="5"),
                     rx.drawer.portal(
