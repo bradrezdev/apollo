@@ -29,16 +29,20 @@ def unified_view() -> rx.Component:
             responsive_chat_container(),
             flex="1",
             width="100%",
-            height="100dvh",
+            height="100%",
             position="relative",
+            overflow="hidden",
         ),
         
-        # Propiedades del contenedor principal
+        # Propiedades del contenedor principal — fixed para bloquear viewport en iOS
         width="100%",
         height="100dvh",
         flex_direction="row",
         align_items="stretch",
         overflow="hidden",
+        position="fixed",
+        top="0",
+        left="0",
     )
 
 
