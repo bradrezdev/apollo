@@ -71,7 +71,7 @@ head_config = [
  # Meta tags para PWA, SEO y redes sociales
 meta = [
     # Evitar zoom automático en inputs (maximum-scale=1, user-scalable=no)
-    {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"},
+    {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"},
     {"name": "apple-mobile-web-app-status-bar-style", "content": "black-translucent"}, 
     {"name": "apple-mobile-web-app-capable", "content": "yes"},
     {"name": "theme-color", "content": "#062A63"},
@@ -91,6 +91,11 @@ meta = [
 
 # Estilos globales para forzar comportamiento en móviles
 global_styles = {
+    "html, body": {
+        "height": "100dvh",
+        "overflow": "hidden",
+        "overscroll-behavior": "none",
+    },
     "@media screen and (max-width: 480px)": {
         "textarea, input": {
             "font-size": "16px !important",

@@ -133,12 +133,16 @@ def responsive_chat_input() -> rx.Component:
         ),
         # Responsivo: ancho
         width=["92%", "92%", "min(60%, 800px)", "min(60%, 800px)"],
-        # Posicionamiento fijo centrado
-        position="fixed",
-        bottom=["0.75rem", "0.75rem", "1.5rem", "1.5rem"],
-        left="50%",
-        transform=["translateX(-50%)", "translateX(-50%)", "translateX(calc(-50% + 150px))", "translateX(calc(-50% + 150px))"],
-        z_index="1000",
+        # Mobile: parte del flex flow; Desktop: fixed overlay
+        position=["relative", "relative", "fixed", "fixed"],
+        bottom=["auto", "auto", "1.5rem", "1.5rem"],
+        left=["auto", "auto", "50%", "50%"],
+        transform=["none", "none", "translateX(calc(-50% + 150px))", "translateX(calc(-50% + 150px))"],
+        z_index=["10", "10", "1000", "1000"],
+        # Mobile: centrar en flex y safe area
+        align_self=["center", "center", "auto", "auto"],
+        margin_bottom=["8px", "8px", "0", "0"],
+        flex_shrink="0",
         transition="box-shadow 0.2s ease",
         _hover={
             "box_shadow": rx.color_mode_cond(
@@ -151,7 +155,7 @@ def responsive_chat_input() -> rx.Component:
 
 def responsive_chat_container() -> rx.Component:
     """Contenedor de chat unificado para todas las vistas"""
-    return rx.box(
+    return rx.flex(
         rx.box(mobile_header(), display=["block", "block", "none", "none"]),
         rx.box(desktop_header(), display=["none", "none", "block", "block"]),
         
@@ -167,12 +171,13 @@ def responsive_chat_container() -> rx.Component:
                     max_width="900px",
                     margin_x="auto",
                     padding_top=["5em", "5em", "6em", "6em"],
-                    padding_bottom=["150px", "150px", "150px", "150px"],
+                    padding_bottom=["16px", "16px", "150px", "150px"],
                     spacing="4",
                 ),
                 autoscroll=State.auto_scroll_enabled,
                 style={
-                    "height": "100vh",
+                    "flex": "1",
+                    "min_height": "0",
                     "overflow_y": "auto",
                     "scroll_behavior": "smooth",
                     "&::-webkit-scrollbar": {"display": "none"},
@@ -196,15 +201,16 @@ def responsive_chat_container() -> rx.Component:
                     spacing="4",
                     align="center",
                 ),
-                height="100vh",
+                flex="1",
                 width="100%",
-                padding_bottom="100px",
+                padding_bottom=["16px", "16px", "100px", "100px"],
             ),
         ),
         
         responsive_chat_input(),
         
+        direction="column",
         width="100%",
-        height="100vh",
-        position="relative",
+        height="100dvh",
+        overflow="hidden",
     )
