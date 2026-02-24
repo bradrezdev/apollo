@@ -16,7 +16,7 @@ API_ASSISTANT_ID = os.getenv("API_ASSISTANT_ID")
 # Cargar desde variables de entorno
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///reflex.db")
 
 # === APP CONFIGURATION ===
 APP_NAME = "Proyecto_Apollo"

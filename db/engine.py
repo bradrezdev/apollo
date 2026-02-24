@@ -3,24 +3,32 @@ from sqlmodel import create_engine
 from Proyecto_Apollo.config.settings import DATABASE_URL
 import threading
 
-# ⭐⭐ CONFIGURACIÓN OPTIMIZADA PARA SUPABASE
-engine = create_engine(
-    DATABASE_URL,
-    echo=False,  # Cambia a True temporalmente para debug
-    pool_pre_ping=True,
-    pool_size=5,           # Conexiones mantenidas abiertas
-    max_overflow=10,       # Máximo adicional bajo carga
-    pool_recycle=300,      # Reciclar conexiones cada 5 minutos
-    pool_timeout=30,       # Timeout de 30 segundos
-    pool_use_lifo=True,    # Mejor para serverless (Supabase)
-    connect_args={
-        "connect_timeout": 10,  # Timeout de conexión
-        "keepalives": 1,
-        "keepalives_idle": 30,
-        "keepalives_interval": 5,
-        "keepalives_count": 5,
-    }
-)
+if "sqlite" in DATABASE_URL:
+    # Configuración para SQLite
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+    )
+else:
+    # ⭐⭐ CONFIGURACIÓN OPTIMIZADA PARA SUPABASE (Postgres)
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,  # Cambia a True temporalmente para debug
+        pool_pre_ping=True,
+        pool_size=5,           # Conexiones mantenidas abiertas
+        max_overflow=10,       # Máximo adicional bajo carga
+        pool_recycle=300,      # Reciclar conexiones cada 5 minutos
+        pool_timeout=30,       # Timeout de 30 segundos
+        pool_use_lifo=True,    # Mejor para serverless (Supabase)
+        connect_args={
+            "connect_timeout": 10,  # Timeout de conexión
+            "keepalives": 1,
+            "keepalives_idle": 30,
+            "keepalives_interval": 5,
+            "keepalives_count": 5,
+        }
+    )
+
 
 # ⭐⭐ PRECALENTAMIENTO EN SEGUNDO PLANO
 def warmup_connection_in_background():

@@ -68,78 +68,84 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
 
 
 def responsive_chat_input() -> rx.Component:
-    """Input de chat unificado y responsivo"""
-    return rx.center(
-        rx.box(
-            rx.form(
-                rx.hstack(
-                    rx.text_area(
-                        name="question",
-                        value=State.question,
-                        on_change=State.set_question,
-                        placeholder="Escribe tu mensaje aquí...",
-                        bg="transparent",
-                        color=rx.color_mode_cond(light="black", dark="white"),
-                        border="none",
-                        _focus={"outline": "none"},
-                        width="100%",
-                        auto_height=True,
-                        max_height="150px",
-                        rows="1",
-                        resize="none",
-                        padding_y="8px",
-                        style={"font_family": "Poppins", "font_size": "16px"},
-                    ),
-                    rx.icon_button(
-                        rx.icon("arrow-up", size=20),
-                        type="submit",
-                        loading=State.is_loading,
-                        variant="solid",
-                        color_scheme="blue",
-                        border_radius="50%",
-                        size="3",
-                    ),
-                    align="end",
-                    spacing="2",
-                    width="100%",
+    """Input de chat unificado y responsivo — Mobile First"""
+    return rx.box(
+        rx.form(
+            rx.hstack(
+                rx.el.textarea(
+                    name="question",
+                    value=State.question,
+                    on_change=State.set_question,
+                    placeholder="Escribe tu mensaje aquí...",
+                    rows=1,
+                    style={
+                        "width": "100%",
+                        "min_height": "40px",
+                        "max_height": "132px",  # ~5 líneas
+                        "resize": "none",
+                        "overflow_y": "auto",
+                        "border": "none",
+                        "outline": "none",
+                        "background": "transparent",
+                        "font_family": "Poppins, sans-serif",
+                        "font_size": "16px",
+                        "padding": "8px 12px",
+                        "line_height": "1.5",
+                        "field_sizing": "content",
+                        "color": rx.color_mode_cond(light="#383A3F", dark="#FFFFFF"),
+                    },
                 ),
-                on_submit=State.answer,
-                reset_on_submit=True,
+                rx.icon_button(
+                    rx.icon("arrow-up", size=20),
+                    type="submit",
+                    loading=State.is_loading,
+                    variant="solid",
+                    bg="#0CBCE5",
+                    color="white",
+                    _hover={"bg": "#3DC9EA"},
+                    border_radius="50%",
+                    size="3",
+                    cursor="pointer",
+                    flex_shrink="0",
+                ),
+                align="end",
+                spacing="2",
                 width="100%",
             ),
-            bg=rx.color_mode_cond(
-                light=ApolloTheme.light_colors()["input_background"],
-                dark=ApolloTheme.dark_colors()["input_background"]
-            ),
-            style={
-                "backdropFilter": "blur(20px)",
-                "-webkit-backdrop-filter": "blur(20px)",
-            },
-            border_radius="24px",
-            padding="10px",
-            box_shadow=rx.color_mode_cond(
-                light=ApolloTheme.light_colors()["box_shadow"],
-                dark="0 4px 20px rgba(0, 0, 0, 0.4)",
-            ),
-            width=["92%", "92%", "60%", "60%"],
-            min_width=["0", "0", "600px", "600px"],
-            position="fixed",
-            bottom=["1rem", "1rem", "2rem", "2rem"],
-            z_index="1000",
-            transition="all 0.2s ease-in-out",
-            _hover={
-                "box_shadow": rx.color_mode_cond(
-                    light=ApolloTheme.light_colors()["box_shadow_hover"],
-                    dark="0 8px 30px rgba(0, 0, 0, 0.5)",
-                ),
-            },
+            on_submit=State.answer,
+            reset_on_submit=True,
+            width="100%",
         ),
-        width="100%",
-        position="absolute",
-        bottom="0",
-        z_index="900",
-        padding_bottom=["0", "0", "2rem", "2rem"],
-        pointer_events="none", 
+        bg=rx.color_mode_cond(
+            light="rgba(255, 255, 255, 0.85)",
+            dark="rgba(30, 30, 35, 0.85)",
+        ),
+        backdrop_filter="blur(20px)",
+        border=rx.color_mode_cond(
+            light="1px solid rgba(6, 42, 99, 0.1)",
+            dark="1px solid rgba(255, 255, 255, 0.1)",
+        ),
+        border_radius="24px",
+        padding="8px 12px",
+        box_shadow=rx.color_mode_cond(
+            light="0 4px 24px rgba(6, 42, 99, 0.10)",
+            dark="0 4px 20px rgba(0, 0, 0, 0.4)",
+        ),
+        # Responsivo: ancho
+        width=["92%", "92%", "min(60%, 800px)", "min(60%, 800px)"],
+        # Posicionamiento fijo centrado
+        position="fixed",
+        bottom=["0.75rem", "0.75rem", "1.5rem", "1.5rem"],
+        left="50%",
+        transform=["translateX(-50%)", "translateX(-50%)", "translateX(calc(-50% + 150px))", "translateX(calc(-50% + 150px))"],
+        z_index="1000",
+        transition="box-shadow 0.2s ease",
+        _hover={
+            "box_shadow": rx.color_mode_cond(
+                light="0 8px 32px rgba(6, 42, 99, 0.15)",
+                dark="0 8px 30px rgba(0, 0, 0, 0.5)",
+            ),
+        },
     )
 
 
