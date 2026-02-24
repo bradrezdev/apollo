@@ -42,12 +42,9 @@ def desktop_view() -> rx.Component:
 def mobile_view() -> rx.Component:
     """Vista principal para mobile con drawer"""
     return rx.vstack(
-        mobile_header(),
         chat_container_mobile(),
-        mobile_chat_input(),
-        spacing="0",
         width="100%",
-        height="100vh",
+        height="100%",
     )
 
 
@@ -84,7 +81,7 @@ meta = [
     {"name": "viewport", "content": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"},
     {"name": "apple-mobile-web-app-status-bar-style", "content": "black-translucent"}, 
     {"name": "apple-mobile-web-app-capable", "content": "yes"},
-    {"name": "theme-color", "content": "#001F3F"},
+    {"name": "theme-color", "content": "#062A63"},
     
     # --- SEO & DESCRIPTION ---
     {"name": "description", "content": "ONANO | Nanotecnología aplicada al bienestar y la libertad financiera. Únete a la revolución de la nanotecnología y proyecta tu éxito."},
@@ -96,7 +93,7 @@ meta = [
     {"property": "og:url", "content": "https://onano-web-teal-apple.reflex.run"}, # URL placeholder
     {"property": "og:title", "content": "ONANO | Proyecta tu Éxito"},
     {"property": "og:description", "content": "Innovación en bienestar y libertad financiera. Descubre el futuro de la nanotecnología."},
-    {"property": "og:image", "content": "https://onano-web-teal-apple.reflex.run/logotipo-onano.svg"},
+    {"property": "og:image", "content": "https://onano-web-teal-apple.reflex.run/light-logo.svg"},
 ]
 
 # Estilos globales para forzar comportamiento en móviles

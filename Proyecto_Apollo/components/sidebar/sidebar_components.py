@@ -108,6 +108,7 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     ),
                 },
             ),
+            border_radius="24px",
             flex="1",
             min_width="0",
             padding_x="0.5rem",
@@ -120,7 +121,7 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     ),
                     "cursor": "pointer",
                 },
-                "border-radius": "0.5em",
+                "border-radius": "24px",
             },
             on_click=lambda: [
                 State.load_conversation_and_messages(conversation["id"]),
@@ -131,6 +132,7 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
             rx.menu.trigger(
                 rx.icon_button(
                     rx.icon("circle-ellipsis", size=18),
+                    border_radius="20px",
                     size="2",
                     variant="ghost",
                     color_scheme="gray",
@@ -190,20 +192,18 @@ def conversations_list() -> rx.Component:
             rx.cond(
                 State.is_loading_conversations,
                 rx.vstack(
-                    rx.skeleton(height="40px", width="100%"),
-                    rx.skeleton(height="40px", width="100%"),
-                    rx.skeleton(height="40px", width="100%"),
-                    spacing="2",
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    spacing="3",
                     width="100%"
                 ),
-                rx.vstack(
-                    rx.foreach(
-                        State.conversations,
-                        conversation_item
-                    ),
-                    spacing="1",
-                    width="100%",
-                )
+                rx.foreach(
+                    State.conversations,
+                    conversation_item
+                ),
             ),
             width="100%",
             max_height="calc(87dvh - 200px)",
@@ -219,25 +219,35 @@ def conversations_list_mobile() -> rx.Component:
     """Lista de conversaciones en el sidebar para móvil con botones de menú visibles"""
     return rx.vstack(
         rx.hstack(
-            rx.text("Conversaciones", size="4", weight="bold"),
-            rx.spacer(),
-            rx.box(
-                rx.icon(
-                    "message-circle-plus",
-                    size=header_styles.icon_sizes["small"],
-                    on_click=State.start_new_conversation,
-                ),
-                **header_styles.header_mobile_round_box_style,
-            ),
+            rx.text("Conversaciones", size="2", weight="bold"),
+            #rx.spacer(),
+            #rx.box(
+            #    rx.icon(
+            #        "message-circle-plus",
+            #        size=header_styles.icon_sizes["small"],
+            #        on_click=State.start_new_conversation,
+            #    ),
+            #    **header_styles.header_mobile_round_box_style,
+            #),
             width="100%",
-            padding_x="0.5rem",
             align="center",
         ),
-        rx.divider(),
         rx.vstack(
-            rx.foreach(
-                State.conversations,
-                conversation_item_mobile
+            rx.cond(
+                State.is_loading_conversations,
+                rx.vstack(
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    rx.skeleton(border_radius="24px", height="40px", width="100%"),
+                    spacing="3",
+                    width="90%"
+                ),
+                rx.foreach(
+                    State.conversations,
+                    conversation_item_mobile
+                ),
             ),
             spacing="1",
             width="290px",
@@ -245,6 +255,7 @@ def conversations_list_mobile() -> rx.Component:
             overflow_y="auto",
         ),
         spacing="2",
+        height="100%",
         width="100%",
     )
 

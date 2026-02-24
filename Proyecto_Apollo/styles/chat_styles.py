@@ -51,17 +51,10 @@ chat_scroll_desktop_style = {
 # === ESTILOS PARA CONTAINERS - MOBILE ===
 chat_container_mobile_style = {
     "width": "100%",
-    "flex": "1",  # Ocupa todo el espacio disponible
-    "overflow_y": "auto",  # Cambiar a auto para permitir scroll
-    "padding_top": "5rem",  # Espacio para el header flotante
-    "padding_bottom": "1rem",
-    "z_index": 1,
 }
 
 chat_scroll_mobile_style = {
-    "height": "100%",
     "scroll_behavior": "smooth",
-    "width": "100%",
 }
 
 # === ESTILOS PARA INPUT ===
@@ -73,11 +66,11 @@ chat_input_style = {
 }
 
 text_area_desktop_style = {
-    "rows": "1",
+    #"rows": "1",
     "auto_height": True,
     "max_height": "150px",
-    "resize": "none",
-    "placeholder": "Envía un mensaje a Apollo...",
+    #"resize": "none",
+    "placeholder": "Pregúntale a Onai…",
     "width": "100%",
     "variant": "soft",
     "bg": "transparent",
@@ -95,11 +88,9 @@ text_area_desktop_style = {
 }
 
 text_area_mobile_style = {
-    "rows": "1",
     "auto_height": True,
     "max_height": "120px",
-    "resize": "none",
-    "placeholder": "Chat con Apollo",
+    "placeholder": "Pregúntale a Onai…",
     "width": "100%",
     "variant": "soft",
     "bg": "transparent",
@@ -135,7 +126,7 @@ send_button_mobile_style = {
         dark=ApolloTheme.dark_colors()["send_button_color"]
     ),
     "radius": "full",
-    "size": "4",
+    "size": "3",
     "_hover": {
         "bg": rx.color_mode_cond(
             light=ApolloTheme.light_colors()["send_button_hover_color"],

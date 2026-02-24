@@ -31,8 +31,9 @@ def warmup_connection_in_background():
     
     try:
         # Intenta una conexión simple
+        from sqlalchemy import text
         with engine.connect() as conn:
-            conn.execute("SELECT 1")
+            conn.execute(text("SELECT 1"))
         elapsed = time.time() - start
         print(f"[DEBUG] ✅ Conexión precalentada en {elapsed:.2f} segundos")
     except Exception as e:

@@ -14,7 +14,7 @@ def splash_screen() -> rx.Component:
         rx.center(
             rx.vstack(
                 # Aquí irá el logo de la App en el futuro
-                rx.image(src="/logotipo-onano.svg", width="80%"),
+                rx.image(src="/light-logo.svg", width="80%"),
                 rx.spinner(size="3", color=ApolloTheme.light_colors()["primary"]),
                 spacing="4",
                 align="center",
