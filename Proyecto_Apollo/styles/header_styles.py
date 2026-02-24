@@ -40,8 +40,9 @@ header_text_style = {
 header_mobile_gradient_style = {
     "background": "linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0))",
     "height": "4rem",
-    "position": "fixed",
+    "position": "absolute",
     "top": 0,
+    "left": 0,
     "width": "100%",
     "z_index": 100,
     "display": "flex",

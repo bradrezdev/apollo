@@ -34,6 +34,7 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
                 rx.hstack(
                     rx.spinner(size="2"),
                     rx.text("Pensando en su respuesta...", color="gray", font_size="0.9em"),
+                    align="start",
                     spacing="2",
                 ),
                 # Mostrar respuesta completa con botón de copiar
@@ -52,8 +53,10 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
                         border_radius="16px",
                     ),
                     width="98%",
+                    align="end",
                 ),
             ),
+            text_align="left",
         ),
         height="auto",
         margin_top="1em",
@@ -133,8 +136,9 @@ def responsive_chat_input() -> rx.Component:
         ),
         # Responsivo: ancho
         width=["92%", "92%", "min(60%, 800px)", "min(60%, 800px)"],
-        # Flotante fijo en todas las vistas
-        position="fixed",
+        # Mobile: absolute dentro del contenedor (se ancla al --app-height)
+        # Desktop: fixed al viewport (sin problemas de teclado)
+        position=["absolute", "absolute", "fixed", "fixed"],
         bottom=["0.75rem", "0.75rem", "1.5rem", "1.5rem"],
         left="50%",
         transform=["translateX(-50%)", "translateX(-50%)", "translateX(calc(-50% + 150px))", "translateX(calc(-50% + 150px))"],
@@ -152,7 +156,7 @@ def responsive_chat_input() -> rx.Component:
 def responsive_chat_container() -> rx.Component:
     """Contenedor de chat unificado para todas las vistas"""
     return rx.box(
-        rx.box(mobile_header(), display=["block", "block", "none", "none"]),
+        # Mobile header se renderiza en unified_view() para que sea fixed real al viewport
         rx.box(desktop_header(), display=["none", "none", "block", "block"]),
         
         rx.cond(
@@ -171,12 +175,14 @@ def responsive_chat_container() -> rx.Component:
                     spacing="4",
                 ),
                 autoscroll=State.auto_scroll_enabled,
+                class_name="chat-scroll-area",
                 style={
                     "height": "100%",
                     "overflow_y": "auto",
                     "scroll_behavior": "smooth",
                     "overscroll-behavior": "contain",
                     "-webkit-overflow-scrolling": "touch",
+                    "touch-action": "pan-y",
                     "&::-webkit-scrollbar": {"display": "none"},
                     "-ms-overflow-style": "none",
                     "scrollbar-width": "none",
