@@ -12,17 +12,17 @@ sidebar_style = {
     "flex_direction": "column",
     "height": "95vh",
     "margin": "2.5vh 0 2.5vh 1rem",
-    "max_width": "320px",
+    "max_width": "300px",
     "padding": "1.5rem",
-    "width": "320px",
+    "width": "300px",
     "z_index": "1000",
 }
 
 sidebar_item_hover_style = {
     "transition": "all 0.2s ease",
     "color": rx.color_mode_cond(
-        light="#4B5563",
-        dark="#D1D5DB",
+        light=ApolloTheme.light_colors()["sidebar_text_color"],
+        dark=ApolloTheme.dark_colors()["sidebar_text_color"],
     ),
     "_hover": {
         "bg": rx.color_mode_cond(
@@ -30,7 +30,7 @@ sidebar_item_hover_style = {
             dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
         ),
         "color": rx.color_mode_cond(
-            light=ApolloTheme.light_colors()["accent"],
+            light="#FFFFFF",
             dark="#FFFFFF",
         ),
         "cursor": "pointer",
@@ -41,7 +41,7 @@ sidebar_item_hover_style = {
 
 # === ESTILOS PARA LOGO ===
 logo_style = {
-    "src": "/logotipo.svg",
+    "src": "/light-logo.svg",
     "height": "auto",
     "margin_bottom": "1em",
     "width": "100%",

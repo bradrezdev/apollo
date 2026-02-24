@@ -2,16 +2,10 @@
 
 from .chat_components import (
     chat_message,
-    chat_container_desktop,
-    chat_container_mobile,
-    desktop_chat_input,
-    mobile_chat_input,
+    responsive_chat_container,
 )
 
 __all__ = [
     "chat_message",
-    "chat_container_desktop",
-    "chat_container_mobile",
-    "desktop_chat_input",
-    "mobile_chat_input",
+    "responsive_chat_container",
 ]
