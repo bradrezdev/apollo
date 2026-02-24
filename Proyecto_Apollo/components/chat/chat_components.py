@@ -60,118 +60,48 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
     )
 
 
-def chat_container_desktop() -> rx.Component:
-    """Contenedor de chat para desktop con scroll automático"""
-    return rx.box(
-        desktop_header(),
-        rx.cond(
-            State.has_messages,
-            rx.auto_scroll(
-                rx.vstack(
-                    rx.foreach(
-                        State.chat_history,
-                        chat_message,
-                    ),
-                    width="100%",
-                    max_width="900px",
-                    margin_x="auto",
-                    padding_top="6em",
-                    spacing="4",
-                ),
-                autoscroll=State.auto_scroll_enabled,
-                **chat_styles.chat_scroll_desktop_style,
-            ),
-            rx.center(
-                rx.vstack(
-                    rx.icon("message-square", size=48, color="gray"),
-                    rx.text("¡Bienvenido a Apollo AI!", size="5", weight="bold"),
-                    rx.text("Tu asistente experto. Pregúntame sobre:", color="gray"),
-                    rx.vstack(
-                        rx.text("• Productos e ingredientes activos", color="gray"),
-                        rx.text("• Recomendaciones para padecimientos", color="gray"),
-                        rx.text("• Plan de compensación y estrategias", color="gray"),
-                        spacing="1",
-                        align="center",
-                    ),
-                    spacing="2",
-                    align="center",
-                ),
-                height="100%",
-            ),
-        ),
-        width="100%",
-        flex="1",
-        overflow="hidden",
-    )
 
 
-def chat_container_mobile() -> rx.Component:
-    """Contenedor de chat para mobile que ocupa todo el espacio disponible"""
-    return rx.box(
-        mobile_header(),
-        rx.cond(
-            State.has_messages,
-            rx.auto_scroll(
-                rx.vstack(
-                    rx.foreach(
-                        State.chat_history,
-                        chat_message,
-                    ),
-                    width="100%",
-                    max_width="900px",
-                    margin_x="auto",
-                    padding_top="4em",
-                    padding_bottom="6em",
-                    spacing="4",
-                ),
-                autoscroll=State.auto_scroll_enabled,
-                **chat_styles.chat_scroll_mobile_style,
-            ),
-            rx.center(
-                rx.vstack(
-                    rx.icon("message-square", size=48, color="gray"),
-                    rx.text("¡Bienvenido a Apollo AI!", size="5", weight="bold", text_align="center"),
-                    rx.text("Tu asistente experto. Pregúntame sobre:", color="gray", text_align="center"),
-                    rx.vstack(
-                        rx.text("• Productos e ingredientes activos", color="gray", text_align="center"),
-                        rx.text("• Recomendaciones para padecimientos", color="gray", text_align="center"),
-                        rx.text("• Plan de compensación y estrategias", color="gray", text_align="center"),
-                        spacing="1",
-                        align="center",
-                    ),
-                    spacing="2",
-                    align="center",
-                    #padding="2em",
-                ),
-                height="100%",
-            ),
-        ),
-        mobile_chat_input(),
-        **chat_styles.chat_container_mobile_style,
-    )
 
 
-def desktop_chat_input() -> rx.Component:
-    """Input de chat para vista desktop"""
+
+
+
+def responsive_chat_input() -> rx.Component:
+    """Input de chat unificado y responsivo"""
     return rx.center(
         rx.box(
             rx.form(
                 rx.hstack(
                     rx.text_area(
                         name="question",
-                        border_radius="14px",
                         value=State.question,
                         on_change=State.set_question,
-                        **chat_styles.text_area_desktop_style,
+                        placeholder="Escribe tu mensaje aquí...",
+                        bg="transparent",
+                        color=rx.color_mode_cond(light="black", dark="white"),
+                        border="none",
+                        _focus={"outline": "none"},
+                        width="100%",
+                        auto_height=True,
+                        max_height="150px",
+                        rows="1",
+                        resize="none",
+                        padding_y="8px",
+                        style={"font_family": "Poppins", "font_size": "16px"},
                     ),
                     rx.icon_button(
                         rx.icon("arrow-up", size=20),
                         type="submit",
                         loading=State.is_loading,
-                        **chat_styles.send_button_desktop_style,
+                        variant="solid",
+                        color_scheme="blue",
+                        border_radius="50%",
+                        size="3",
                     ),
                     align="end",
-                    spacing="3",
+                    spacing="2",
+                    width="100%",
                 ),
                 on_submit=State.answer,
                 reset_on_submit=True,
@@ -191,9 +121,11 @@ def desktop_chat_input() -> rx.Component:
                 light=ApolloTheme.light_colors()["box_shadow"],
                 dark="0 4px 20px rgba(0, 0, 0, 0.4)",
             ),
-            width="60%",
-            min_width="600px",
-            margin_bottom="2rem",
+            width=["92%", "92%", "60%", "60%"],
+            min_width=["0", "0", "600px", "600px"],
+            position="fixed",
+            bottom=["1rem", "1rem", "2rem", "2rem"],
+            z_index="1000",
             transition="all 0.2s ease-in-out",
             _hover={
                 "box_shadow": rx.color_mode_cond(
@@ -203,51 +135,70 @@ def desktop_chat_input() -> rx.Component:
             },
         ),
         width="100%",
+        position="absolute",
+        bottom="0",
+        z_index="900",
+        padding_bottom=["0", "0", "2rem", "2rem"],
+        pointer_events="none", 
     )
 
 
-def mobile_chat_input() -> rx.Component:
-    """Input de chat para vista mobile"""
-    return rx.center(
-        rx.box(
-            rx.form(
-                rx.hstack(
-                    rx.text_area(
-                        name="question",
-                        value=State.question,
-                        on_change=State.set_question,
-                        **chat_styles.text_area_mobile_style,
+def responsive_chat_container() -> rx.Component:
+    """Contenedor de chat unificado para todas las vistas"""
+    return rx.box(
+        rx.box(mobile_header(), display=["block", "block", "none", "none"]),
+        rx.box(desktop_header(), display=["none", "none", "block", "block"]),
+        
+        rx.cond(
+            State.has_messages,
+            rx.auto_scroll(
+                rx.vstack(
+                    rx.foreach(
+                        State.chat_history,
+                        chat_message,
                     ),
-                    rx.icon_button(
-                        rx.icon("arrow-up", size=20),
-                        type="submit",
-                        loading=State.is_loading,
-                        **chat_styles.send_button_mobile_style,
-                    ),
-                    align="end",
-                    spacing="2",
-                    width="100%",
+                    width=["94%", "94%", "100%", "100%"],
+                    max_width="900px",
+                    margin_x="auto",
+                    padding_top=["5em", "5em", "6em", "6em"],
+                    padding_bottom=["150px", "150px", "150px", "150px"],
+                    spacing="4",
                 ),
-                on_submit=State.answer,
-                reset_on_submit=True,
+                autoscroll=State.auto_scroll_enabled,
+                style={
+                    "height": "100vh",
+                    "overflow_y": "auto",
+                    "scroll_behavior": "smooth",
+                    "&::-webkit-scrollbar": {"display": "none"},
+                    "-ms-overflow-style": "none",
+                    "scrollbar-width": "none",
+                }
+            ),
+            rx.center(
+                rx.vstack(
+                    rx.icon("message-square", size=48, color="#0CBCE5"),
+                    rx.text("¡Bienvenido a Apollo AI!", size="6", weight="bold", color="#062A63"),
+                    rx.text("Tu asistente experto en ONANO.", color="gray"),
+                    rx.divider(width="50%"),
+                    rx.vstack(
+                        rx.hstack(rx.icon("sparkles", size=16, color="#0CBCE5"), rx.text("Productos y Nanotecnología", color="gray")),
+                        rx.hstack(rx.icon("trending-up", size=16, color="#0CBCE5"), rx.text("Plan de Compensación", color="gray")),
+                        rx.hstack(rx.icon("activity", size=16, color="#0CBCE5"), rx.text("Salud y Bienestar", color="gray")),
+                        spacing="2",
+                        align="start",
+                    ),
+                    spacing="4",
+                    align="center",
+                ),
+                height="100vh",
                 width="100%",
+                padding_bottom="100px",
             ),
-            bg=rx.color_mode_cond(
-                light=ApolloTheme.light_colors()["input_background"],
-                dark=ApolloTheme.dark_colors()["input_background"]
-            ),
-            style={
-                "backdropFilter": "blur(20px)",
-                "-webkit-backdrop-filter": "blur(20px)",
-            },
-            border_radius="24px",
-            padding="10px",
-            margin_bottom="1rem",
-            box_shadow="0 4px 12px rgba(0, 0, 0, 0.1)",
-            width="calc(100% - 1em)",
         ),
-        position="fixed",
+        
+        responsive_chat_input(),
+        
         width="100%",
-        z_index="1000",
-        bottom="0",
+        height="100vh",
+        position="relative",
     )

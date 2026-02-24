@@ -12,9 +12,9 @@ sidebar_style = {
     "flex_direction": "column",
     "height": "95vh",
     "margin": "2.5vh 0 2.5vh 1rem",
-    "max_width": "320px",
+    "max_width": "300px",
     "padding": "1.5rem",
-    "width": "320px",
+    "width": "300px",
     "z_index": "1000",
 }
 

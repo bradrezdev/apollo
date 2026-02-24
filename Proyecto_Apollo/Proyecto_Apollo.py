@@ -12,48 +12,41 @@ import reflex as rx
 from Proyecto_Apollo.state import State
 
 # Importar componentes modulares
-from Proyecto_Apollo.components.chat import (
-    chat_container_desktop,
-    chat_container_mobile,
-    desktop_chat_input,
-    mobile_chat_input,
-)
+from Proyecto_Apollo.components.chat import responsive_chat_container
 from Proyecto_Apollo.components.sidebar import desktop_sidebar, edit_conversation_dialog, delete_conversation_dialog
-from Proyecto_Apollo.components.header import desktop_header, mobile_header
 from Proyecto_Apollo.components.layout.splash_screen import splash_screen
 
 # === COMPOSICIÓN DE VISTAS ===
 
-def desktop_view() -> rx.Component:
-    """Vista principal para desktop con sidebar y chat"""
+def unified_view() -> rx.Component:
+    """Vista unificada y responsiva para todos los dispositivos"""
     return rx.flex(
+        # Sidebar se muestra/oculta automáticamente mediante CSS (breakpoints) definidos en sus estilos
         desktop_sidebar(),
-        rx.vstack(
-            chat_container_desktop(),
-            desktop_chat_input(),
+        
+        # Área principal de Chat
+        rx.box(
+            responsive_chat_container(),
+            flex="1",
             width="100%",
             height="100dvh",
+            position="relative",
         ),
+        
+        # Propiedades del contenedor principal
         width="100%",
         height="100dvh",
-    )
-
-
-def mobile_view() -> rx.Component:
-    """Vista principal para mobile con drawer"""
-    return rx.vstack(
-        chat_container_mobile(),
-        width="100%",
-        height="100%",
+        flex_direction="row",
+        align_items="stretch",
+        overflow="hidden",
     )
 
 
 def index() -> rx.Component:
-    """Punto de entrada principal - Renderiza vista según el dispositivo"""
+    """Punto de entrada principal - Renderiza vista unificada"""
     return rx.fragment(
         splash_screen(),
-        rx.desktop_only(desktop_view()),
-        rx.mobile_only(mobile_view()),
+        unified_view(),
         edit_conversation_dialog(),
         delete_conversation_dialog(),
     )
