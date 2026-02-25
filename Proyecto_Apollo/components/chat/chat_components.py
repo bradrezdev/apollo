@@ -75,17 +75,18 @@ def responsive_chat_input() -> rx.Component:
     return rx.box(
         rx.form(
             rx.hstack(
-                rx.el.textarea(
+                rx.text_area(
                     name="question",
                     value=State.question,
                     on_change=State.set_question,
                     placeholder="Escribe tu mensaje aquí...",
-                    rows=1,
+                    rows="1",
+                    auto_height=True,
+                    resize="none",
                     style={
                         "width": "100%",
                         "min_height": "40px",
-                        "max_height": "132px",  # ~5 líneas
-                        "resize": "none",
+                        "max_height": "132px",
                         "overflow_y": "auto",
                         "border": "none",
                         "outline": "none",
@@ -94,7 +95,6 @@ def responsive_chat_input() -> rx.Component:
                         "font_size": "16px",
                         "padding": "8px 12px",
                         "line_height": "1.5",
-                        "field_sizing": "content",
                         "color": rx.color_mode_cond(light="#383A3F", dark="#FFFFFF"),
                     },
                 ),
@@ -124,10 +124,6 @@ def responsive_chat_input() -> rx.Component:
             dark="rgba(30, 30, 35, 0.85)",
         ),
         backdrop_filter="blur(20px)",
-        border=rx.color_mode_cond(
-            light="1px solid rgba(6, 42, 99, 0.1)",
-            dark="1px solid rgba(255, 255, 255, 0.1)",
-        ),
         border_radius="24px",
         padding="8px 12px",
         box_shadow=rx.color_mode_cond(
