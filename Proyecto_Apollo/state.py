@@ -4,6 +4,7 @@ import reflex as rx
 from Proyecto_Apollo.config import OPENAI_API_KEY, API_ASSISTANT_ID
 from db.db_state import DBState
 import asyncio
+import re
 from datetime import datetime
 
 # Cargar variables de entorno
@@ -12,6 +13,38 @@ load_dotenv()
 
 class State(DBState):
     """Estado principal optimizado que maneja la funcionalidad del chat con UI no bloqueante"""
+    
+    # === SANITIZACIÓN DE RESPUESTAS OpenAI ===
+    @staticmethod
+    def _sanitize_response(text: str) -> str:
+        """
+        Elimina artefactos de citación del OpenAI Assistants API.
+        
+        Patrones eliminados:
+        - fileciteturnXfileY (ej: fileciteturn7file4)
+        - 【...】 (corchetes CJK con contenido de citación)
+        - 【†source】 y variantes
+        - sandbox:/mnt/... rutas internas
+        """
+        if not text:
+            return text
+        
+        # Patrón 1: fileciteturnXfileY (con o sin espacios alrededor)
+        text = re.sub(r'\s*filecite\w*', '', text)
+        
+        # Patrón 2: Corchetes CJK con contenido de citación 【...】
+        text = re.sub(r'【[^】]*】', '', text)
+        
+        # Patrón 3: Rutas sandbox internas
+        text = re.sub(r'sandbox:/mnt/\S+', '', text)
+        
+        # Patrón 4: Anotaciones residuales tipo [数字:数字†source]
+        text = re.sub(r'\[\d+:\d+†[^\]]*\]', '', text)
+        
+        # Limpiar espacios dobles residuales
+        text = re.sub(r'  +', ' ', text)
+        
+        return text.strip()
     
     # === VARIABLES DEL CHAT ===
     question: str = ""
@@ -144,25 +177,30 @@ class State(DBState):
                 content=message
             )
             
-            # Inicializar variable para respuesta en streaming
-            answer = ""
             yield
             
             # Usar create_and_stream() para streaming en tiempo real
+            # Guardamos respuesta cruda para sanitizar sobre el acumulado completo
+            raw_answer = ""
             async with client.beta.threads.runs.create_and_stream(
                 thread_id=self.current_thread_id,
                 assistant_id=API_ASSISTANT_ID,
             ) as stream:
                 # Iterar sobre text_deltas - streaming palabra por palabra
                 async for text_delta in stream.text_deltas:
-                    answer += text_delta
+                    raw_answer += text_delta
+                    # Sanitizar el acumulado completo (tokens de citación pueden llegar partidos entre deltas)
+                    answer = self._sanitize_response(raw_answer)
                     # Reasignar la lista completa para que Reflex detecte el cambio
                     updated_history = self.chat_history.copy()
                     updated_history[-1] = (updated_history[-1][0], answer)
                     self.chat_history = updated_history
                     yield  # ⭐ Actualizar UI con cada palabra
                 
-            # ⭐ GUARDAR MENSAJE EN SUPABASE ASÍNCRONAMENTE
+            # Sanitización final sobre la respuesta completa
+            answer = self._sanitize_response(raw_answer)
+            
+            # ⭐ GUARDAR MENSAJE SANITIZADO EN SUPABASE ASÍNCRONAMENTE
             if self.current_conversation_id:
                 print(f"[DEBUG] 💾 Guardando mensaje en BD: {message[:20]}...")
                 asyncio.create_task(self.add_message_async(
