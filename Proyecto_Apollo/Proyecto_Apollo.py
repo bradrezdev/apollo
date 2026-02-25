@@ -17,6 +17,8 @@ from Proyecto_Apollo.components.sidebar import desktop_sidebar, edit_conversatio
 from Proyecto_Apollo.components.layout.splash_screen import splash_screen
 from Proyecto_Apollo.components.header.header_components import mobile_header
 
+from Proyecto_Apollo.pages.auth import auth_page_ui, AuthState
+
 # === COMPOSICIÓN DE VISTAS ===
 
 def unified_view() -> rx.Component:
@@ -55,7 +57,7 @@ def unified_view() -> rx.Component:
     )
 
 
-def index() -> rx.Component:
+def chat_page() -> rx.Component:
     """Punto de entrada principal - Renderiza vista unificada"""
     return rx.box(
         # Script para bloquear scroll global en iOS y ajustar altura al teclado
@@ -157,4 +159,5 @@ app = rx.App(
     ),
 )
 
-app.add_page(index, title="Apollo AI - ChatBot con IA", on_load=State.on_load)
+app.add_page(auth_page_ui, route="/", title="Bienvenido a Apollo", on_load=AuthState.on_load)
+app.add_page(chat_page, route="/chat", title="Apollo AI - ChatBot con IA", on_load=State.on_load)
