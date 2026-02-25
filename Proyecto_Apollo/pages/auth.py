@@ -7,46 +7,6 @@ from Proyecto_Apollo.styles.fonts import FontSystem
 from Proyecto_Apollo.components.ui.atoms import atom_button, atom_input, atom_badge
 
 
-# ─────────────────────────────────────────────────────────
-#  JS: Smooth particle scroll interpolation
-#  Replaces scroll_timeline.js since Apollo uses step-based
-#  navigation instead of vertical scroll.
-# ─────────────────────────────────────────────────────────
-_PARTICLE_BRIDGE_JS = """
-(function() {
-    window._apolloParticleProgress = 0;
-    window._apolloAnimId = null;
-
-    window.animateParticleScroll = function(targetProgress, duration) {
-        var api = window.__oParticleHero;
-        if (!api) return;
-
-        if (window._apolloAnimId) cancelAnimationFrame(window._apolloAnimId);
-
-        var startProgress = window._apolloParticleProgress;
-        var startT = performance.now();
-
-        function tick(now) {
-            var elapsed = now - startT;
-            var t = Math.min(elapsed / duration, 1);
-            // easeInOutQuad — same feel as onano_website's smoothStep
-            var ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-            var val = startProgress + (targetProgress - startProgress) * ease;
-            api.setScrollProgress(val);
-            window._apolloParticleProgress = val;
-            if (t < 1) {
-                window._apolloAnimId = requestAnimationFrame(tick);
-            } else {
-                api.setScrollProgress(targetProgress);
-                window._apolloParticleProgress = targetProgress;
-                window._apolloAnimId = null;
-            }
-        }
-        window._apolloAnimId = requestAnimationFrame(tick);
-    };
-})();
-"""
-
 
 class AuthState(rx.State):
     """Estado para el flujo de autenticación y registro."""
@@ -227,10 +187,10 @@ def auth_page_ui() -> rx.Component:
         ),
         # ── Scripts ─────────────────────────────────────────
         # particle_hero.js auto-boots via its IIFE MutationObserver
-        # and writes to window.__oParticleHero. We do NOT manually
-        # call initParticleHero — the IIFE handles it.
+        # and writes to window.__oParticleHero. 
+        # apollo_particle_bridge.js provides window.animateParticleScroll.
         rx.script(src="/scripts/particle_hero.js"),
-        rx.script(_PARTICLE_BRIDGE_JS),
+        rx.script(src="/scripts/apollo_particle_bridge.js"),
         # ── Horizontal slide container ──────────────────────
         # All steps exist in a row. Only the text/forms slide
         # horizontally; the canvas stays fixed behind everything.
