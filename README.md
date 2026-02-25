@@ -111,8 +111,10 @@ Si deseas conectar tu propia infraestructura de OpenAI y Supabase:
    # Supabase / Database Configuration
    SUPABASE_URL=https://tu-proyecto.supabase.co
    SUPABASE_KEY=tu-supabase-anon-key
-   DATABASE_URL=postgresql://usuario:password@host:5432/database
+   # Usa la URL del Connection Pooler (puerto 5432 + tenant) para evitar errores IPv6
+   DATABASE_URL=postgresql://postgres.tu-proyecto:password@aws-0-REGION.pooler.supabase.com:5432/database
    ```
+   > ⚠️ **Nota importante sobre Supabase:** Usa la URL del **Connection Pooler** en modo **Session** (como se muestra arriba) en lugar de la URL directa (`db...supabase.co`). Esto evita errores de timeout (`psycopg2.OperationalError`) causados por la falta de soporte IPv6 nativo en algunos entornos de desarrollo locales.
 
 2. **Inicializar Base de Datos**:
    Si usas tu propia BD, ejecuta las migraciones:
