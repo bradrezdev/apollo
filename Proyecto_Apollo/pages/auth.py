@@ -18,7 +18,7 @@ class AuthState(rx.State):
         set_dob: typing.ClassVar[rx.EventHandler]
         set_terms_accepted: typing.ClassVar[rx.EventHandler]
         
-    step: int = 0
+    step: int = 1
     
     email: str = ""
     password: str = ""
@@ -32,7 +32,7 @@ class AuthState(rx.State):
     final_message: str = "Preparando tu asistente personal"
     
     def on_load(self):
-        self.step = 0
+        self.step = 1
         self.email = ""
         self.password = ""
         self.confirm_password = ""
@@ -86,46 +86,57 @@ class AuthState(rx.State):
 
     @rx.event
     def go_to_register(self):
-        self.step = 1
-        return rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(0.5); }")
+        self.step = 2
+        return rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.5, 800); }")
         
     @rx.event
     def go_to_login(self):
-        return rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(0.5); }")
+        self.step = 0
+        return rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.5, 800); }")
         
     @rx.event
     def go_back(self):
-        self.step = 0
-        return rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(0.0); }")
+        self.step = 1
+        return rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.0, 800); }")
         
     @rx.event
     async def submit_step1(self):
         if self.can_proceed_step1:
-            self.step = 2
-            yield rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(0.2); }")
-            await asyncio.sleep(2)
             self.step = 3
+            yield rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.2, 800); }")
+            await asyncio.sleep(2)
+            self.step = 4
             
     @rx.event
     async def submit_step3(self):
         if self.first_name and self.last_name and self.dob:
-            self.step = 4
+            self.step = 5
             self.final_message = "Cargando productos..."
-            yield rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(0.5); }")
+            yield rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.5, 800); }")
             yield
             
             await asyncio.sleep(2)
             self.final_message = "Cargando plan de compensación..."
-            yield rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(0.8); }")
+            yield rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.8, 800); }")
             yield
             
             await asyncio.sleep(2)
             self.final_message = "Cargando tu asistente personal..."
-            yield rx.call_script("if(window.onanoParticleSim){ window.onanoParticleSim.setScrollProgress(1.0); }")
+            yield rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(1.0, 800); }")
             yield
             
             await asyncio.sleep(2)
             yield rx.redirect("/chat")
+
+def _render_step(component: rx.Component) -> rx.Component:
+    """Wrapper para cada paso que ocupe el 100% de la pantalla."""
+    return rx.center(
+        component,
+        width="100vw",
+        height="100vh",
+        flex_shrink="0",
+        position="relative"
+    )
 
 def auth_page_ui() -> rx.Component:
     return rx.box(
@@ -142,23 +153,93 @@ def auth_page_ui() -> rx.Component:
             },
         ),
         rx.script(src="/scripts/particle_hero.js"),
-        rx.script("window.addEventListener('load', () => { if(typeof initParticleHero === 'function'){ window.onanoParticleSim = initParticleHero('particle-hero-canvas'); }});"),
+        rx.script("""
+            window.addEventListener('load', () => { 
+                if(typeof initParticleHero === 'function'){ 
+                    window.onanoParticleSim = initParticleHero('particle-hero-canvas'); 
+                }
+            });
+            window.animateParticleScroll = function(targetProgress, duration) {
+                if(!window.onanoParticleSim) return;
+                if(window.currentParticleProgress === undefined) window.currentParticleProgress = 0;
+                const startProgress = window.currentParticleProgress;
+                const startT = performance.now();
+                function step(currentTime) {
+                    const elapsed = currentTime - startT;
+                    let t = Math.min(elapsed / duration, 1);
+                    const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                    const currentVal = startProgress + (targetProgress - startProgress) * ease;
+                    window.onanoParticleSim.setScrollProgress(currentVal);
+                    window.currentParticleProgress = currentVal;
+                    if (t < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        window.onanoParticleSim.setScrollProgress(targetProgress);
+                        window.currentParticleProgress = targetProgress;
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+        """),
         
-        rx.center(
-            rx.match(
-                AuthState.step,
-                (0, step_initial()),
-                (1, step_register()),
-                (2, step_transition("Creando nueva cuenta", "Ya casi terminamos con tu registro")),
-                (3, step_profile()),
-                (4, step_transition("Preparando tu asistente personal", AuthState.final_message)),
-                step_initial()
+        rx.box(
+            rx.hstack(
+                _render_step(step_login()),
+                _render_step(step_initial()),
+                _render_step(step_register()),
+                _render_step(step_transition("Creando nueva cuenta", "Ya casi terminamos con tu registro")),
+                _render_step(step_profile()),
+                _render_step(step_transition("Preparando tu asistente personal", AuthState.final_message)),
+                width="600vw",
+                height="100vh",
+                margin="0",
+                padding="0",
+                spacing="0",
+                transform=f"translateX(calc(-100vw * {AuthState.step}))",
+                transition="transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
             ),
-            width="100%",
+            width="100vw",
             height="100vh",
+            overflow="hidden",
             position="relative",
             z_index="1"
         )
+    )
+
+def step_login() -> rx.Component:
+    return rx.vstack(
+        rx.hstack(
+            atom_button(
+                rx.icon("chevron-right", size=24), 
+                on_click=AuthState.go_back, 
+                variant="ghost", 
+                width="auto", 
+                padding="0.5em",
+                border_radius="50%"
+            ),
+            rx.heading("Iniciar sesión", color=NEUTRAL_WHITE, font=FontSystem.SIZE_H2),
+            align="center",
+            width="100%",
+            spacing="2"
+        ),
+        rx.vstack(
+            atom_input(placeholder="Correo electrónico", type="email", value=AuthState.email, on_change=AuthState.set_email),
+            atom_input(placeholder="Contraseña", type="password", value=AuthState.password, on_change=AuthState.set_password),
+            width="100%",
+            spacing="4",
+            margin_y="4"
+        ),
+        atom_button("Entrar", disabled=(AuthState.email == "") | (AuthState.password == ""), margin_top="4"),
+        spacing="6",
+        align="start",
+        padding="2.5em 2em",
+        justify="center",
+        background="rgba(6, 42, 99, 0.4)",
+        backdrop_filter="blur(16px)",
+        border="1px solid rgba(255, 255, 255, 0.1)",
+        border_radius="24px",
+        width="100%",
+        max_width="450px"
     )
 
 def step_initial() -> rx.Component:
@@ -169,6 +250,7 @@ def step_initial() -> rx.Component:
         rx.vstack(
             atom_button("Iniciar sesión", on_click=AuthState.go_to_login, variant="outline"),
             atom_button("Registrarse", on_click=AuthState.go_to_register, variant="primary"),
+            margin_top="2em",
             spacing="4",
             width="100%"
         ),
