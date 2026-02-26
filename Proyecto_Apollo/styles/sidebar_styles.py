@@ -1,7 +1,7 @@
 """Estilos para componentes del sidebar"""
 
 import reflex as rx
-from .colors import ApolloTheme
+from .colors import *
 from .common_styles import glassmorphism_style
 
 # === ESTILOS PARA SIDEBAR ===
@@ -21,17 +21,17 @@ sidebar_style = {
 sidebar_item_hover_style = {
     "transition": "all 0.2s ease",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["sidebar_text_color"],
-        dark=ApolloTheme.dark_colors()["sidebar_text_color"],
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE,
     ),
     "_hover": {
         "bg": rx.color_mode_cond(
-            light=ApolloTheme.light_colors()["sidebar_item_hover"],
-            dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
+            light=BRAND_BACKGROUND_ALT,
+            dark=BRAND_BACKGROUND_ALT
         ),
         "color": rx.color_mode_cond(
-            light="#FFFFFF",
-            dark="#FFFFFF",
+            light=BRAND_WHITE,
+            dark=BRAND_WHITE,
         ),
         "cursor": "pointer",
         "transform": "translateX(4px)",

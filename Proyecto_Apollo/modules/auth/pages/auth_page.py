@@ -1,180 +1,21 @@
-import typing
 import reflex as rx
-import asyncio
-
-from Proyecto_Apollo.styles.colors import SECONDARY_100, NEUTRAL_WHITE, SUCCESS
-from Proyecto_Apollo.styles.fonts import FontSystem
-from Proyecto_Apollo.components.ui.atoms import atom_button, atom_input, atom_badge
-
-
-
-class AuthState(rx.State):
-    """Estado para el flujo de autenticación y registro."""
-
-    if typing.TYPE_CHECKING:
-        set_email: typing.ClassVar[rx.EventHandler]
-        set_password: typing.ClassVar[rx.EventHandler]
-        set_confirm_password: typing.ClassVar[rx.EventHandler]
-        set_first_name: typing.ClassVar[rx.EventHandler]
-        set_last_name: typing.ClassVar[rx.EventHandler]
-        set_dob: typing.ClassVar[rx.EventHandler]
-        set_terms_accepted: typing.ClassVar[rx.EventHandler]
-
-    # Steps: 0=login, 1=initial(welcome), 2=register, 3=transition, 4=profile, 5=final
-    step: int = 1
-
-    email: str = ""
-    password: str = ""
-    confirm_password: str = ""
-    terms_accepted: bool = False
-
-    first_name: str = ""
-    last_name: str = ""
-    dob: str = ""
-
-    final_message: str = "Preparando tu asistente personal"
-
-    def on_load(self):
-        self.step = 1
-        self.email = ""
-        self.password = ""
-        self.confirm_password = ""
-        self.first_name = ""
-        self.last_name = ""
-        self.dob = ""
-        self.terms_accepted = False
-        # Reset particle state to phase-0 (agglomerated, gentle vibration)
-        return rx.call_script(
-            "window._apolloParticleProgress = 0;"
-            "if(window.__oParticleHero){ window.__oParticleHero.setScrollProgress(0); }"
-        )
-
-    # ── Password validation computed vars ──────────────────
-    @rx.var
-    def has_lowercase(self) -> bool:
-        return any(c.islower() for c in self.password)
-
-    @rx.var
-    def has_uppercase(self) -> bool:
-        return any(c.isupper() for c in self.password)
-
-    @rx.var
-    def has_number(self) -> bool:
-        return any(c.isdigit() for c in self.password)
-
-    @rx.var
-    def has_special(self) -> bool:
-        return any(not c.isalnum() for c in self.password) and len(self.password) > 0
-
-    @rx.var
-    def is_length_valid(self) -> bool:
-        return len(self.password) >= 8
-
-    @rx.var
-    def is_password_valid(self) -> bool:
-        return (
-            self.has_lowercase
-            and self.has_uppercase
-            and self.has_number
-            and self.has_special
-            and len(self.password) >= 8
-        )
-
-    @rx.var
-    def passwords_match(self) -> bool:
-        return self.password == self.confirm_password and len(self.password) > 0
-
-    @rx.var
-    def is_email_valid(self) -> bool:
-        return "@" in self.email and "." in self.email.split("@")[-1]
-
-    @rx.var
-    def can_proceed_step1(self) -> bool:
-        return (
-            self.is_email_valid
-            and self.is_password_valid
-            and self.passwords_match
-            and self.terms_accepted
-        )
-
-    # ── Navigation events ──────────────────────────────────
-    @rx.event
-    def go_to_register(self):
-        """Welcome → Register (slide right). Particles: disperse to 0.5."""
-        self.step = 2
-        return rx.call_script("window.animateParticleScroll(0.5, 800);")
-
-    @rx.event
-    def go_to_login(self):
-        """Welcome → Login (slide left). Particles: disperse to 0.5."""
-        self.step = 0
-        return rx.call_script("window.animateParticleScroll(0.5, 800);")
-
-    @rx.event
-    def go_back(self):
-        """Any form → Welcome (slide back). Particles: re-agglomerate to 0."""
-        self.step = 1
-        return rx.call_script("window.animateParticleScroll(0.0, 800);")
-
-    @rx.event
-    async def submit_step1(self):
-        """Register form submitted → transition → profile."""
-        if self.can_proceed_step1:
-            self.step = 3
-            yield rx.call_script("window.animateParticleScroll(0.2, 800);")
-            await asyncio.sleep(2)
-            self.step = 4
-
-    @rx.event
-    async def submit_step3(self):
-        """Profile submitted → final loading sequence."""
-        if self.first_name and self.last_name and self.dob:
-            self.step = 5
-            self.final_message = "Cargando productos..."
-            yield rx.call_script("window.animateParticleScroll(0.5, 1200);")
-            yield
-            await asyncio.sleep(2)
-
-            self.final_message = "Cargando plan de compensación..."
-            yield rx.call_script("window.animateParticleScroll(0.8, 1200);")
-            yield
-            await asyncio.sleep(2)
-
-            self.final_message = "Cargando tu asistente personal..."
-            yield rx.call_script("window.animateParticleScroll(1.0, 1200);")
-            yield
-            await asyncio.sleep(2)
-
-            yield rx.redirect("/chat")
-
-
-# ═══════════════════════════════════════════════════════════
-#  UI COMPONENTS
-# ═══════════════════════════════════════════════════════════
-
-def _render_step(component: rx.Component) -> rx.Component:
-    """Wrapper: cada paso ocupa 100vw y está centrado verticalmente."""
-    return rx.center(
-        component,
-        width="100vw",
-        height="100vh",
-        flex_shrink="0",
-        position="relative",
-    )
-
+from Proyecto_Apollo.styles.colors import *
+from Proyecto_Apollo.styles import fonts
+from Proyecto_Apollo.components.ui import atom_button, atom_input, atom_badge
+from ..state.auth_state import AuthState
 
 def auth_page_ui() -> rx.Component:
     return rx.box(
         # ── Fixed particle canvas background ────────────────
         # Matches onano_website: canvas inside a fixed wrapper,
-        # pointer-events:none so clicks pass through to forms.
+        # pointer-events=none so clicks pass through to forms.
         rx.box(
             rx.el.canvas(
                 id="particle-hero-canvas",
                 style={
                     "display": "block",
                     "width": "100%",
-                    "height": "100%",
+                    "height": "100vh",
                 },
             ),
             position="fixed",
@@ -189,8 +30,8 @@ def auth_page_ui() -> rx.Component:
         # particle_hero.js auto-boots via its IIFE MutationObserver
         # and writes to window.__oParticleHero. 
         # apollo_particle_bridge.js provides window.animateParticleScroll.
-        rx.script(src="/scripts/particle_hero.js"),
-        rx.script(src="/scripts/apollo_particle_bridge.js"),
+        #rx.script(src="/scripts/particle_hero.js"),
+        #rx.script(src="/scripts/apollo_particle_bridge.js"),
         # ── Horizontal slide container ──────────────────────
         # All steps exist in a row. Only the text/forms slide
         # horizontally; the canvas stays fixed behind everything.
@@ -213,24 +54,29 @@ def auth_page_ui() -> rx.Component:
                     )
                 ),
                 width="600vw",
-                height="100vh",
                 margin="0",
                 padding="0",
                 spacing="0",
                 transform=f"translateX(calc(-100vw * {AuthState.step}))",
                 transition="transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
             ),
+            bg=rx.color_mode_cond(
+                light=BRAND_WHITE,
+                dark=BRAND_DARK,
+            ),
+            #backdrop_filter="blur(64px)",
             width="100vw",
-            height="100vh",
             overflow="hidden",
             position="relative",
             z_index="1",
         ),
+        # ── Alert Dialog para error de login (solo móvil) ───
+        rx.box(
+            _render_login_error_dialog(),
+            display=["none", "block", "block"],
+        ),
         # Root styles
         width="100vw",
-        height="100vh",
-        overflow="hidden",
-        bg="#070D1A",
     )
 
 
@@ -248,8 +94,11 @@ def step_login() -> rx.Component:
             ),
             rx.heading(
                 "Iniciar sesión",
-                color=NEUTRAL_WHITE,
-                font=FontSystem.SIZE_H2,
+                color=rx.color_mode_cond(
+                    light=BRAND_PRIMARY_100,
+                    dark=BRAND_WHITE,
+                ),
+                style=fonts.STYLE_H2,
             ),
             align="center",
             width="100%",
@@ -273,18 +122,15 @@ def step_login() -> rx.Component:
             margin_y="4",
         ),
         atom_button(
-            "Entrar",
+            "Iniciar sesión",
             disabled=(AuthState.email == "") | (AuthState.password == ""),
+            on_click=AuthState.submit_login,
             margin_top="4",
         ),
         spacing="6",
         align="start",
-        padding="2.5em 2em",
+        padding="0 2em",
         justify="center",
-        background="rgba(6, 42, 99, 0.4)",
-        backdrop_filter="blur(16px)",
-        border="1px solid rgba(255, 255, 255, 0.1)",
-        border_radius="24px",
         width="100%",
         max_width="450px",
     )
@@ -293,16 +139,29 @@ def step_login() -> rx.Component:
 # ── Step 1: Welcome / Initial ─────────────────────────────
 def step_initial() -> rx.Component:
     return rx.vstack(
-        rx.image(src="/dark-logo.svg", height="6em", margin_bottom="2em"),
+        rx.hstack(
+            rx.color_mode_cond(
+                light=rx.image(src="/light-logo.svg", height="6em", margin_bottom="4em"),
+                dark=rx.image(src="/dark-logo.svg", height="6em", margin_bottom="4em"),
+            ),
+            width="100%",
+            justify="center",
+        ),
         rx.heading(
             "Bienvenido a Apollo",
-            color=NEUTRAL_WHITE,
-            font=FontSystem.SIZE_H2,
+            color=rx.color_mode_cond(
+                light=BRAND_PRIMARY_100,
+                dark=BRAND_WHITE,
+            ),
+            style=fonts.STYLE_H2,
         ),
         rx.text(
             "Tu asistente personal potenciado por la nanotecnología de ONANO®",
-            color=NEUTRAL_WHITE,
-            font=FontSystem.SIZE_BODY,
+            color=rx.color_mode_cond(
+                light=BRAND_PRIMARY_100,
+                dark=BRAND_WHITE,
+            ),
+            style=fonts.STYLE_BODY,
             margin_bottom="1em",
         ),
         rx.vstack(
@@ -320,23 +179,18 @@ def step_initial() -> rx.Component:
             spacing="4",
             width="100%",
         ),
-        padding="0 10px",
+        padding="0 2em",
         justify="center",
-        background="rgba(6, 42, 99, 0.4)",
-        backdrop_filter="blur(16px)",
-        border="1px solid rgba(255, 255, 255, 0.1)",
-        height="120vh",
         width="100%",
-        max_width="400px",
     )
 
 
 # ── Step 2: Register Form ─────────────────────────────────
 def step_register() -> rx.Component:
-    return rx.vstack(
+    return rx.form(
         rx.hstack(
             atom_button(
-                rx.icon("chevron-left", size=24),
+                rx.icon("chevron-left", size=32),
                 on_click=AuthState.go_back,
                 variant="ghost",
                 width="auto",
@@ -345,8 +199,11 @@ def step_register() -> rx.Component:
             ),
             rx.heading(
                 "Crear cuenta",
-                color=NEUTRAL_WHITE,
-                font=FontSystem.SIZE_H2,
+                color=rx.color_mode_cond(
+                    light=BRAND_PRIMARY_100,
+                    dark=BRAND_WHITE,
+                ),
+                style=fonts.STYLE_H2,
             ),
             align="center",
             width="100%",
@@ -371,10 +228,7 @@ def step_register() -> rx.Component:
                 atom_badge("Un número", AuthState.has_number),
                 atom_badge("Un símbolo especial", AuthState.has_special),
                 atom_badge("Mínimo 8 caracteres", AuthState.is_length_valid),
-                margin_y="4",
-                padding="1.5em",
-                background="rgba(255,255,255,0.05)",
-                border_radius="16px",
+                padding_x="16px",
                 width="100%",
                 spacing="2",
             ),
@@ -388,27 +242,29 @@ def step_register() -> rx.Component:
                 "Acepto los Términos y Condiciones, autorizando el tratamiento de mis datos personales de acuerdo a la normativa legal vigente para el uso de esta plataforma.",
                 checked=AuthState.terms_accepted,
                 on_change=AuthState.set_terms_accepted,
-                color="rgba(255,255,255,0.8)",
-                font_size=FontSystem.SIZE_MICRO,
-                font_family=FontSystem.SECONDARY_FONT,
+                color=rx.color_mode_cond(
+                    light=BRAND_PRIMARY_100,
+                    dark=BRAND_WHITE,
+                ),
+                style=fonts.STYLE_MICRO,
             ),
             width="100%",
             spacing="4",
         ),
         atom_button(
             "Siguiente",
-            on_click=AuthState.submit_step1,
-            disabled=~AuthState.can_proceed_step1,
-            margin_top="4",
+            type="submit",
+            disabled=(AuthState.email == "")
+            | (AuthState.password == "")
+            | (AuthState.confirm_password == "")
+            | ~AuthState.terms_accepted,
+            margin_top="24px",
         ),
+        on_submit=AuthState.submit_step1,
         spacing="6",
         align="start",
         padding="2.5em 2em",
         justify="center",
-        background="rgba(6, 42, 99, 0.4)",
-        backdrop_filter="blur(16px)",
-        border="1px solid rgba(255, 255, 255, 0.1)",
-        border_radius="24px",
         width="100%",
         max_width="450px",
     )
@@ -417,24 +273,21 @@ def step_register() -> rx.Component:
 # ── Steps 3/5: Transition Loading ─────────────────────────
 def step_transition(title: str, subtitle: str) -> rx.Component:
     return rx.vstack(
-        rx.spinner(size="3", color=NEUTRAL_WHITE),
+        rx.spinner(size="3", color=BRAND_WHITE),
         rx.heading(
             title,
-            color=NEUTRAL_WHITE,
-            font=FontSystem.SIZE_H2,
+            color=BRAND_WHITE,
+            style=fonts.STYLE_H2,
             margin_top="4",
         ),
         rx.text(
             subtitle,
             color="rgba(255,255,255,0.7)",
-            font=FontSystem.SIZE_BODY,
+            style=fonts.STYLE_BODY,
         ),
         spacing="4",
         align="center",
-        background="rgba(6, 42, 99, 0.4)",
-        backdrop_filter="blur(10px)",
         padding="3em",
-        border_radius="1em",
     )
 
 
@@ -443,13 +296,13 @@ def step_profile() -> rx.Component:
     return rx.vstack(
         rx.heading(
             "Información personal",
-            color=NEUTRAL_WHITE,
-            font=FontSystem.SIZE_H2,
+            color=BRAND_WHITE,
+            style=fonts.STYLE_H2,
         ),
         rx.text(
             "Completa tu perfil para continuar",
             color="rgba(255,255,255,0.7)",
-            font=FontSystem.SIZE_BODY,
+            style=fonts.STYLE_BODY,
             margin_bottom="4",
         ),
         rx.vstack(
@@ -474,7 +327,7 @@ def step_profile() -> rx.Component:
         ),
         atom_button(
             "Finalizar",
-            on_click=AuthState.submit_step3,
+            type="submit",
             disabled=(AuthState.first_name == "")
             | (AuthState.last_name == "")
             | (AuthState.dob == ""),
@@ -482,10 +335,83 @@ def step_profile() -> rx.Component:
         ),
         spacing="6",
         align="start",
-        background="rgba(6, 42, 99, 0.4)",
-        backdrop_filter="blur(10px)",
         padding="3em",
-        border_radius="1em",
         width="100%",
         max_width="450px",
     )
+
+
+def _render_step(component: rx.Component) -> rx.Component:
+    """Wrapper: cada paso ocupa 100vw y está centrado verticalmente."""
+    return rx.center(
+        rx.script("""
+            // === 1. Bloquear touchmove fuera del chat ===
+            document.addEventListener('touchmove', function(e) {
+                let node = e.target;
+                while (node && node !== document.body) {
+                    if (node.classList && node.classList.contains('chat-scroll-area')) {
+                        return;
+                    }
+                    node = node.parentNode;
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            // === 2. Ajustar --app-height con visualViewport ===
+            function setAppHeight() {
+                var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                document.documentElement.style.setProperty('--app-height', vh + 'px');
+            }
+            setAppHeight();
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', setAppHeight);
+                window.visualViewport.addEventListener('scroll', function() {
+                    // Forzar scroll del viewport a 0 para evitar que iOS mueva la página
+                    window.scrollTo(0, 0);
+                });
+            }
+            window.addEventListener('resize', setAppHeight);
+        """),
+        component,
+        width="100vw",
+        height="100vh",
+        flex_shrink="0",
+        position="relative",
+    )
+
+
+def _render_login_error_dialog() -> rx.Component:
+    """Renderiza el Alert Dialog para error de login (solo móvil)."""
+    return rx.cond(
+        AuthState.show_login_error,
+        rx.dialog.root(
+            rx.dialog.content(
+                rx.dialog.title(
+                    "Error de inicio de sesión",
+                    style=fonts.STYLE_H2,
+                    margin_bottom="1em",
+                ),
+                rx.dialog.description(
+                    "No hay un registro que coincida con este correo y/o contraseña.",
+                    style=fonts.STYLE_BODY,
+                ),
+                atom_button(
+                    "Cerrar",
+                    variant="primary",
+                    height="48px",
+                    margin_top="2em",
+                    width="100%",
+                    on_click=AuthState.close_login_error,
+                ),
+                style={
+                    "padding": "2em",
+                    "max_width": "320px",
+                    "border_radius": "32px",
+                    "display": ["block", "none", "none"],
+                },
+            ),
+            open=AuthState.show_login_error,
+        ),
+    )
+
+

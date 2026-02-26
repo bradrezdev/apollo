@@ -1,11 +1,11 @@
 """Componentes del sidebar - Navegación y conversaciones"""
 
 import reflex as rx
-from Proyecto_Apollo.state import State
+from Proyecto_Apollo.modules.chat.state.chat_state import State
 from Proyecto_Apollo.styles import sidebar_styles, header_styles, colors
 
 # Import de colores personalizados
-from ...styles.colors import ApolloTheme
+from Proyecto_Apollo.styles.colors import *
 
 
 def sidebar_item(text: str, icon: str, href: str) -> rx.Component:
@@ -47,8 +47,8 @@ def conversation_item(conversation: dict) -> rx.Component:
                     style={
                         "_hover": {
                             "bg": rx.color_mode_cond(
-                                light=ApolloTheme.light_colors()["sidebar_item_hover"],
-                                dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
+                                light=BRAND_BACKGROUND_ALT,
+                                dark=BRAND_BACKGROUND_ALT
                             ),
                             "cursor": "pointer",
                         },
@@ -103,8 +103,8 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
                     "text_overflow": "ellipsis",
                     "white_space": "nowrap",
                     "color": rx.color_mode_cond(
-                        light=ApolloTheme.light_colors()["header_text_color"],
-                        dark=ApolloTheme.dark_colors()["header_text_color"]
+                        light=BRAND_TEXT_DARK,
+                        dark=BRAND_WHITE
                     ),
                 },
             ),
@@ -116,8 +116,8 @@ def conversation_item_mobile(conversation: dict) -> rx.Component:
             style={
                 "_hover": {
                     "bg": rx.color_mode_cond(
-                        light=ApolloTheme.light_colors()["sidebar_item_hover"],
-                        dark=ApolloTheme.dark_colors()["sidebar_item_hover"]
+                        light=BRAND_BACKGROUND_ALT,
+                        dark=BRAND_BACKGROUND_ALT
                     ),
                     "cursor": "pointer",
                 },
@@ -187,7 +187,7 @@ def conversations_list() -> rx.Component:
             width="100%",
         ),
         rx.divider(),
-        rx.text("Conversaciones", size="2", weight="bold", color="gray", padding_left="0.5rem"),
+        rx.text("Conversaciones", size="2", weight="bold", color=rx.color_mode_cond(light=BRAND_TEXT_DARK, dark=BRAND_WHITE), padding_left="0.5rem"),
         rx.vstack(
             rx.cond(
                 State.is_loading_conversations,

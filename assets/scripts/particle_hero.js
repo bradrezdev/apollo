@@ -23,7 +23,7 @@ function initParticleHero(canvasId, opts) {
      CONFIGURACIÓN
      ═══════════════════════════════════════════════════════ */
   var D = {
-    particleCount:   120,
+    particleCount:   50,
     clusterMin:      3,
     clusterMax:      5,
     /* Colores */
@@ -31,26 +31,26 @@ function initParticleHero(canvasId, opts) {
     cyanLight:  [61, 201, 234],   // #3DC9EA
     cyanPale:   [206, 242, 250],  // #CEF2FA
     darkBlue:   [6,  42,  99],    // #062A63
-    bg:         '#070D1A',
+    bg:         '#FFFFFF',
     /* Aglomeración */
-    agglomRadius:  0.10,
-    agglomGlow:    0.18,
+    agglomRadius:  2.5,
+    agglomGlow:    1.0,
     /* Vibración */
-    vibAmp:        2.8,
+    vibAmp:        4.8,
     vibSpeedMin:   0.6,
     vibSpeedMax:   2.0,
     /* Dispersión — semi-ejes de la elipse como fracción del canvas (W y H).
      * 📐 AJUSTE MANUAL: sube containX/containY para más expansión.
-     *    containX 0.42 = moderado | 0.54 = amplio | 0.68 = máximo
-     *    containY 0.20 = moderado | 0.32 = amplio | 0.45 = máximo      */
-    containX:      0.54,
-    containY:      0.32,
+     *    containX 0.42 (width) = moderado | 0.54 = amplio | 0.85 = máximo
+     *    containY (height) 0.20 = moderado | 0.32 = amplio | 0.65 = máximo      */
+    containX:      0.85,
+    containY:      0.65,
     /* Render */
-    glowMul:       3.5,
+    glowMul:       4.0,  // Aumentado para partículas más grandes
     connAlphaAgg:  0.055,
     connAlphaDisp: 0.22,
     /* Pulso visual */
-    pulseSpeed:    0.0012,
+    pulseSpeed:    0.012,
     pulseAmp:      0.25,
   };
 
@@ -96,7 +96,7 @@ function initParticleHero(canvasId, opts) {
   function Particle(x, y, cid) {
     this.x  = x;  this.y  = y;
     this.hx = x;  this.hy = y;  // posición home (agglomerated)
-    this.r   = rand(1.4, 4.6);
+    this.r   = rand(7, 23);  // Tamaño aumentado (era 1.4-4.6)
     this.op  = rand(0.45, 0.95);
     this.cid = cid;
     this.vPhase = Math.random() * Math.PI * 2;

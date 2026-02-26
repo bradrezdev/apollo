@@ -1,12 +1,12 @@
 """Componentes de chat - Mensajes y contenedores"""
 
 import reflex as rx
-from Proyecto_Apollo.state import State
+from Proyecto_Apollo.modules.chat.state.chat_state import State
 from Proyecto_Apollo.styles import chat_styles
-from Proyecto_Apollo.components.header.header_components import desktop_header, mobile_header
+from Proyecto_Apollo.modules.chat.components.header_components import desktop_header, mobile_header
 
 # Import de colores personalizados
-from ...styles.colors import ApolloTheme
+from Proyecto_Apollo.styles.colors import *
 
 
 def chat_message(qa: tuple[str, str]) -> rx.Component:
@@ -25,7 +25,7 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
         rx.box(
             rx.text(question, style=chat_styles.question_style), 
             text_align="right", 
-            color="white"
+            color=rx.color_mode_cond(light=BRAND_TEXT_DARK, dark=BRAND_WHITE)
         ),
         rx.box(
             rx.cond(
@@ -33,7 +33,7 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
                 # Mostrar indicador de "pensando" cuando la respuesta está vacía
                 rx.hstack(
                     rx.spinner(size="2"),
-                    rx.text("Pensando en su respuesta...", color="gray", font_size="0.9em"),
+                    rx.text("Pensando en su respuesta...", color=rx.color_mode_cond(light=BRAND_TEXT_DARK, dark=BRAND_WHITE), font_size="0.9em"),
                     align="start",
                     spacing="2",
                 ),

@@ -1,15 +1,15 @@
 """Componentes de header - Desktop y Mobile"""
 
 import reflex as rx
-from Proyecto_Apollo.state import State
+from Proyecto_Apollo.modules.chat.state.chat_state import State
 from Proyecto_Apollo.styles import header_styles, colors
-from Proyecto_Apollo.components.sidebar import (
+from Proyecto_Apollo.modules.chat.components.sidebar_components import (
     sidebar_item,
     conversations_list_mobile
 )
 
 # Importar colores
-from ...styles.colors import ApolloTheme
+from Proyecto_Apollo.styles.colors import *
 
 
 def desktop_header() -> rx.Component:

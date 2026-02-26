@@ -1,7 +1,7 @@
 """Estilos para componentes del header"""
 
 import reflex as rx
-from .colors import ApolloTheme
+from .colors import *
 from .common_styles import glassmorphism_style
 
 # === TAMAÑOS DE ICONOS ===
@@ -31,8 +31,8 @@ header_text_style = {
     "weight": "medium",
     "size": "4",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["header_text_color"],
-        dark=ApolloTheme.dark_colors()["header_text_color"]
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE
     ),
 }
 
@@ -79,8 +79,8 @@ header_mobile_title_box_style = {
 mobile_title_style = {
     "align": "center",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["header_text_color"],
-        dark=ApolloTheme.dark_colors()["header_text_color"]
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE
     ),
     "size": "4",
 }

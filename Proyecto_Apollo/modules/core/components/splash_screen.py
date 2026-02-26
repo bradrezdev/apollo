@@ -1,8 +1,8 @@
 """Componente Splash Screen - Se muestra solo en PWA/Standalone mientras carga"""
 
 import reflex as rx
-from Proyecto_Apollo.state import State
-from Proyecto_Apollo.styles.colors import ApolloTheme
+from Proyecto_Apollo.modules.chat.state.chat_state import State
+from Proyecto_Apollo.styles.colors import *
 
 def splash_screen() -> rx.Component:
     """
@@ -15,13 +15,13 @@ def splash_screen() -> rx.Component:
             rx.vstack(
                 # Aquí irá el logo de la App en el futuro
                 rx.image(src="/light-logo.svg", width="80%"),
-                rx.spinner(size="3", color=ApolloTheme.light_colors()["primary"]),
+                rx.spinner(size="3", color=rx.color_mode_cond(light=BRAND_PRIMARY_100, dark=BRAND_PRIMARY_100)),
                 spacing="4",
                 align="center",
             ),
             background_color=rx.color_mode_cond(
-                light=ApolloTheme.light_colors()["background_color"],
-                dark=ApolloTheme.dark_colors()["background_color"]
+                light=BRAND_BACKGROUND_ALT,
+                dark=BRAND_BACKGROUND_ALT
             ),
             position="fixed",
             top="0",

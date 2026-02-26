@@ -6,7 +6,7 @@ from typing import Optional
 class Messages(rx.Model, table=True):
     """
     Modelo para almacenar los mensajes de cada conversación.
-    Almacena el par pregunta-respuesta para alinearse con la estructura de chat de Reflex.
+    Almacena el par pregunta-respuesta encriptados para privacidad.
     """
     
     id: int | None = Field(default=None, primary_key=True)
@@ -15,9 +15,9 @@ class Messages(rx.Model, table=True):
     conversation_id: int = Field(foreign_key="conversations.id", index=True)
     conversation: Optional["Conversations"] = Relationship(back_populates="messages")
     
-    # Contenido del mensaje
-    question: str = Field(default="")
-    answer: str = Field(default="")
+    # Contenido del mensaje (Debe almacenarse encriptado)
+    question_encrypted: str = Field(default="")
+    answer_encrypted: str = Field(default="")
     
     # Timestamp de creación
     created_at: datetime = Field(

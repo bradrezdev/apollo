@@ -17,6 +17,14 @@
   window._apolloAnimId = null;
 
   /**
+   * Get the particle hero API, with polling retry until it boots.
+   * @returns {object|null} The API or null if not available after retries
+   */
+  function getParticleApi() {
+    return window.__oParticleHero || null;
+  }
+
+  /**
    * Smoothly interpolate the particle scrollProgress from the
    * current value to targetProgress over `duration` ms.
    *
@@ -26,15 +34,28 @@
    * @param {number} duration        animation duration in ms
    */
   window.animateParticleScroll = function (targetProgress, duration) {
-    var api = window.__oParticleHero;
+    var api = getParticleApi();
     if (!api) {
-      // Particle engine not yet booted — retry once after a short delay
-      setTimeout(function () {
-        api = window.__oParticleHero;
+      // Particle engine not yet booted — poll with exponential backoff
+      var retries = 0;
+      var maxRetries = 10;
+      var baseDelay = 50;
+      
+      function poll() {
+        api = getParticleApi();
         if (api) {
           window.animateParticleScroll(targetProgress, duration);
+          return;
         }
-      }, 200);
+        retries++;
+        if (retries < maxRetries) {
+          // Exponential backoff: 50, 100, 200, 400, 800...
+          setTimeout(poll, baseDelay * Math.pow(2, retries - 1));
+        }
+        // Silent fail after max retries — particles just won't animate
+      }
+      
+      setTimeout(poll, baseDelay);
       return;
     }
 

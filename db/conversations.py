@@ -6,11 +6,15 @@ from typing import List, Optional
 class Conversations(rx.Model, table=True):
     """
     Modelo de conversaciones del chatbot con timestamps en UTC puro.
-    Cada conversación está vinculada a un thread_id único de OpenAI.
+    Cada conversación está vinculada a un thread_id único de OpenAI y a un usuario.
     """
     
     # Clave primaria
     id: int | None = Field(default=None, primary_key=True)
+    
+    # Relación con usuario
+    user_id: Optional[int] = Field(default=None, foreign_key="users.id", index=True)
+    user: Optional["Users"] = Relationship(back_populates="conversations")
     
     # Relación con mensajes (One-to-Many)
     messages: List["Messages"] = Relationship(back_populates="conversation")
@@ -35,4 +39,4 @@ class Conversations(rx.Model, table=True):
     
     def __repr__(self) -> str:
         """Representación en string del modelo."""
-        return f"<Conversation(id={self.id}, title='{self.title}', thread_id='{self.thread_id}')>"
+        return f"<Conversation(id={self.id}, title='{self.title}', thread_id='{self.thread_id}', user_id={self.user_id})>"
