@@ -2,7 +2,7 @@ from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import reflex as rx
 from Proyecto_Apollo.config import OPENAI_API_KEY, API_ASSISTANT_ID
-from db.db_state import DBState
+from .db_state import DBState
 import asyncio
 import re
 from datetime import datetime
@@ -68,8 +68,16 @@ class State(DBState):
     
     # === VARIABLES DE UI OPTIMIZADAS ===
     auto_scroll_enabled: bool = True
-    user_name: str = "Bryan Nuñez"
-    user_email: str = "b.nunez@hotmail.es"
+    
+    @rx.var
+    def user_name(self) -> str:
+        """Obtiene el nombre de usuario desde los metadatos de Suplex"""
+        if self.user_metadata:
+            first = self.user_metadata.get("first_name", "")
+            last = self.user_metadata.get("last_name", "")
+            if first or last:
+                return f"{first} {last}".strip()
+        return "Usuario"
     
     # === VARIABLES PARA SCROLL INFINITO ===
     visible_conversations_start: int = 0
@@ -115,12 +123,14 @@ class State(DBState):
         """Carga inicial ASÍNCRONA de la aplicación"""
         print("[DEBUG] 🚀 Ejecutando State.on_load optimizado", flush=True)
         
+        if not self.user_is_authenticated:
+            print("[DEBUG] 🔒 Usuario no autenticado, redirigiendo a inicio.")
+            return rx.redirect("/")
+        
         # Iniciar carga de conversaciones en background SIN BLOQUEAR
         # Retornamos el generador asíncrono para que Reflex lo ejecute
         # El primer yield ocurre inmediatamente, permitiendo que la UI renderice
         return self.load_conversations_async()
-        
-        print("[DEBUG] ✅ UI lista inmediatamente, conversaciones cargando en background", flush=True)
     
     # === MÉTODOS DEL CHAT OPTIMIZADOS ===
     async def answer(self, form_data: dict = None):
@@ -373,10 +383,8 @@ class State(DBState):
     
     @rx.event
     def update_user_info(self, name: str, email: str):
-        """Actualiza la información del usuario"""
-        self.user_name = name
-        self.user_email = email
-        print(f"[DEBUG] 👤 Información de usuario actualizada: {name}")
+        """No-op, ya que Suplex maneja la información del usuario."""
+        print(f"[DEBUG] 👤 Intentó actualizar info de usuario (manejado por Suplex): {name}")
     
     @rx.event
     def log_context_menu_open(self, is_open: bool):

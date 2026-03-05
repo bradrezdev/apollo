@@ -2,7 +2,7 @@ import reflex as rx
 from ...styles.colors import *
 from ...styles import fonts
 
-def atom_badge(text: str, is_valid: rx.Var[bool], **kwargs) -> rx.Component:
+def badge(text: str, is_valid: rx.Var[bool], **kwargs) -> rx.Component:
     """Badge atómico para mostrar estados como validaciones."""
     return rx.hstack(
         rx.cond(

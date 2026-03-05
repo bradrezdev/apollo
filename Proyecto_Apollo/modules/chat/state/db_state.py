@@ -2,9 +2,10 @@
 
 import reflex as rx
 from sqlmodel import Session, select, text
-from db.conversations import Conversations
-from db.messages import Messages
-from db.engine import get_db_engine
+from Proyecto_Apollo.models.conversations import Conversations
+from Proyecto_Apollo.models.messages import Messages
+from Proyecto_Apollo.models.users import Users
+# engine removed
 from datetime import datetime, timezone
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
@@ -13,7 +14,9 @@ import threading
 # ⭐⭐ ThreadPool para operaciones de base de datos
 _db_executor = ThreadPoolExecutor(max_workers=3, thread_name_prefix="db_worker")
 
-class DBState(rx.State):
+from Proyecto_Apollo.modules.auth.state.auth_state import AuthState
+
+class DBState(AuthState):
     """Estado optimizado que maneja toda la lógica de base de datos de forma asíncrona"""
     
     # === VARIABLES DE CONVERSACIONES ===
@@ -27,6 +30,39 @@ class DBState(rx.State):
     _conversations_cache: dict[int, dict] = {}  # Cache en memoria
     _last_conversations_load: datetime | None = None
     _conversations_loaded: bool = False
+
+    local_user_id: int | None = None
+    
+    def sync_user_sync(self):
+        """Sincroniza el usuario de Supabase Auth con la base de datos local."""
+        if not self.user_is_authenticated or not self.user_id:
+            return None
+            
+        try:
+            with rx.session() as session:
+                statement = select(Users).where(Users.supabase_uid == self.user_id)
+                user = session.exec(statement).first()
+                if user:
+                    return user.id
+                
+                # Crear nuevo usuario si no existe
+                new_user = Users(
+                    supabase_uid=self.user_id,
+                    correo=self.user_email or "",
+                    nombre=self.user_metadata.get("first_name", "") if self.user_metadata else "",
+                    apellido=self.user_metadata.get("last_name", "") if self.user_metadata else "",
+                    fecha_de_nacimiento="N/A",
+                    password_hash=""
+                )
+                session.add(new_user)
+                session.commit()
+                session.refresh(new_user)
+                print(f"[DEBUG] 👤 Usuario sincronizado localmente con ID: {new_user.id}")
+                return new_user.id
+        except Exception as e:
+            print(f"[ERROR] ❌ Error sincronizando usuario: {e}")
+            return None
+
     
     # === MÉTODOS DE INICIALIZACIÓN ASÍNCRONOS ===
     async def on_load(self):
@@ -57,11 +93,16 @@ class DBState(rx.State):
         yield  # ⭐ Permitir que UI muestre spinner inmediatamente
         
         try:
+            # Sincronizar usuario antes de cargar
+            if not self.local_user_id:
+                self.local_user_id = self.sync_user_sync()
+            
             # ⭐ Ejecutar en thread separado para no bloquear
             loop = asyncio.get_event_loop()
             conversations_data = await loop.run_in_executor(
                 _db_executor,
-                self._load_conversations_sync
+                self._load_conversations_sync,
+                self.local_user_id
             )
             
             if conversations_data:
@@ -84,20 +125,22 @@ class DBState(rx.State):
             self.is_loading_conversations = False
             yield
     
-    def _load_conversations_sync(self) -> list[dict]:
+    def _load_conversations_sync(self, user_id: int | None = None) -> list[dict]:
         """
         Método síncrono que se ejecuta en thread separado
         Contiene toda la lógica pesada de base de datos
         """
         try:
             start_time = datetime.now(timezone.utc)
-            engine = get_db_engine()
             
-            print(f"[DEBUG] 🔌 Conectando a BD (pool: {engine.pool.size()})", flush=True)
+            print(f"[DEBUG] 🔌 Conectando a BD", flush=True)
             
-            with Session(engine) as session:
+            with rx.session() as session:
                 # ⭐ CONSULTA OPTIMIZADA CON ÍNDICE
-                statement = select(Conversations).order_by(Conversations.updated_at.desc())
+                statement = select(Conversations)
+                if user_id:
+                    statement = statement.where(Conversations.user_id == user_id)
+                statement = statement.order_by(Conversations.updated_at.desc())
                 results = session.exec(statement).all()
                 
                 query_time = (datetime.now(timezone.utc) - start_time).total_seconds()
@@ -157,11 +200,16 @@ class DBState(rx.State):
         try:
             # Ejecutar en thread separado
             loop = asyncio.get_event_loop()
+            
+            if not self.local_user_id:
+                self.local_user_id = self.sync_user_sync()
+                
             conversation_id = await loop.run_in_executor(
                 _db_executor,
                 self._create_conversation_sync,
                 thread_id,
-                title
+                title,
+                self.local_user_id
             )
             
             if conversation_id:
@@ -176,13 +224,14 @@ class DBState(rx.State):
             traceback.print_exc()
             return None
     
-    def _create_conversation_sync(self, thread_id: str, title: str) -> int | None:
+    def _create_conversation_sync(self, thread_id: str, title: str, user_id: int | None = None) -> int | None:
         """Método síncrono para crear conversación"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 conversation = Conversations(
                     thread_id=thread_id,
-                    title=title
+                    title=title,
+                    user_id=user_id
                 )
                 session.add(conversation)
                 session.commit()
@@ -213,10 +262,11 @@ class DBState(rx.State):
         """Método compatible para creación síncrona (mantener para compatibilidad)"""
         # Nota: Este método bloquea. Mejor usar create_new_conversation_async
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 conversation = Conversations(
                     thread_id=thread_id,
-                    title=title
+                    title=title,
+                    user_id=self.local_user_id
                 )
                 session.add(conversation)
                 session.commit()
@@ -280,7 +330,7 @@ class DBState(rx.State):
     def _load_conversation_by_id_sync(self, conversation_id: int) -> dict | None:
         """Método síncrono para cargar conversación por ID"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -310,7 +360,7 @@ class DBState(rx.State):
         
         # Si no está en cache, cargar síncronamente (puede bloquear)
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -365,7 +415,7 @@ class DBState(rx.State):
     def _update_conversation_title_sync(self, conversation_id: int, new_title: str):
         """Método síncrono para actualizar título"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -383,7 +433,7 @@ class DBState(rx.State):
     def update_conversation_title(self, conversation_id: int, new_title: str):
         """Método original mantenido para compatibilidad"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -424,7 +474,7 @@ class DBState(rx.State):
     def _update_conversation_timestamp_sync(self, conversation_id: int):
         """Método síncrono para actualizar timestamp"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -441,7 +491,7 @@ class DBState(rx.State):
     def update_conversation_timestamp(self, conversation_id: int):
         """Método original mantenido para compatibilidad"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -489,7 +539,7 @@ class DBState(rx.State):
     def _delete_conversation_sync(self, conversation_id: int):
         """Método síncrono para eliminar conversación"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -507,7 +557,7 @@ class DBState(rx.State):
     def delete_conversation(self, conversation_id: int):
         """Método original mantenido para compatibilidad"""
         try:
-            with Session(get_db_engine()) as session:
+            with rx.session() as session:
                 statement = select(Conversations).where(Conversations.id == conversation_id)
                 conversation = session.exec(statement).first()
                 
@@ -568,11 +618,11 @@ class DBState(rx.State):
 
     def add_message(self, conversation_id: int, question: str, answer: str):
         """Guarda un mensaje en la base de datos (Síncrono para ThreadPool)"""
-        with Session(get_db_engine()) as session:
+        with rx.session() as session:
             message = Messages(
                 conversation_id=conversation_id,
-                question=question,
-                answer=answer
+                question_encrypted=question,
+                answer_encrypted=answer
             )
             session.add(message)
             session.commit()
@@ -593,15 +643,15 @@ class DBState(rx.State):
 
     def get_messages(self, conversation_id: int) -> list[dict]:
         """Obtiene mensajes de una conversación (Síncrono)"""
-        with Session(get_db_engine()) as session:
+        with rx.session() as session:
             statement = select(Messages).where(
                 Messages.conversation_id == conversation_id
             ).order_by(Messages.created_at)
             results = session.exec(statement).all()
             return [
                 {
-                    "question": msg.question, 
-                    "answer": msg.answer, 
+                    "question": msg.question_encrypted, 
+                    "answer": msg.answer_encrypted, 
                     "created_at": msg.created_at
                 } 
                 for msg in results
@@ -622,8 +672,7 @@ def warmup_database_connection():
     print("[DEBUG] 🔥 Precalentando conexión a BD en background...", flush=True)
     try:
         # Solo crear una conexión simple para activar el pool
-        engine = get_db_engine()
-        with Session(engine) as session:
+        with rx.session() as session:
             # Usar text() para consultas SQL crudas
             session.execute(text("SELECT 1"))
         print("[DEBUG] ✅ Conexión precalentada", flush=True)

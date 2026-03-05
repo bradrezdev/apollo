@@ -10,6 +10,10 @@ print("[DEBUG] Cargando módulo Proyecto_Apollo.py", flush=True)
 
 import reflex as rx
 
+# Import models so reflex detects them
+import Proyecto_Apollo.models
+
+
 # Importar páginas
 from Proyecto_Apollo.modules.auth.pages.auth_page import auth_page_ui
 from Proyecto_Apollo.modules.auth.state.auth_state import AuthState

@@ -1,7 +1,11 @@
 import reflex as rx
 from sqlmodel import Field, func, Relationship
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .users import Users
+    from .messages import Messages
 
 class Conversations(rx.Model, table=True):
     """

@@ -3,7 +3,7 @@ from ...styles.colors import *
 from ...styles import fonts
 from typing import Any
 
-def atom_button(text: str | rx.Component, on_click: Any = None, variant: str = "primary", width="100%", **kwargs) -> rx.Component:
+def button(text: str | rx.Component, on_click: Any = None, variant: str = "primary", width="100%", **kwargs) -> rx.Component:
     """Botón atómico reutilizable que sigue el Design System."""
     
     # Base styling

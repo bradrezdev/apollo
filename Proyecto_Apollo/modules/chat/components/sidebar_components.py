@@ -263,14 +263,29 @@ def conversations_list_mobile() -> rx.Component:
 def user_profile_section() -> rx.Component:
     """Sección de perfil de usuario en el sidebar"""
     return rx.hstack(
-        rx.icon_button(rx.icon("user"), size="3", radius="full"),
-        rx.vstack(
-            rx.box(
-                rx.text(State.user_name, style=sidebar_styles.user_name_style),
-                rx.text(State.user_email, style=sidebar_styles.user_email_style),
-                **sidebar_styles.user_info_container_style,
+        rx.hstack(
+            rx.icon_button(rx.icon("user"), size="3", radius="full"),
+            rx.vstack(
+                rx.box(
+                    rx.text(State.user_name, style=sidebar_styles.user_name_style),
+                    rx.text(State.user_email, style=sidebar_styles.user_email_style),
+                    **sidebar_styles.user_info_container_style,
+                ),
             ),
+            width="100%",
         ),
+        rx.icon_button(
+            rx.icon("log-out"),
+            size="2",
+            variant="ghost",
+            color_scheme="red",
+            on_click=State.handle_logout,
+            cursor="pointer",
+            title="Cerrar sesión"
+        ),
+        width="100%",
+        justify="between",
+        align="center",
     )
 
 
@@ -375,7 +390,7 @@ def desktop_sidebar() -> rx.Component:
         rx.vstack(
             rx.image(**sidebar_styles.logo_style),
             conversations_list(),
-            #user_profile_section(),
+            user_profile_section(),
             **sidebar_styles.sidebar_style,
         ),
     )

@@ -1,5 +1,5 @@
 import reflex as rx
-from Proyecto_Apollo.components.ui import atom_button, atom_input, atom_badge, atom_toast, atom_alert_dialog
+from Proyecto_Apollo.components.ui import button, input, badge, toast, alert_dialog, dialog
 
 class TestingAtomsState(rx.State):
     """Estado para la página de testing de átomos."""
@@ -11,7 +11,7 @@ class TestingAtomsState(rx.State):
         self.is_valid = len(value) > 3
         
     def show_toast(self):
-        return rx.toast("Esto es un Toast de prueba desde el state", position="bottom-right")
+        return toast.success("Esto es un Toast de prueba desde el state", position="bottom-right")
 
 def testing_atoms_page() -> rx.Component:
     return rx.box(
@@ -23,9 +23,9 @@ def testing_atoms_page() -> rx.Component:
             
             rx.heading("Botones", size="6", margin_bottom="10px"),
             rx.hstack(
-                atom_button("Primary Button", variant="primary", width="200px"),
-                atom_button("Outline Button", variant="outline", width="200px"),
-                atom_button("Ghost Button", variant="ghost", width="200px"),
+                button("Primary Button", variant="primary", width="200px"),
+                button("Outline Button", variant="outline", width="200px"),
+                button("Ghost Button", variant="ghost", width="200px"),
                 spacing="4"
             ),
             
@@ -33,7 +33,7 @@ def testing_atoms_page() -> rx.Component:
             
             rx.heading("Inputs", size="6", margin_bottom="10px"),
             rx.vstack(
-                atom_input(
+                input(
                     placeholder="Escribe algo (>3 chars para validar)", 
                     value=TestingAtomsState.test_value,
                     on_change=TestingAtomsState.validate_input
@@ -46,7 +46,7 @@ def testing_atoms_page() -> rx.Component:
             
             rx.heading("Badges / Validadores", size="6", margin_bottom="10px"),
             rx.hstack(
-                atom_badge("Validación en tiempo real", is_valid=TestingAtomsState.is_valid),
+                badge("Validación en tiempo real", TestingAtomsState.is_valid),
                 spacing="4"
             ),
             
@@ -54,11 +54,13 @@ def testing_atoms_page() -> rx.Component:
             
             rx.heading("Toasts", size="6", margin_bottom="10px"),
             rx.vstack(
-                rx.button("Mostrar Toast (rx.toast)", on_click=TestingAtomsState.show_toast),
-                rx.text("UI del Toast Atómico (para maquetación/referencia):"),
-                atom_toast("Operación exitosa", type="success"),
-                atom_toast("Aviso de información", type="info"),
-                atom_toast("Ha ocurrido un error", type="error"),
+                button("Mostrar Toast (rx.toast)", on_click=TestingAtomsState.show_toast),
+                rx.text("Haz clic para probar los Toasts Atómicos y personalizables:"),
+                button("Custom Toast General", on_click=toast("Registro exitoso", bg_color=rx.color_mode_cond(light="#5a228b", dark="#ffffff"), color=rx.color_mode_cond(light="white", dark="#5a228b"), close_button=True)),
+                button("Operación exitosa", on_click=toast.success("Operación exitosa",)),
+                button("Error en operación", on_click=toast.error("Ha ocurrido un error")),
+                button("Advertencia", on_click=toast.warning("Ten cuidado con esta acción")),
+                button("Información", on_click=toast.info("Este es un mensaje informativo")),
                 spacing="4",
                 align_items="flex-start"
             ),
@@ -66,9 +68,13 @@ def testing_atoms_page() -> rx.Component:
             rx.divider(margin_y="20px"),
             
             rx.heading("Alert Dialogs", size="6", margin_bottom="10px"),
-            atom_alert_dialog(
+            alert_dialog(
                 title="Alerta de prueba",
                 description="Puedes usarla para confirmar acciones destructivas.",
+            ),
+            dialog(
+                title="Diálogo de prueba",
+                description="Este es un diálogo más genérico, sin opciones de confirmación específicas.",
             ),
             
             padding="40px",

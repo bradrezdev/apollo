@@ -3,7 +3,7 @@ from ...styles.colors import *
 from ...styles import fonts
 from typing import Any
 
-def atom_input(placeholder: str, value: str | rx.Var[str], on_change: Any = None, type: str = "text", **kwargs) -> rx.Component:
+def input(placeholder: str, value: str | rx.Var[str], on_change: Any = None, type: str = "text", **kwargs) -> rx.Component:
     """Input atómico reutilizable."""
     return rx.input(
         placeholder=placeholder,

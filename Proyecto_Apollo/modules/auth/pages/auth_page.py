@@ -1,7 +1,7 @@
 import reflex as rx
 from Proyecto_Apollo.styles.colors import *
 from Proyecto_Apollo.styles import fonts
-from Proyecto_Apollo.components.ui import atom_button, atom_input, atom_badge
+from Proyecto_Apollo.components.ui import button, input, badge
 from ..state.auth_state import AuthState
 
 def auth_page_ui() -> rx.Component:
@@ -84,7 +84,7 @@ def auth_page_ui() -> rx.Component:
 def step_login() -> rx.Component:
     return rx.vstack(
         rx.hstack(
-            atom_button(
+            button(
                 rx.icon("chevron-right", size=24),
                 on_click=AuthState.go_back,
                 variant="ghost",
@@ -105,13 +105,13 @@ def step_login() -> rx.Component:
             spacing="2",
         ),
         rx.vstack(
-            atom_input(
+            input(
                 placeholder="Correo electrónico",
                 type="email",
                 value=AuthState.email,
                 on_change=AuthState.set_email,
             ),
-            atom_input(
+            input(
                 placeholder="Contraseña",
                 type="password",
                 value=AuthState.password,
@@ -121,7 +121,7 @@ def step_login() -> rx.Component:
             spacing="4",
             margin_y="4",
         ),
-        atom_button(
+        button(
             "Iniciar sesión",
             disabled=(AuthState.email == "") | (AuthState.password == ""),
             on_click=AuthState.submit_login,
@@ -142,7 +142,7 @@ def step_initial() -> rx.Component:
         rx.hstack(
             rx.color_mode_cond(
                 light=rx.image(src="/light-logo.svg", height="6em", margin_bottom="4em"),
-                dark=rx.image(src="/dark-logo.svg", height="6em", margin_bottom="4em"),
+                dark=rx.image(src="/dark-logo1.svg", height="6em", margin_bottom="4em"),
             ),
             width="100%",
             justify="center",
@@ -165,12 +165,12 @@ def step_initial() -> rx.Component:
             margin_bottom="1em",
         ),
         rx.vstack(
-            atom_button(
+            button(
                 "Iniciar sesión",
                 on_click=AuthState.go_to_login,
                 variant="outline",
             ),
-            atom_button(
+            button(
                 "Registrarse",
                 on_click=AuthState.go_to_register,
                 variant="primary",
@@ -189,7 +189,7 @@ def step_initial() -> rx.Component:
 def step_register() -> rx.Component:
     return rx.form(
         rx.hstack(
-            atom_button(
+            button(
                 rx.icon("chevron-left", size=32),
                 on_click=AuthState.go_back,
                 variant="ghost",
@@ -210,29 +210,29 @@ def step_register() -> rx.Component:
             spacing="2",
         ),
         rx.vstack(
-            atom_input(
+            input(
                 placeholder="Correo electrónico",
                 type="email",
                 value=AuthState.email,
                 on_change=AuthState.set_email,
             ),
-            atom_input(
+            input(
                 placeholder="Contraseña",
                 type="password",
                 value=AuthState.password,
                 on_change=AuthState.set_password,
             ),
             rx.box(
-                atom_badge("Una letra minúscula", AuthState.has_lowercase),
-                atom_badge("Una letra mayúscula", AuthState.has_uppercase),
-                atom_badge("Un número", AuthState.has_number),
-                atom_badge("Un símbolo especial", AuthState.has_special),
-                atom_badge("Mínimo 8 caracteres", AuthState.is_length_valid),
+                badge("Una letra minúscula", AuthState.has_lowercase),
+                badge("Una letra mayúscula", AuthState.has_uppercase),
+                badge("Un número", AuthState.has_number),
+                badge("Un símbolo especial", AuthState.has_special),
+                badge("Mínimo 8 caracteres", AuthState.is_length_valid),
                 padding_x="16px",
                 width="100%",
                 spacing="2",
             ),
-            atom_input(
+            input(
                 placeholder="Confirmar contraseña",
                 type="password",
                 value=AuthState.confirm_password,
@@ -251,7 +251,7 @@ def step_register() -> rx.Component:
             width="100%",
             spacing="4",
         ),
-        atom_button(
+        button(
             "Siguiente",
             type="submit",
             disabled=(AuthState.email == "")
@@ -293,30 +293,44 @@ def step_transition(title: str, subtitle: str) -> rx.Component:
 
 # ── Step 4: Profile Form ──────────────────────────────────
 def step_profile() -> rx.Component:
-    return rx.vstack(
-        rx.heading(
-            "Información personal",
-            color=BRAND_WHITE,
-            style=fonts.STYLE_H2,
+    return rx.form(
+        rx.hstack(
+            button(
+                rx.icon("chevron-left", size=32),
+                # Regresa al paso 2 (registro) para que el usuario pueda editar email/contraseña si quiere.
+                on_click=AuthState.go_to_register,
+                variant="ghost",
+                width="auto",
+                padding="0.5em",
+                border_radius="50%",
+            ),
+            rx.heading(
+                "Información personal",
+                color=BRAND_WHITE,
+                style=fonts.STYLE_H2,
+            ),
+            align="center",
+            width="100%",
+            spacing="2",
         ),
         rx.text(
             "Completa tu perfil para continuar",
             color="rgba(255,255,255,0.7)",
             style=fonts.STYLE_BODY,
-            margin_bottom="4",
+            margin_bottom="16px",
         ),
         rx.vstack(
-            atom_input(
-                placeholder="Nombre",
+            input(
+                placeholder="Nombre(s)",
                 value=AuthState.first_name,
                 on_change=AuthState.set_first_name,
             ),
-            atom_input(
-                placeholder="Apellido",
+            input(
+                placeholder="Apellido(s)",
                 value=AuthState.last_name,
                 on_change=AuthState.set_last_name,
             ),
-            atom_input(
+            input(
                 placeholder="Fecha de nacimiento",
                 type="date",
                 value=AuthState.dob,
@@ -325,15 +339,15 @@ def step_profile() -> rx.Component:
             width="100%",
             spacing="4",
         ),
-        atom_button(
+        button(
             "Finalizar",
             type="submit",
             disabled=(AuthState.first_name == "")
             | (AuthState.last_name == "")
             | (AuthState.dob == ""),
-            margin_top="4",
+            margin_top="32px",
         ),
-        spacing="6",
+        on_submit=AuthState.submit_step3,
         align="start",
         padding="3em",
         width="100%",
@@ -395,7 +409,7 @@ def _render_login_error_dialog() -> rx.Component:
                     "No hay un registro que coincida con este correo y/o contraseña.",
                     style=fonts.STYLE_BODY,
                 ),
-                atom_button(
+                button(
                     "Cerrar",
                     variant="primary",
                     height="48px",
