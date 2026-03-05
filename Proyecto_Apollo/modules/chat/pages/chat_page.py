@@ -83,7 +83,7 @@ def chat_page() -> rx.Component:
             user_name=State.user_name,
             user_email=State.user_email,
             is_open=State.is_profile_drawer_open,
-            on_open_change=State.toggle_profile_drawer,
+            on_open_change=State.set_profile_drawer_open,
             on_logout=State.handle_logout,
         ),
         height="var(--app-height, 100dvh)",

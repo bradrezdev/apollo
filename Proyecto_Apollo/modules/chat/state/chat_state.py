@@ -388,17 +388,14 @@ class State(DBState):
     
     # === MÉTODOS DE UI ===
     @rx.event
-    def toggle_profile_drawer(self, value: bool | None = None):
-        """Abre o cierra el drawer de perfil de usuario.
-        
-        Args:
-            value: Si se pasa un bool, lo usa directamente (para on_open_change).
-                   Si es None, alterna el estado actual.
-        """
-        if value is None:
-            self.is_profile_drawer_open = not self.is_profile_drawer_open
-        else:
-            self.is_profile_drawer_open = value
+    def toggle_profile_drawer(self):
+        """Alterna el drawer de perfil (usado en on_click — sin argumentos)."""
+        self.is_profile_drawer_open = not self.is_profile_drawer_open
+
+    @rx.event
+    def set_profile_drawer_open(self, value: bool):
+        """Abre o cierra el drawer de perfil (usado en on_open_change del drawer)."""
+        self.is_profile_drawer_open = value
 
     @rx.event
     def toggle_auto_scroll(self):
