@@ -206,23 +206,62 @@ class AuthState(Suplex):
             return None
 
     def sign_in_user(self, email: str, password: str):
-        """Inicia sesión en Supabase Auth usando Suplex."""
+        """Inicia sesión en Supabase Auth usando Suplex.
+        
+        NOTA: sign_in_with_password() guarda los tokens en cookies y retorna
+        el dict completo de Supabase con access_token, user.id, user.email, etc.
+        Extraemos el UID directamente del response (igual que sign_up) para no
+        depender de que el JWT decodifique correctamente con jwt_secret.
+        """
         try:
             email_clean = email.strip()
             password_clean = password.strip()
-            self.sign_in_with_password(email=email_clean, password=password_clean)
-            if self.user_is_authenticated:
+            result = self.sign_in_with_password(email=email_clean, password=password_clean)
+            
+            # sign_in_with_password retorna el dict completo: access_token, user, etc.
+            # Extraemos el UID directamente del response, sin depender de self.user_id
+            # (que requiere que el JWT se decodifique correctamente con jwt_secret)
+            supabase_uid = None
+            user_email = email_clean
+            first_name = ""
+            last_name = ""
+            
+            if isinstance(result, dict):
+                user_obj = result.get("user") or {}
+                supabase_uid = user_obj.get("id") or result.get("id")
+                user_email = user_obj.get("email", email_clean)
+                meta = user_obj.get("user_metadata") or {}
+                first_name = meta.get("first_name", "")
+                last_name = meta.get("last_name", "")
+            
+            if supabase_uid:
                 user_data = {
-                    "id": self.user_id,
-                    "email": self.user_email,
-                    "first_name": self.user_metadata.get("first_name", "") if self.user_metadata else "",
-                    "last_name": self.user_metadata.get("last_name", "") if self.user_metadata else "",
+                    "id": supabase_uid,
+                    "email": user_email,
+                    "first_name": first_name,
+                    "last_name": last_name,
                 }
+                print(f"[AUTH] Login exitoso - uid={supabase_uid}, email={user_email}")
                 return True, "Login exitoso", user_data
             else:
-                return False, "Credenciales inválidas", None
+                # Los tokens se guardaron pero no pudimos extraer el UID del response
+                # Intentamos con self.user_id como último recurso
+                fallback_uid = self.user_id
+                if fallback_uid:
+                    user_data = {
+                        "id": fallback_uid,
+                        "email": self.user_email or email_clean,
+                        "first_name": self.user_metadata.get("first_name", "") if self.user_metadata else "",
+                        "last_name": self.user_metadata.get("last_name", "") if self.user_metadata else "",
+                    }
+                    print(f"[AUTH] Login exitoso (fallback via JWT) - uid={fallback_uid}")
+                    return True, "Login exitoso", user_data
+                else:
+                    print(f"[AUTH] WARN: sign_in_with_password retornó 200 pero no se pudo extraer UID. result={result}")
+                    return False, "Credenciales inválidas", None
         except Exception as e:
             error_msg = str(e).lower()
+            print(f"[AUTH] Error en sign_in: {error_msg}")
             if "invalid login credentials" in error_msg or "invalid" in error_msg:
                 return False, "Email o contraseña incorrectos", None
             elif "email not confirmed" in error_msg:
@@ -314,15 +353,18 @@ class AuthState(Suplex):
         success, message, user_data = self.sign_in_user(self.email, self.password)
         
         if success:
-            # Sincronizar usuario con tabla local (por si no existe aún)
+            # Sincronizar usuario con tabla local y guardar el ID local en estado
             if user_data and user_data.get("id"):
-                self.sync_user_to_local_db(
+                local_id = self.sync_user_to_local_db(
                     supabase_uid=user_data["id"],
                     email=user_data.get("email", self.email.strip()),
                     first_name=user_data.get("first_name", ""),
                     last_name=user_data.get("last_name", ""),
                     dob="N/A",
                 )
+                if local_id:
+                    self.local_user_id = local_id
+                    print(f"[AUTH] local_user_id establecido: {local_id}")
             
             self.step = 3
             yield rx.call_script("if(window.animateParticleScroll){ window.animateParticleScroll(0.2, 800); }")
@@ -375,6 +417,7 @@ class AuthState(Suplex):
         )
         
         if local_user_id:
+            self.local_user_id = local_user_id
             print(f"[AUTH] PASO 2 OK: Usuario en tabla users - local_id={local_user_id}")
         else:
             print(f"[AUTH] PASO 2 WARN: sync_user_to_local_db retornó None")
