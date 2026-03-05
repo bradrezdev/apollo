@@ -5,6 +5,8 @@ from ..components.chat_components import responsive_chat_container
 from ..components.sidebar_components import desktop_sidebar, edit_conversation_dialog, delete_conversation_dialog
 from ...core.components.splash_screen import splash_screen
 from ..components.header_components import mobile_header
+from ..state.chat_state import State
+from Proyecto_Apollo.components.ui import user_profile_drawer
 
 def unified_view() -> rx.Component:
     """Vista unificada y responsiva para todos los dispositivos"""
@@ -77,6 +79,13 @@ def chat_page() -> rx.Component:
         unified_view(),
         edit_conversation_dialog(),
         delete_conversation_dialog(),
+        user_profile_drawer(
+            user_name=State.user_name,
+            user_email=State.user_email,
+            is_open=State.is_profile_drawer_open,
+            on_open_change=State.toggle_profile_drawer,
+            on_logout=State.handle_logout,
+        ),
         height="var(--app-height, 100dvh)",
         overflow="hidden",
     )

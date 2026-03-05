@@ -43,6 +43,11 @@ class AuthState(Suplex):
     final_message: str = "Preparando tu asistente personal"
 
     def on_load(self):
+        # Si el usuario ya tiene sesión activa, redirigir a /chat
+        # Evita que un usuario autenticado vea el formulario de login innecesariamente
+        if self.access_token:
+            return rx.redirect("/chat")
+        
         self.step = 1
         self.email = ""
         self.password = ""

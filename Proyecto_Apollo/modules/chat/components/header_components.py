@@ -7,6 +7,7 @@ from Proyecto_Apollo.modules.chat.components.sidebar_components import (
     sidebar_item,
     conversations_list_mobile
 )
+from Proyecto_Apollo.components.ui import user_profile_drawer, user_profile_trigger
 
 # Importar colores
 from Proyecto_Apollo.styles.colors import *
@@ -53,35 +54,12 @@ def mobile_drawer_content() -> rx.Component:
         conversations_list_mobile(),
         rx.divider(),
         rx.spacer(),
-        # Sección inferior del drawer
-        # rx.vstack(
-        #     rx.vstack(
-        #         sidebar_item("Settings", "settings", "/#"),
-        #         sidebar_item("Log out", "log-out", "/#"),
-        #         spacing="1",
-        #         width="100%",
-        #     ),
-        #     rx.divider(margin="0"),
-        #     rx.hstack(
-        #         rx.icon_button(rx.icon("user"), size="3", radius="full"),
-        #         rx.vstack(
-        #             rx.box(
-        #                 rx.text("My account", style=header_styles.user_name_style),
-        #                 rx.text("user@reflex.dev", size="2", weight="medium"),
-        #                 width="100%",
-        #             ),
-        #             spacing="0",
-        #             justify="start",
-        #             width="100%",
-        #         ),
-        #         padding_x="0.5rem",
-        #         align="center",
-        #         justify="start",
-        #         width="100%",
-        #     ),
-        #     spacing="5",
-        #     width="100%",
-        # ),
+        # Sección de perfil de usuario (trigger para abrir el profile drawer)
+        user_profile_trigger(
+            user_name=State.user_name,
+            user_email=State.user_email,
+            on_click=State.toggle_profile_drawer,
+        ),
         spacing="5",
         width="100%",
     )

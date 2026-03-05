@@ -3,6 +3,7 @@
 import reflex as rx
 from Proyecto_Apollo.modules.chat.state.chat_state import State
 from Proyecto_Apollo.styles import sidebar_styles, header_styles, colors
+from Proyecto_Apollo.components.ui import user_profile_trigger
 
 # Import de colores personalizados
 from Proyecto_Apollo.styles.colors import *
@@ -261,31 +262,11 @@ def conversations_list_mobile() -> rx.Component:
 
 
 def user_profile_section() -> rx.Component:
-    """Sección de perfil de usuario en el sidebar"""
-    return rx.hstack(
-        rx.hstack(
-            rx.icon_button(rx.icon("user"), size="3", radius="full"),
-            rx.vstack(
-                rx.box(
-                    rx.text(State.user_name, style=sidebar_styles.user_name_style),
-                    rx.text(State.user_email, style=sidebar_styles.user_email_style),
-                    **sidebar_styles.user_info_container_style,
-                ),
-            ),
-            width="100%",
-        ),
-        rx.icon_button(
-            rx.icon("log-out"),
-            size="2",
-            variant="ghost",
-            color_scheme="red",
-            on_click=State.handle_logout,
-            cursor="pointer",
-            title="Cerrar sesión"
-        ),
-        width="100%",
-        justify="between",
-        align="center",
+    """Sección de perfil de usuario en el sidebar (trigger para profile drawer)"""
+    return user_profile_trigger(
+        user_name=State.user_name,
+        user_email=State.user_email,
+        on_click=State.toggle_profile_drawer,
     )
 
 

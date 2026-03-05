@@ -68,6 +68,7 @@ class State(DBState):
     
     # === VARIABLES DE UI OPTIMIZADAS ===
     auto_scroll_enabled: bool = True
+    is_profile_drawer_open: bool = False
     
     @rx.var
     def user_name(self) -> str:
@@ -121,15 +122,28 @@ class State(DBState):
     # === MÉTODOS DE INICIALIZACIÓN OPTIMIZADOS ===
     async def on_load(self):
         """Carga inicial ASÍNCRONA de la aplicación"""
-        print("[DEBUG] 🚀 Ejecutando State.on_load optimizado", flush=True)
+        print("[DEBUG] Ejecutando State.on_load optimizado", flush=True)
         
-        # Verificar autenticación por cookie (access_token) en lugar de JWT decode.
-        # user_is_authenticated depende de claims que requiere decodificar el JWT
-        # con HS256, pero el proyecto usa ECC P-256 (ES256). Usar access_token
-        # como indicador directo de sesión activa es más confiable.
+        # ── Auth guard con soporte de refresh ──────────────────────
+        # 1. Si hay access_token, la sesión está activa → continuar
+        # 2. Si no hay access_token pero sí refresh_token → intentar renovar
+        # 3. Sin ningún token → redirigir a login
         if not self.access_token:
-            print("[DEBUG] 🔒 No hay access_token, redirigiendo a inicio.")
-            return rx.redirect("/")
+            if self.refresh_token:
+                print("[DEBUG] No hay access_token, intentando refresh con refresh_token...", flush=True)
+                try:
+                    self.refresh_session()
+                    if self.access_token:
+                        print("[DEBUG] Sesión renovada exitosamente via refresh_token", flush=True)
+                    else:
+                        print("[DEBUG] refresh_session no restauró el access_token", flush=True)
+                        return rx.redirect("/")
+                except Exception as e:
+                    print(f"[DEBUG] refresh_session falló: {e}", flush=True)
+                    return rx.redirect("/")
+            else:
+                print("[DEBUG] No hay access_token ni refresh_token, redirigiendo a inicio.", flush=True)
+                return rx.redirect("/")
         
         # Iniciar carga de conversaciones en background SIN BLOQUEAR
         # Retornamos el generador asíncrono para que Reflex lo ejecute
@@ -373,6 +387,19 @@ class State(DBState):
         self.visible_conversations_end = 20
     
     # === MÉTODOS DE UI ===
+    @rx.event
+    def toggle_profile_drawer(self, value: bool | None = None):
+        """Abre o cierra el drawer de perfil de usuario.
+        
+        Args:
+            value: Si se pasa un bool, lo usa directamente (para on_open_change).
+                   Si es None, alterna el estado actual.
+        """
+        if value is None:
+            self.is_profile_drawer_open = not self.is_profile_drawer_open
+        else:
+            self.is_profile_drawer_open = value
+
     @rx.event
     def toggle_auto_scroll(self):
         """Alterna el scroll automático"""

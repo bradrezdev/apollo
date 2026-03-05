@@ -67,19 +67,35 @@ class CustomToastWrapper:
 
     def success(self, message: str | rx.Var[str], close_button: bool = True, **kwargs):
         """Toast de éxito."""
-        return self._create_toast(message, "success", close_button, None, color="#2e7d32", **kwargs)
+        return self._create_toast(
+            message, "success", close_button, None,
+            color=rx.color_mode_cond(light=BRAND_SUCCESS, dark=BRAND_SUCCESS_LIGHT),
+            **kwargs,
+        )
 
     def error(self, message: str | rx.Var[str], close_button: bool = True, **kwargs):
         """Toast de error."""
-        return self._create_toast(message, "error", close_button, None, color="#2D0607", **kwargs)
+        return self._create_toast(
+            message, "error", close_button, None,
+            color=rx.color_mode_cond(light=BRAND_ERROR, dark=BRAND_ERROR_LIGHT),
+            **kwargs,
+        )
 
     def warning(self, message: str | rx.Var[str], close_button: bool = True, **kwargs):
         """Toast de advertencia."""
-        return self._create_toast(message, "warning", close_button, None, color="#ed6c02", **kwargs)
+        return self._create_toast(
+            message, "warning", close_button, None,
+            color=rx.color_mode_cond(light=BRAND_WARNING, dark=BRAND_WARNING_LIGHT),
+            **kwargs,
+        )
 
     def info(self, message: str | rx.Var[str], close_button: bool = True, **kwargs):
         """Toast informativo."""
-        return self._create_toast(message, "info", close_button, None, color="#0288d1", **kwargs)
+        return self._create_toast(
+            message, "info", close_button, None,
+            color=rx.color_mode_cond(light=BRAND_SECONDARY_100, dark=BRAND_SECONDARY_80),
+            **kwargs,
+        )
 
 # Instancia exportada para ser usada como el átomo 'toast'
 toast = CustomToastWrapper()
