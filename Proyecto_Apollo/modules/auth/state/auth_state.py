@@ -9,32 +9,11 @@ from sqlmodel import select
 from Proyecto_Apollo.components.ui import toast
 from Proyecto_Apollo.models.users import Users
 
-# ── Monkey-patch: Suplex cookies con secure=False en desarrollo ──────────
-# Suplex v0.2.7 hardcodea secure=True en las cookies access_token y refresh_token.
-# En desarrollo (http://localhost) el browser NO envía cookies con secure=True,
-# lo que causa que F5 pierda la sesión. Este override resuelve eso sin forkear Suplex.
-# En producción (HTTPS), secure=True se mantiene para seguridad.
-# NOTA: Este patch vive aquí (no en rxconfig.py) para evitar un circular import —
-# Suplex class body llama rx.config.get_config() que re-importa rxconfig.py.
+# Detectar entorno para uso en event handlers.
+# La configuración de seguridad de las cookies se controla desde rxconfig.py
+# (clave "cookie_secure" en el dict suplex) y se aplica en suplex.py al
+# nivel del class body de Suplex, antes de que Pydantic congele el schema.
 _is_dev = os.getenv("REFLEX_ENV", "dev").lower() in ("dev", "development", "local")
-_cookie_max_age = 60 * 60 * 24 * 7  # 7 días
-
-Suplex.access_token = rx.Cookie(
-    name="access_token",
-    path="/",
-    secure=not _is_dev,
-    same_site="lax",
-    domain=None,
-    max_age=_cookie_max_age,
-)
-Suplex.refresh_token = rx.Cookie(
-    name="refresh_token",
-    path="/",
-    secure=not _is_dev,
-    same_site="lax",
-    domain=None,
-    max_age=_cookie_max_age,
-)
 
 
 class AuthState(Suplex):

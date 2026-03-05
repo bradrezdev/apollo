@@ -22,14 +22,14 @@ config = rx.Config(
         # Ver: suplex.py línea 642-649 (startup validation) y línea 663-696 (claims computed var).
         "jwt_secret": "placeholder-not-used-project-uses-ecc-p256-es256",
         "cookie_max_age": _cookie_max_age,
+        # cookie_secure: False en desarrollo (http://localhost) para que el browser acepte
+        # las cookies de sesión. Los browsers rechazan silenciosamente cookies con Secure=True
+        # en conexiones HTTP planas, lo que causaba pérdida de sesión en cada F5.
+        # En producción (HTTPS) se mantiene True para seguridad.
+        # NOTA: este valor es leído por suplex.py en el class body de Suplex (antes de que
+        # Pydantic congele el schema), gracias al parche en .venv/suplex/suplex.py.
+        # Si se reinstala suplex, re-aplicar el parche con: make patch-suplex
+        "cookie_secure": not _is_dev,
         "debug": _is_dev,
     },
 )
-
-# ── Monkey-patch de cookies se aplica en auth_state.py ──────────────────
-# Suplex v0.2.7 hardcodea secure=True en las cookies access_token y refresh_token.
-# En desarrollo (http://localhost) el browser NO envía cookies con secure=True,
-# lo que causa que F5 pierda la sesión.
-# El patch NO puede vivir aquí porque Suplex.__init__.py → suplex.py class body
-# llama a rx.config.get_config() que re-importa rxconfig.py → circular import.
-# Se aplica en auth_state.py justo después de `from suplex import Suplex`.
