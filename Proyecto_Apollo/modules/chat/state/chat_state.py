@@ -123,8 +123,12 @@ class State(DBState):
         """Carga inicial ASÍNCRONA de la aplicación"""
         print("[DEBUG] 🚀 Ejecutando State.on_load optimizado", flush=True)
         
-        if not self.user_is_authenticated:
-            print("[DEBUG] 🔒 Usuario no autenticado, redirigiendo a inicio.")
+        # Verificar autenticación por cookie (access_token) en lugar de JWT decode.
+        # user_is_authenticated depende de claims que requiere decodificar el JWT
+        # con HS256, pero el proyecto usa ECC P-256 (ES256). Usar access_token
+        # como indicador directo de sesión activa es más confiable.
+        if not self.access_token:
+            print("[DEBUG] 🔒 No hay access_token, redirigiendo a inicio.")
             return rx.redirect("/")
         
         # Iniciar carga de conversaciones en background SIN BLOQUEAR

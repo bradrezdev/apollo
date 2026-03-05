@@ -16,7 +16,8 @@ API_ASSISTANT_ID = os.getenv("API_ASSISTANT_ID")
 # Cargar desde variables de entorno
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
-SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET", "dummy_secret_for_now")
+# SUPABASE_JWT_SECRET no es necesario: el proyecto usa JWT Keys ECC (P-256).
+# Suplex decodifica access_tokens via JWKS automáticamente cuando jwt_secret no está en config.
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///reflex.db")
 
 # === APP CONFIGURATION ===

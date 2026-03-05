@@ -34,25 +34,45 @@ class DBState(AuthState):
     local_user_id: int | None = None
     
     def sync_user_sync(self):
-        """Sincroniza el usuario de Supabase Auth con la base de datos local."""
-        if not self.user_is_authenticated or not self.user_id:
+        """Sincroniza el usuario de Supabase Auth con la base de datos local.
+        
+        Usa get_user() (llamada HTTP) en lugar de self.user_id (JWT decode)
+        porque el proyecto usa ECC P-256 y el decode HS256 siempre falla.
+        """
+        if not self.access_token:
             return None
             
         try:
+            # Obtener datos del usuario via API (no depende de JWT decode)
+            user_data = self.get_user()
+            if not user_data:
+                return None
+                
+            supabase_uid = user_data.get("id")
+            user_email = user_data.get("email", "")
+            meta = user_data.get("user_metadata") or {}
+            first_name = meta.get("first_name", "")
+            last_name = meta.get("last_name", "")
+            
+            if not supabase_uid:
+                return None
+                
             with rx.session() as session:
-                statement = select(Users).where(Users.supabase_uid == self.user_id)
+                statement = select(Users).where(Users.supabase_uid == supabase_uid)
                 user = session.exec(statement).first()
                 if user:
                     return user.id
                 
                 # Crear nuevo usuario si no existe
                 new_user = Users(
-                    supabase_uid=self.user_id,
-                    correo=self.user_email or "",
-                    nombre=self.user_metadata.get("first_name", "") if self.user_metadata else "",
-                    apellido=self.user_metadata.get("last_name", "") if self.user_metadata else "",
+                    supabase_uid=supabase_uid,
+                    correo=user_email,
+                    nombre=first_name,
+                    apellido=last_name,
                     fecha_de_nacimiento="N/A",
-                    password_hash=""
+                    password_hash="supabase_managed",
+                    salt="N/A",
+                    bo_connection=False,
                 )
                 session.add(new_user)
                 session.commit()
