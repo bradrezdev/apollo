@@ -31,7 +31,8 @@ class DBState(AuthState):
     _last_conversations_load: datetime | None = None
     _conversations_loaded: bool = False
 
-    local_user_id: int | None = None
+    # local_user_id se hereda de AuthState (declarado allí para que submit_login
+    # y submit_step3 puedan setearlo sin violar la restricción de Reflex).
     
     def sync_user_sync(self):
         """Sincroniza el usuario de Supabase Auth con la base de datos local.

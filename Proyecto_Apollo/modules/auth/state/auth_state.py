@@ -35,6 +35,11 @@ class AuthState(Suplex):
 
     show_login_error: bool = False
 
+    # ID del usuario en la tabla local 'users' (sincronizado desde Supabase Auth).
+    # Declarado aquí (AuthState) porque submit_login y submit_step3 lo setean,
+    # y Reflex no permite setear vars de estados hijo desde estados padre.
+    local_user_id: int | None = None
+
     final_message: str = "Preparando tu asistente personal"
 
     def on_load(self):
