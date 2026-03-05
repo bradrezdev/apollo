@@ -26,26 +26,10 @@ config = rx.Config(
     },
 )
 
-# ── Monkey-patch: Suplex cookies con secure=False en desarrollo ──────────
+# ── Monkey-patch de cookies se aplica en auth_state.py ──────────────────
 # Suplex v0.2.7 hardcodea secure=True en las cookies access_token y refresh_token.
 # En desarrollo (http://localhost) el browser NO envía cookies con secure=True,
-# lo que causa que F5 pierda la sesión. Este override resuelve eso sin forkear Suplex.
-# En producción (HTTPS), secure=True se mantiene para seguridad.
-from suplex import Suplex  # noqa: E402
-
-Suplex.access_token = rx.Cookie(
-    name="access_token",
-    path="/",
-    secure=not _is_dev,
-    same_site="lax",
-    domain=None,
-    max_age=_cookie_max_age,
-)
-Suplex.refresh_token = rx.Cookie(
-    name="refresh_token",
-    path="/",
-    secure=not _is_dev,
-    same_site="lax",
-    domain=None,
-    max_age=_cookie_max_age,
-)
+# lo que causa que F5 pierda la sesión.
+# El patch NO puede vivir aquí porque Suplex.__init__.py → suplex.py class body
+# llama a rx.config.get_config() que re-importa rxconfig.py → circular import.
+# Se aplica en auth_state.py justo después de `from suplex import Suplex`.
