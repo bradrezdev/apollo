@@ -3,9 +3,20 @@ from ...styles.colors import *
 from ...styles import fonts
 from typing import Any
 
-def button(text: str | rx.Component, on_click: Any = None, variant: str = "primary", width="100%", **kwargs) -> rx.Component:
-    """Botón atómico reutilizable que sigue el Design System."""
-    
+def button(
+    text: str | rx.Component,
+    on_click: Any = None,
+    variant: str = "primary",
+    width="100%",
+    loading: Any = False,
+    disabled: Any = False,
+    **kwargs,
+) -> rx.Component:
+    """Botón atómico reutilizable que sigue el Design System.
+
+    Props como `loading` y `disabled` se pasan directamente a rx.button
+    (no como parte del dict de estilos).
+    """
     # Base styling
     base_style = {
         "height": "48px",
@@ -18,7 +29,7 @@ def button(text: str | rx.Component, on_click: Any = None, variant: str = "prima
         "transition": "all 0.2s ease-in-out",
         "_hover": {"transform": "scale(1.02)"}
     }
-    
+
     if variant == "primary":
         base_style.update({
             "bg": rx.color_mode_cond(
@@ -51,5 +62,13 @@ def button(text: str | rx.Component, on_click: Any = None, variant: str = "prima
             "opacity": "0.8",
             "_hover": {"opacity": "1.0", "bg": "rgba(255,255,255,0.1)"}
         })
-        
-    return rx.button(text, on_click=on_click, **{**base_style, **kwargs})
+
+    # Remaining kwargs are style overrides (e.g. margin_top, padding).
+    # loading / disabled are rx.button props — must NOT be in the style dict.
+    return rx.button(
+        text,
+        on_click=on_click,
+        loading=loading,
+        disabled=disabled,
+        **{**base_style, **kwargs},
+    )

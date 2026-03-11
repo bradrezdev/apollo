@@ -33,7 +33,11 @@ class DBState(AuthState):
 
     # local_user_id se hereda de AuthState (declarado allí para que submit_login
     # y submit_step3 puedan setearlo sin violar la restricción de Reflex).
-    
+
+    # Nombre para mostrar en la UI (cargado desde la BD local al iniciar sesión).
+    # Se mantiene en estado para que los @rx.var puedan leerlo sin hacer consultas BD.
+    display_name: str = ""
+
     def sync_user_sync(self):
         """Sincroniza el usuario de Supabase Auth con la base de datos local.
         
@@ -84,7 +88,26 @@ class DBState(AuthState):
             print(f"[ERROR] ❌ Error sincronizando usuario: {e}")
             return None
 
-    
+    def _load_display_name_sync(self, local_user_id: int) -> str:
+        """Lee nombre + apellido desde la tabla Users local.
+
+        Se llama síncronamente durante on_load (ya estamos en el hilo de Reflex).
+        Retorna "nombre apellido" o "" si no hay datos.
+        """
+        try:
+            with rx.session() as session:
+                user = session.get(Users, local_user_id)
+                if user:
+                    nombre = (user.nombre or "").strip()
+                    apellido = (user.apellido or "").strip()
+                    full = f"{nombre} {apellido}".strip()
+                    if full:
+                        print(f"[DEBUG] 👤 display_name cargado: '{full}'", flush=True)
+                        return full
+        except Exception as e:
+            print(f"[ERROR] ❌ Error cargando display_name: {e}")
+        return ""
+
     # === MÉTODOS DE INICIALIZACIÓN ASÍNCRONOS ===
     async def on_load(self):
         """Carga las conversaciones al iniciar la aplicación de forma asíncrona"""
@@ -117,7 +140,11 @@ class DBState(AuthState):
             # Sincronizar usuario antes de cargar
             if not self.local_user_id:
                 self.local_user_id = self.sync_user_sync()
-            
+
+            # Cargar nombre desde la BD local para mostrarlo en la UI
+            if self.local_user_id and not self.display_name:
+                self.display_name = self._load_display_name_sync(self.local_user_id)
+
             # ⭐ Ejecutar en thread separado para no bloquear
             loop = asyncio.get_event_loop()
             conversations_data = await loop.run_in_executor(

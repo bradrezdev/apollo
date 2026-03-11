@@ -72,7 +72,15 @@ class State(DBState):
     
     @rx.var
     def user_name(self) -> str:
-        """Obtiene el nombre de usuario desde los metadatos de Suplex"""
+        """Nombre del usuario autenticado.
+
+        Orden de prioridad:
+        1. display_name cargado desde la BD local (nombre + apellido real del usuario)
+        2. user_metadata del JWT de Supabase (solo si el nombre aún no fue guardado en BD)
+        3. Fallback: "Usuario"
+        """
+        if self.display_name:
+            return self.display_name
         if self.user_metadata:
             first = self.user_metadata.get("first_name", "")
             last = self.user_metadata.get("last_name", "")

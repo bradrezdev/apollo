@@ -470,6 +470,11 @@ class AuthState(Suplex):
         except Exception as e:
             print(f"[AUTH] Error updating name: {e}")
 
+        # Actualizar display_name en el estado para reflejarlo inmediatamente en la UI
+        full_name = f"{self.first_name.strip()} {self.last_name.strip()}".strip()
+        if full_name:
+            self.display_name = full_name
+
         self.is_loading = False
         self.show_name_form = False
 
