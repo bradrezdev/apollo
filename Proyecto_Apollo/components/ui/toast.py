@@ -31,7 +31,7 @@ class CustomToastWrapper:
         
         # Si es el toast custom general, asignamos un color base si no trae
         if type_name is None and bg_color is None:
-            bg_color = rx.color_mode_cond(light=BRAND_PRIMARY_100, dark=BRAND_SECONDARY_100)
+            bg_color = BRAND_PRIMARY_100
             
         # Si hay bg_color o color definido, lo inyectamos
         if bg_color is not None:
@@ -69,7 +69,7 @@ class CustomToastWrapper:
         """Toast de éxito."""
         return self._create_toast(
             message, "success", close_button, None,
-            color=rx.color_mode_cond(light=BRAND_SUCCESS, dark=BRAND_SUCCESS_LIGHT),
+            color=BRAND_SUCCESS,
             **kwargs,
         )
 
@@ -77,7 +77,7 @@ class CustomToastWrapper:
         """Toast de error."""
         return self._create_toast(
             message, "error", close_button, None,
-            color=rx.color_mode_cond(light=BRAND_ERROR, dark=BRAND_ERROR_LIGHT),
+            color=BRAND_ERROR,
             **kwargs,
         )
 
@@ -85,7 +85,7 @@ class CustomToastWrapper:
         """Toast de advertencia."""
         return self._create_toast(
             message, "warning", close_button, None,
-            color=rx.color_mode_cond(light=BRAND_WARNING, dark=BRAND_WARNING_LIGHT),
+            color=BRAND_WARNING,
             **kwargs,
         )
 
@@ -93,7 +93,7 @@ class CustomToastWrapper:
         """Toast informativo."""
         return self._create_toast(
             message, "info", close_button, None,
-            color=rx.color_mode_cond(light=BRAND_SECONDARY_100, dark=BRAND_SECONDARY_80),
+            color=BRAND_SECONDARY_100,
             **kwargs,
         )
 

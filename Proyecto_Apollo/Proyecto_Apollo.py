@@ -16,7 +16,9 @@ import Proyecto_Apollo.models
 
 # Importar páginas
 from Proyecto_Apollo.modules.auth.pages.auth_page import auth_page_ui
+from Proyecto_Apollo.modules.auth.pages.confirm_page import confirm_page_ui
 from Proyecto_Apollo.modules.auth.state.auth_state import AuthState
+from Proyecto_Apollo.modules.auth.state.confirm_state import ConfirmState
 from Proyecto_Apollo.modules.chat.pages.chat_page import chat_page
 from Proyecto_Apollo.modules.chat.state.chat_state import State
 from Proyecto_Apollo.modules.core.pages.testing_atoms import testing_atoms_page
@@ -83,5 +85,6 @@ app = rx.App(
 )
 
 app.add_page(auth_page_ui, route="/", title="Bienvenido a Apollo", on_load=AuthState.on_load)
+app.add_page(confirm_page_ui, route="/confirm", title="Cuenta confirmada - Apollo", on_load=ConfirmState.on_load)
 app.add_page(chat_page, route="/chat", title="Apollo AI - ChatBot con IA", on_load=State.on_load)
 app.add_page(testing_atoms_page, route="/testing-atoms", title="Testing Átomos UI")
