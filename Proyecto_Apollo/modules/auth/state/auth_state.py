@@ -81,6 +81,18 @@ class AuthState(Suplex):
     # ID del usuario en la tabla local 'users'
     local_user_id: int | None = None
 
+    # Nombre para mostrar en la UI (cargado desde la BD local al iniciar sesión).
+    # Declarado aquí (en AuthState) y no en DBState porque submit_login y submit_name
+    # (ambos en AuthState) necesitan settearlo. Reflex no permite que una clase padre
+    # setee un state var declarado en una clase hija.
+    display_name: str = ""
+
+    # Email para mostrar en la UI (cargado desde Users.correo en la BD local).
+    # Suplex.user_email depende de JWT decode (JWKS/ES256) que puede fallar en dev.
+    # Declarado aquí por la misma razón que display_name: submit_login (AuthState)
+    # lo setea en la línea 435.
+    display_email: str = ""
+
     # ── On Load ──────────────────────────────────────────
     def on_load(self):
         """Si ya tiene sesión activa, redirigir a /chat."""

@@ -34,14 +34,8 @@ class DBState(AuthState):
     # local_user_id se hereda de AuthState (declarado allí para que submit_login
     # y submit_step3 puedan setearlo sin violar la restricción de Reflex).
 
-    # Nombre para mostrar en la UI (cargado desde la BD local al iniciar sesión).
-    # Se mantiene en estado para que los @rx.var puedan leerlo sin hacer consultas BD.
-    display_name: str = ""
-
-    # Email para mostrar en la UI (cargado desde Users.correo en la BD local).
-    # Suplex.user_email depende de JWT decode (JWKS/ES256) que puede fallar en dev.
-    # Este campo evita depender del decode del token: se carga igual que display_name.
-    display_email: str = ""
+    # display_name y display_email se heredan de AuthState (declarados allí para
+    # que submit_login y submit_name en AuthState puedan settearlos).
 
     def sync_user_sync(self) -> tuple[int | None, str]:
         """Sincroniza el usuario de Supabase Auth con la base de datos local.
