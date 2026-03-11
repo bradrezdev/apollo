@@ -417,6 +417,11 @@ class AuthState(Suplex):
         if local_id:
             self.local_user_id = local_id
 
+        # Cache email for display (Suplex.user_email depends on JWT/JWKS decode which
+        # can fail with ES256 + placeholder jwt_secret; this guarantees email is shown)
+        if user_email:
+            self.display_email = user_email
+
         self.auth_loading = False
 
         # Check if user has a name in local DB

@@ -38,6 +38,11 @@ class DBState(AuthState):
     # Se mantiene en estado para que los @rx.var puedan leerlo sin hacer consultas BD.
     display_name: str = ""
 
+    # Email para mostrar en la UI (cargado desde Users.correo en la BD local).
+    # Suplex.user_email depende de JWT decode (JWKS/ES256) que puede fallar en dev.
+    # Este campo evita depender del decode del token: se carga igual que display_name.
+    display_email: str = ""
+
     def sync_user_sync(self):
         """Sincroniza el usuario de Supabase Auth con la base de datos local.
         
@@ -88,11 +93,11 @@ class DBState(AuthState):
             print(f"[ERROR] ❌ Error sincronizando usuario: {e}")
             return None
 
-    def _load_display_name_sync(self, local_user_id: int) -> str:
-        """Lee nombre + apellido desde la tabla Users local.
+    def _load_display_name_sync(self, local_user_id: int) -> tuple[str, str]:
+        """Lee nombre + apellido + correo desde la tabla Users local.
 
         Se llama síncronamente durante on_load (ya estamos en el hilo de Reflex).
-        Retorna "nombre apellido" o "" si no hay datos.
+        Retorna ("nombre apellido", "correo") — ambos vacíos si no hay datos.
         """
         try:
             with rx.session() as session:
@@ -101,12 +106,13 @@ class DBState(AuthState):
                     nombre = (user.nombre or "").strip()
                     apellido = (user.apellido or "").strip()
                     full = f"{nombre} {apellido}".strip()
+                    correo = (user.correo or "").strip()
                     if full:
                         print(f"[DEBUG] 👤 display_name cargado: '{full}'", flush=True)
-                        return full
+                    return full, correo
         except Exception as e:
             print(f"[ERROR] ❌ Error cargando display_name: {e}")
-        return ""
+        return "", ""
 
     # === MÉTODOS DE INICIALIZACIÓN ASÍNCRONOS ===
     async def on_load(self):
@@ -141,9 +147,12 @@ class DBState(AuthState):
             if not self.local_user_id:
                 self.local_user_id = self.sync_user_sync()
 
-            # Cargar nombre desde la BD local para mostrarlo en la UI
+            # Cargar nombre y email desde la BD local para mostrarlo en la UI
             if self.local_user_id and not self.display_name:
-                self.display_name = self._load_display_name_sync(self.local_user_id)
+                name, email = self._load_display_name_sync(self.local_user_id)
+                self.display_name = name
+                if email:
+                    self.display_email = email
 
             # ⭐ Ejecutar en thread separado para no bloquear
             loop = asyncio.get_event_loop()

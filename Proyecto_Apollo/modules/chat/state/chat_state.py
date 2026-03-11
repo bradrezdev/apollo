@@ -87,6 +87,17 @@ class State(DBState):
             if first or last:
                 return f"{first} {last}".strip()
         return "Usuario"
+
+    @rx.var
+    def user_email(self) -> str:
+        """Email del usuario autenticado.
+
+        Lee desde display_email (cargado desde Users.correo en la BD local).
+        Suplex.user_email depende de JWT decode con JWKS (ES256) lo cual puede
+        fallar o estar pendiente en dev. Este override garantiza que el email
+        siempre se muestre si el usuario está en la BD local.
+        """
+        return self.display_email
     
     # === VARIABLES PARA SCROLL INFINITO ===
     visible_conversations_start: int = 0
