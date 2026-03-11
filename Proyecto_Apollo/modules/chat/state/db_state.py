@@ -147,10 +147,13 @@ class DBState(AuthState):
             if not self.local_user_id:
                 self.local_user_id = self.sync_user_sync()
 
-            # Cargar nombre y email desde la BD local para mostrarlo en la UI
-            if self.local_user_id and not self.display_name:
+            # Cargar nombre y email desde la BD local para mostrarlo en la UI.
+            # Se cargan independientemente: si display_name ya está pero display_email
+            # no (ej. primer login antes del fix), se carga igual.
+            if self.local_user_id and (not self.display_name or not self.display_email):
                 name, email = self._load_display_name_sync(self.local_user_id)
-                self.display_name = name
+                if name:
+                    self.display_name = name
                 if email:
                     self.display_email = email
 

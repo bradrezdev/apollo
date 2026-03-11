@@ -33,13 +33,23 @@ from Proyecto_Apollo.styles.common_styles import glassmorphism_style
 
 _drawer_content_style = {
     **glassmorphism_style,
-    "border_radius": "32px 32px 0 0",
+    # Esquinas superiores redondeadas en mobile/tablet; todas redondeadas en desktop
+    "border_radius": ["32px 32px 0 0", "32px 32px 0 0", "32px", "32px"],
     "padding": "1.5rem",
-    "width": "100%",
+    "width": ["100%", "100%", "480px", "480px"],
     "max_width": "480px",
     "margin": "0 auto",
     # Altura responsiva: [mobile, tablet, desktop, large desktop]
-    "height": ["95dvh", "95dvh", "70dvh", "60dvh"],
+    "height": ["95dvh", "95dvh", "auto", "auto"],
+    # Centrado vertical en desktop — Radix posiciona bottom:0 por defecto;
+    # en desktop sobreescribimos para centrar en el viewport.
+    "min_height": ["unset", "unset", "300px", "300px"],
+    "max_height": ["95dvh", "95dvh", "70dvh", "60dvh"],
+    # Centering override for desktop (Radix drawer content is position:fixed)
+    "bottom": ["0", "0", "unset", "unset"],
+    "top": ["unset", "unset", "50%", "50%"],
+    "left": ["unset", "unset", "50%", "50%"],
+    "transform": ["unset", "unset", "translate(-50%, -50%)", "translate(-50%, -50%)"],
 }
 
 _avatar_style = {

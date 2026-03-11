@@ -408,7 +408,15 @@ class State(DBState):
     # === MÉTODOS DE UI ===
     @rx.event
     def toggle_profile_drawer(self):
-        """Alterna el drawer de perfil (usado en on_click — sin argumentos)."""
+        """Alterna el drawer de perfil (usado en on_click — sin argumentos).
+
+        Al abrir el profile drawer desde dentro del mobile sidebar drawer,
+        cierra el sidebar (is_open=False) para evitar que ambos drawers queden
+        apilados visualmente y el botón X requiera múltiples clicks.
+        """
+        if not self.is_profile_drawer_open:
+            # Cerrar el sidebar drawer (mobile) antes de abrir el profile drawer
+            self.is_open = False
         self.is_profile_drawer_open = not self.is_profile_drawer_open
 
     @rx.event
