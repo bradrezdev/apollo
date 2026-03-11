@@ -67,7 +67,10 @@ class AuthState(Suplex):
     last_name: str = ""
 
     # ── UI state ─────────────────────────────────────────
-    is_loading: bool = False
+    # NOTE: Cannot use `is_loading` — Suplex defines `is_loading = False` as a
+    # plain class attribute (line 634 of suplex.py), which shadows the Reflex
+    # field descriptor and makes the Var always resolve to a literal False.
+    auth_loading: bool = False
 
     # Post-login: show name form if user has no nombre
     show_name_form: bool = False
@@ -91,7 +94,7 @@ class AuthState(Suplex):
         self.first_name = ""
         self.last_name = ""
         self.terms_accepted = False
-        self.is_loading = False
+        self.auth_loading = False
         self.show_name_form = False
         self.loading_step = 0
         # Reset particle state
@@ -275,7 +278,7 @@ class AuthState(Suplex):
             return
 
         # Show loading spinner BEFORE network call
-        self.is_loading = True
+        self.auth_loading = True
         yield
 
         # Run blocking HTTP call off the event loop so the yield above is flushed
@@ -295,7 +298,7 @@ class AuthState(Suplex):
         except Exception as e:
             error_msg = str(e).lower()
             print(f"[AUTH] Error en sign_up: {error_msg}")
-            self.is_loading = False
+            self.auth_loading = False
             if "user already registered" in error_msg or "already been registered" in error_msg:
                 yield toast.error("El email ya está registrado")
             elif "password" in error_msg:
@@ -326,7 +329,7 @@ class AuthState(Suplex):
             self.local_user_id = local_user_id
             print(f"[AUTH] Usuario sincronizado - local_id={local_user_id}")
 
-        self.is_loading = False
+        self.auth_loading = False
 
         # Show success toast and switch to login segment
         yield toast.success(
@@ -351,7 +354,7 @@ class AuthState(Suplex):
             return
 
         # Show loading spinner BEFORE network call
-        self.is_loading = True
+        self.auth_loading = True
         yield
 
         # Run blocking HTTP call off the event loop
@@ -369,7 +372,7 @@ class AuthState(Suplex):
         except Exception as e:
             error_msg = str(e).lower()
             print(f"[AUTH] Error en sign_in: {error_msg}")
-            self.is_loading = False
+            self.auth_loading = False
             if "email not confirmed" in error_msg:
                 yield toast.error("Por favor confirma tu email antes de iniciar sesión")
             else:
@@ -389,7 +392,7 @@ class AuthState(Suplex):
         last_name = meta.get("last_name", "")
 
         if not supabase_uid:
-            self.is_loading = False
+            self.auth_loading = False
             yield toast.error(
                 "Correo electrónico y/o Contraseña no coinciden con nuestros registros"
             )
@@ -409,7 +412,7 @@ class AuthState(Suplex):
         if local_id:
             self.local_user_id = local_id
 
-        self.is_loading = False
+        self.auth_loading = False
 
         # Check if user has a name in local DB
         has_name = self._check_user_has_name(supabase_uid)
@@ -429,7 +432,7 @@ class AuthState(Suplex):
             yield toast.error("El apellido es requerido")
             return
 
-        self.is_loading = True
+        self.auth_loading = True
         yield
 
         # Update user name in local DB
@@ -475,7 +478,7 @@ class AuthState(Suplex):
         if full_name:
             self.display_name = full_name
 
-        self.is_loading = False
+        self.auth_loading = False
         self.show_name_form = False
 
         # Loading animation sequence

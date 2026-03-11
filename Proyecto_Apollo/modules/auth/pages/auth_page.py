@@ -166,7 +166,7 @@ def _render_register_segment() -> rx.Component:
                 button(
                     "Registrar",
                     on_click=AuthState.submit_register,
-                    loading=AuthState.is_loading,
+                    loading=AuthState.auth_loading,
                     width="100%",
                     margin_top="1em",
                 ),
@@ -223,7 +223,7 @@ def _render_login_segment() -> rx.Component:
                 button(
                     "Iniciar sesión",
                     on_click=AuthState.submit_login,
-                    loading=AuthState.is_loading,
+                    loading=AuthState.auth_loading,
                     width="100%",
                     margin_top="0.5em",
                 ),
@@ -287,7 +287,7 @@ def _render_name_form_overlay() -> rx.Component:
                 button(
                     "Continuar",
                     on_click=AuthState.submit_name,
-                    loading=AuthState.is_loading,
+                    loading=AuthState.auth_loading,
                     width="100%",
                     margin_top="1.5em",
                 ),
