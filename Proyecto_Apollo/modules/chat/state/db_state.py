@@ -43,36 +43,45 @@ class DBState(AuthState):
     # Este campo evita depender del decode del token: se carga igual que display_name.
     display_email: str = ""
 
-    def sync_user_sync(self):
+    def sync_user_sync(self) -> tuple[int | None, str]:
         """Sincroniza el usuario de Supabase Auth con la base de datos local.
-        
+
         Usa get_user() (llamada HTTP) en lugar de self.user_id (JWT decode)
         porque el proyecto usa ECC P-256 y el decode HS256 siempre falla.
+
+        Returns:
+            (local_user_id, user_email) — email vacío si no se pudo obtener.
         """
         if not self.access_token:
-            return None
-            
+            return None, ""
+
         try:
             # Obtener datos del usuario via API (no depende de JWT decode)
             user_data = self.get_user()
             if not user_data:
-                return None
-                
+                return None, ""
+
             supabase_uid = user_data.get("id")
             user_email = user_data.get("email", "")
             meta = user_data.get("user_metadata") or {}
             first_name = meta.get("first_name", "")
             last_name = meta.get("last_name", "")
-            
+
             if not supabase_uid:
-                return None
-                
+                return None, user_email
+
             with rx.session() as session:
                 statement = select(Users).where(Users.supabase_uid == supabase_uid)
                 user = session.exec(statement).first()
                 if user:
-                    return user.id
-                
+                    # Actualizar correo si estaba vacío (usuarios creados antes del fix)
+                    if user_email and not user.correo:
+                        user.correo = user_email
+                        session.add(user)
+                        session.commit()
+                        print(f"[DEBUG] 👤 correo actualizado para usuario {user.id}: '{user_email}'", flush=True)
+                    return user.id, user_email
+
                 # Crear nuevo usuario si no existe
                 new_user = Users(
                     supabase_uid=supabase_uid,
@@ -87,11 +96,11 @@ class DBState(AuthState):
                 session.add(new_user)
                 session.commit()
                 session.refresh(new_user)
-                print(f"[DEBUG] 👤 Usuario sincronizado localmente con ID: {new_user.id}")
-                return new_user.id
+                print(f"[DEBUG] 👤 Usuario sincronizado localmente con ID: {new_user.id}", flush=True)
+                return new_user.id, user_email
         except Exception as e:
             print(f"[ERROR] ❌ Error sincronizando usuario: {e}")
-            return None
+            return None, ""
 
     def _load_display_name_sync(self, local_user_id: int) -> tuple[str, str]:
         """Lee nombre + apellido + correo desde la tabla Users local.
@@ -145,7 +154,12 @@ class DBState(AuthState):
         try:
             # Sincronizar usuario antes de cargar
             if not self.local_user_id:
-                self.local_user_id = self.sync_user_sync()
+                local_id, api_email = self.sync_user_sync()
+                self.local_user_id = local_id
+                # Usar el email que ya trajo get_user() — evita una segunda consulta a BD
+                if api_email and not self.display_email:
+                    self.display_email = api_email
+                    print(f"[DEBUG] 📧 display_email seteado desde sync_user_sync: '{api_email}'", flush=True)
 
             # Cargar nombre y email desde la BD local para mostrarlo en la UI.
             # Se cargan independientemente: si display_name ya está pero display_email
@@ -154,8 +168,9 @@ class DBState(AuthState):
                 name, email = self._load_display_name_sync(self.local_user_id)
                 if name:
                     self.display_name = name
-                if email:
+                if email and not self.display_email:
                     self.display_email = email
+                    print(f"[DEBUG] 📧 display_email seteado desde BD: '{email}'", flush=True)
 
             # ⭐ Ejecutar en thread separado para no bloquear
             loop = asyncio.get_event_loop()
@@ -262,8 +277,8 @@ class DBState(AuthState):
             loop = asyncio.get_event_loop()
             
             if not self.local_user_id:
-                self.local_user_id = self.sync_user_sync()
-                
+                local_id, _ = self.sync_user_sync()
+                self.local_user_id = local_id
             conversation_id = await loop.run_in_executor(
                 _db_executor,
                 self._create_conversation_sync,

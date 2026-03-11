@@ -245,8 +245,20 @@ class AuthState(Suplex):
 
     @rx.event
     def handle_logout(self):
-        """Cierra sesión y redirige al inicio."""
-        self.log_out()
+        """Cierra sesión y redirige al inicio.
+
+        Suplex.log_out() llama a POST /auth/v1/logout con el access_token actual.
+        Supabase devuelve 403 si el token ya expiró (sesión inválida). En ese caso,
+        igual limpiamos el estado local con self.reset() y redirigimos al inicio —
+        el usuario ya no tiene una sesión válida de todas formas.
+        """
+        try:
+            self.log_out()
+        except Exception as e:
+            # 403 / token expirado — la sesión ya no es válida en Supabase.
+            # Limpiamos el estado local manualmente y continuamos con el redirect.
+            print(f"[AUTH] log_out falló ({type(e).__name__}: {e}) — limpiando estado local")
+            self.reset()
         return rx.redirect("/")
 
     @rx.event
