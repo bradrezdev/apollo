@@ -401,6 +401,11 @@ class AuthState(Suplex):
         # Set tokens on main state (must be done here, not in thread)
         self.set_tokens(access_token=access_token, refresh_token=refresh_token)
         print(f"[AUTH] Login exitoso - uid={supabase_uid}, email={user_email}")
+        # Flush cookie mutations to browser BEFORE redirect. Without this yield,
+        # Reflex batches the cookie-set and rx.redirect() in the same delta update,
+        # causing the browser to navigate to /chat before it has stored the cookies.
+        # State.on_load then sees empty tokens and immediately redirects back to /.
+        yield
 
         # Sync user to local DB
         local_id = self.sync_user_to_local_db(
