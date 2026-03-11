@@ -72,6 +72,10 @@ class AuthState(Suplex):
     # field descriptor and makes the Var always resolve to a literal False.
     auth_loading: bool = False
 
+    # Password visibility toggles
+    show_password: bool = False
+    show_confirm_password: bool = False
+
     # Post-login: show name form if user has no nombre
     show_name_form: bool = False
 
@@ -109,11 +113,22 @@ class AuthState(Suplex):
         self.auth_loading = False
         self.show_name_form = False
         self.loading_step = 0
+        self.show_password = False
+        self.show_confirm_password = False
         # Reset particle state
         return rx.call_script(
             "window._apolloParticleProgress = 0;"
             "if(window.__oParticleHero){ window.__oParticleHero.setScrollProgress(0); }"
         )
+
+    # ── Password visibility toggles ──────────────────────
+    @rx.event
+    def toggle_show_password(self):
+        self.show_password = not self.show_password
+
+    @rx.event
+    def toggle_show_confirm_password(self):
+        self.show_confirm_password = not self.show_confirm_password
 
     # ── Password validation computed vars ────────────────
     @rx.var

@@ -28,6 +28,8 @@ from Proyecto_Apollo.styles.colors import (
 from Proyecto_Apollo.styles.fonts import *
 from Proyecto_Apollo.styles.common_styles import glassmorphism_style
 
+from ...modules.auth.state.auth_state import AuthState
+
 
 # ── Styles ────────────────────────────────────────────────────────────
 
@@ -70,7 +72,7 @@ _avatar_style = {
 }
 
 _user_name_style = {
-    "font_style": STYLE_BODY,
+    "font_style": STYLE_MICRO,
     "color": rx.color_mode_cond(
         light=BRAND_TEXT_DARK,
         dark=BRAND_WHITE,
@@ -131,11 +133,11 @@ def _user_avatar(user_name: rx.Var[str]) -> rx.Component:
 
 def user_profile_drawer(
     *,
-    user_name: rx.Var,
-    user_email: rx.Var,
+    user_name: rx.Var[str],
+    user_email: rx.Var[str],
     is_open: rx.Var[bool],
     on_open_change: rx.EventHandler,
-    on_logout: rx.EventHandler,
+    on_logout: AuthState.handle_logout,
 ) -> rx.Component:
     """
     Drawer de perfil de usuario (direction=bottom).

@@ -5,6 +5,9 @@ from Proyecto_Apollo.modules.chat.state.chat_state import State
 from Proyecto_Apollo.styles import sidebar_styles, header_styles, colors
 from Proyecto_Apollo.components.ui import user_profile_trigger
 
+from ...auth.state.auth_state import AuthState
+from Proyecto_Apollo.components.ui.user_drawer import user_profile_drawer
+
 # Import de colores personalizados
 from Proyecto_Apollo.styles.colors import *
 
@@ -270,6 +273,33 @@ def user_profile_section() -> rx.Component:
     )
 
 
+def profile_dropdown_menu() -> rx.Component:
+    """Menú desplegable para opciones de perfil (editar perfil, cerrar sesión) - dentro del drawer de conversaciones"""
+    return rx.menu.root(
+    rx.menu.trigger(
+        user_profile_section(),
+    ),
+    rx.menu.content(
+        #rx.menu.item("Editar perfil", on_click=State.toggle_profile_drawer),
+        #rx.menu.separator(),
+        rx.menu.item(
+            rx.hstack(
+                rx.icon("log-out", size=16),
+                rx.text("Cerrar sesión"),
+                on_click=AuthState.handle_logout,
+            align="center",
+            justify="center",
+            ),
+            border_radius="18px",
+            color_scheme="red",
+            height="2rem",
+            width="12rem",
+        ),
+        border_radius="20px",
+    ),      
+)
+
+
 def edit_conversation_dialog() -> rx.Component:
     """Diálogo para editar el título de una conversación"""
     return rx.dialog.root(
@@ -371,7 +401,7 @@ def desktop_sidebar() -> rx.Component:
         rx.vstack(
             rx.image(**sidebar_styles.logo_style),
             conversations_list(),
-            user_profile_section(),
+            profile_dropdown_menu(),
             **sidebar_styles.sidebar_style,
         ),
     )

@@ -7,6 +7,7 @@ from Proyecto_Apollo.modules.chat.components.header_components import desktop_he
 
 # Import de colores personalizados
 from Proyecto_Apollo.styles.colors import *
+from Proyecto_Apollo.components.ui import toast
 
 
 def chat_message(qa: tuple[str, str]) -> rx.Component:
@@ -43,7 +44,7 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
                     rx.icon_button(
                         rx.icon("copy", size=16, margin_right="4px"),
                         rx.text("Copiar respuesta", size="1"),
-                        on_click=[rx.set_clipboard(answer), State.log_copy_event],
+                        on_click=[rx.set_clipboard(answer), toast.success("Respuesta copiada al portapapeles"), State.log_copy_event],
                         size="1",
                         variant="ghost",
                         color_scheme="gray",
@@ -64,12 +65,6 @@ def chat_message(qa: tuple[str, str]) -> rx.Component:
 
 
 
-
-
-
-
-
-
 def responsive_chat_input() -> rx.Component:
     """Input de chat unificado y responsivo — Mobile First"""
     return rx.box(
@@ -79,7 +74,7 @@ def responsive_chat_input() -> rx.Component:
                     name="question",
                     value=State.question,
                     on_change=State.set_question,
-                    placeholder="Escribe tu mensaje aquí...",
+                    placeholder="Escrbe tu pregunta aquí...",
                     rows="1",
                     auto_height=True,
                     resize="none",
@@ -92,12 +87,12 @@ def responsive_chat_input() -> rx.Component:
                     style={
                         "border_radius": "16px",
                         "width": "100%",
-                        "min_height": "40px",
+                        "min_height": "32px",
                         "max_height": "132px",
                         "overflow_y": "auto",
                         "font_family": "Poppins, sans-serif",
                         "font_size": "16px",
-                        "padding": "8px 12px",
+                        "padding": "4px 2px",
                     },
                 ),
                 rx.icon_button(
@@ -105,10 +100,18 @@ def responsive_chat_input() -> rx.Component:
                     type="submit",
                     loading=State.is_loading,
                     variant="solid",
-                    bg=rx.color_mode_cond(light=BRAND_SECONDARY_100, dark=BRAND_SECONDARY_100),
+                    bg=rx.color_mode_cond(
+                        light=BRAND_PRIMARY_100,
+                        dark=BRAND_SECONDARY_100
+                        ),
                     color="white",
-                    _hover={"bg": rx.color_mode_cond(light=BRAND_SECONDARY_80, dark=BRAND_SECONDARY_80)},
-                    border_radius="50%",
+                    _hover={
+                        "bg": rx.color_mode_cond(
+                            light=BRAND_PRIMARY_80,
+                            dark=BRAND_SECONDARY_80
+                            )
+                        },
+                    radius="full",
                     size="3",
                     cursor="pointer",
                     flex_shrink="0",
@@ -193,16 +196,67 @@ def responsive_chat_container() -> rx.Component:
                     rx.text("Tu asistente experto en ONANO.", color=rx.color_mode_cond(light=BRAND_PRIMARY_60, dark=BRAND_PRIMARY_40)),
                     rx.divider(width="50%"),
                     rx.vstack(
-                        rx.hstack(rx.icon("sparkles", size=16, color=rx.color_mode_cond(light=BRAND_SECONDARY_100, dark=BRAND_SECONDARY_80)), rx.text("Productos y Nanotecnología", color=rx.color_mode_cond(light=BRAND_PRIMARY_60, dark=BRAND_PRIMARY_40))),
-                        rx.hstack(rx.icon("trending-up", size=16, color=rx.color_mode_cond(light=BRAND_SECONDARY_100, dark=BRAND_SECONDARY_80)), rx.text("Plan de Compensación", color=rx.color_mode_cond(light=BRAND_PRIMARY_60, dark=BRAND_PRIMARY_40))),
-                        rx.hstack(rx.icon("activity", size=16, color=rx.color_mode_cond(light=BRAND_SECONDARY_100, dark=BRAND_SECONDARY_80)), rx.text("Salud y Bienestar", color=rx.color_mode_cond(light=BRAND_PRIMARY_60, dark=BRAND_PRIMARY_40))),
+                        rx.hstack(
+                            rx.icon(
+                                "sparkles",
+                                size=16,
+                                color=rx.color_mode_cond(
+                                    light=BRAND_SECONDARY_100,
+                                    dark=BRAND_SECONDARY_80
+                                )
+                            ),
+                            rx.text(
+                                "Productos y Nanotecnología",
+                                color=rx.color_mode_cond(
+                                    light=BRAND_PRIMARY_60,
+                                    dark=BRAND_PRIMARY_40
+                                )
+                            ),
+                            align="center",
+                        ),
+                        rx.hstack(
+                            rx.icon(
+                                "heart",
+                                size=16,
+                                color=rx.color_mode_cond(
+                                    light=BRAND_SECONDARY_100,
+                                    dark=BRAND_SECONDARY_80
+                                )
+                            ),
+                            rx.text(
+                                "Salud y bienestar",
+                                color=rx.color_mode_cond(
+                                    light=BRAND_PRIMARY_60,
+                                    dark=BRAND_PRIMARY_40
+                                )
+                            ),
+                            align="center",
+                        ),
+                        rx.hstack(
+                            rx.icon(
+                                "users",
+                                size=16,
+                                color=rx.color_mode_cond(
+                                    light=BRAND_SECONDARY_100,
+                                    dark=BRAND_SECONDARY_80
+                                )
+                            ),
+                            rx.text(
+                                "Personal",
+                                color=rx.color_mode_cond(
+                                    light=BRAND_PRIMARY_60,
+                                    dark=BRAND_PRIMARY_40
+                                )
+                            ),
+                            align="center",
+                        ),
                         spacing="2",
                         align="start",
                     ),
                     spacing="4",
                     align="center",
                 ),
-                height="100%",
+                height=["110%", "110%", "110%", "110%"], # Ajustes de altura para dispositivos: mobile, tablet, desktop, large desktop
                 width="100%",
                 padding_bottom="100px",
             ),

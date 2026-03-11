@@ -1,5 +1,5 @@
 from .button import button
-from .input import input
+from .input import input, password_input
 from .badge import badge
 from .toast import toast
 from .alert_dialog import alert_dialog

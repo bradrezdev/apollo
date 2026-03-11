@@ -1,7 +1,7 @@
 import reflex as rx
 from Proyecto_Apollo.styles.colors import *
 from Proyecto_Apollo.styles import fonts
-from Proyecto_Apollo.components.ui import button, input, badge
+from Proyecto_Apollo.components.ui import button, input, badge, password_input
 from ..state.auth_state import AuthState
 
 
@@ -50,7 +50,6 @@ def auth_page_ui() -> rx.Component:
                     variant="surface",
                     radius="full",
                     width="100%",
-                    margin_bottom="1.5em",
                 ),
                 # Segment content
                 rx.cond(
@@ -86,24 +85,22 @@ def auth_page_ui() -> rx.Component:
 # ── Registration Segment ────────────────────────────────
 def _render_register_segment() -> rx.Component:
     return rx.vstack(
-        rx.heading(
-            "Crear cuenta",
+        rx.text(
+            "Regístrate",
             color=rx.color_mode_cond(
                 light=BRAND_PRIMARY_100,
                 dark=BRAND_WHITE,
             ),
             style=fonts.STYLE_H1,
-            text_align="center",
         ),
         rx.text(
-            "Regístrate para comenzar",
+            "Resuelve tus dudas sobre nuestros productos y la nanotecnología.",
             color=rx.color_mode_cond(
                 light=BRAND_PRIMARY_60,
                 dark="rgba(255,255,255,0.7)",
             ),
             style=fonts.STYLE_BODY,
-            text_align="center",
-            margin_bottom="1.5em",
+            margin_bottom="1rem",
         ),
         # Email input (always visible)
         input(
@@ -117,11 +114,12 @@ def _render_register_segment() -> rx.Component:
             AuthState.show_extra_fields,
             rx.vstack(
                 # Password
-                input(
+                password_input(
                     placeholder="Contraseña",
-                    type="password",
                     value=AuthState.password,
                     on_change=AuthState.set_password,
+                    show=AuthState.show_password,
+                    toggle=AuthState.toggle_show_password,
                 ),
                 # Password requirements badges
                 rx.cond(
@@ -139,11 +137,12 @@ def _render_register_segment() -> rx.Component:
                     ),
                 ),
                 # Confirm password
-                input(
+                password_input(
                     placeholder="Confirmar contraseña",
-                    type="password",
                     value=AuthState.confirm_password,
                     on_change=AuthState.set_confirm_password,
+                    show=AuthState.show_confirm_password,
+                    toggle=AuthState.toggle_show_confirm_password,
                 ),
                 # Terms checkbox
                 rx.hstack(
@@ -175,8 +174,7 @@ def _render_register_segment() -> rx.Component:
                 width="100%",
             ),
         ),
-        spacing="4",
-        align="center",
+        spacing="2",
         width="100%",
     )
 
@@ -184,24 +182,22 @@ def _render_register_segment() -> rx.Component:
 # ── Login Segment ───────────────────────────────────────
 def _render_login_segment() -> rx.Component:
     return rx.vstack(
-        rx.heading(
-            "Iniciar sesión",
+        rx.text(
+            "Inicia sesión",
             color=rx.color_mode_cond(
                 light=BRAND_PRIMARY_100,
                 dark=BRAND_WHITE,
             ),
             style=fonts.STYLE_H1,
-            text_align="center",
         ),
         rx.text(
-            "Accede a tu cuenta",
+            "Resuelve tus dudas sobre nuestros productos y la nanotecnología.",
             color=rx.color_mode_cond(
                 light=BRAND_PRIMARY_60,
                 dark="rgba(255,255,255,0.7)",
             ),
             style=fonts.STYLE_BODY,
-            text_align="center",
-            margin_bottom="1.5em",
+            margin_bottom="1rem",
         ),
         # Email input (always visible)
         input(
@@ -214,11 +210,12 @@ def _render_login_segment() -> rx.Component:
         rx.cond(
             AuthState.show_extra_fields,
             rx.vstack(
-                input(
+                password_input(
                     placeholder="Contraseña",
-                    type="password",
                     value=AuthState.password,
                     on_change=AuthState.set_password,
+                    show=AuthState.show_password,
+                    toggle=AuthState.toggle_show_password,
                 ),
                 button(
                     "Iniciar sesión",
@@ -232,8 +229,7 @@ def _render_login_segment() -> rx.Component:
                 width="100%",
             ),
         ),
-        spacing="4",
-        align="center",
+        spacing="2",
         width="100%",
     )
 

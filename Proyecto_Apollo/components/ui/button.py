@@ -33,7 +33,7 @@ def button(
     if variant == "primary":
         base_style.update({
             "bg": rx.color_mode_cond(
-                light=BRAND_SECONDARY_100,
+                light=BRAND_PRIMARY_100,
                 dark=BRAND_SECONDARY_100
             ),
             "color": rx.color_mode_cond(
@@ -46,10 +46,10 @@ def button(
         base_style.update({
             "bg": "transparent",
             "color": rx.color_mode_cond(
-                light=BRAND_SECONDARY_100,
+                light=BRAND_PRIMARY_100,
                 dark=BRAND_WHITE
             ),
-            "border": f"2px solid {BRAND_SECONDARY_100}",
+            "border": f"2px solid {BRAND_PRIMARY_100}",
         })
     elif variant == "ghost":
         base_style.update({

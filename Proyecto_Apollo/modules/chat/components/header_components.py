@@ -51,16 +51,21 @@ def mobile_drawer_content() -> rx.Component:
         #    width="100%"
         #),
         # Lista de conversaciones para móvil con botones visibles
-        conversations_list_mobile(),
-        rx.divider(),
-        rx.spacer(),
-        # Sección de perfil de usuario (trigger para abrir el profile drawer)
+        rx.vstack(
+            conversations_list_mobile(),
+            rx.divider(),
+            spacing="0",
+            width="100%",
+        ),
+            
+            # Sección de perfil de usuario (trigger para abrir el profile drawer)
         user_profile_trigger(
             user_name=State.user_name,
             user_email=State.user_email,
             on_click=State.toggle_profile_drawer,
         ),
-        spacing="5",
+        justify="between",
+        height="100%",
         width="100%",
     )
 
