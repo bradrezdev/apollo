@@ -156,9 +156,14 @@ class State(DBState):
                         print("[DEBUG] Sesión renovada exitosamente via refresh_token", flush=True)
                     else:
                         print("[DEBUG] refresh_session no restauró el access_token", flush=True)
+                        self.reset()
+                        self.set_tokens(access_token="", refresh_token="")
                         return rx.redirect("/")
                 except Exception as e:
                     print(f"[DEBUG] refresh_session falló: {e}", flush=True)
+                    # Limpiar cookies explícitamente para que no se restauren en el próximo load
+                    self.reset()
+                    self.set_tokens(access_token="", refresh_token="")
                     return rx.redirect("/")
             else:
                 print("[DEBUG] No hay access_token ni refresh_token, redirigiendo a inicio.", flush=True)

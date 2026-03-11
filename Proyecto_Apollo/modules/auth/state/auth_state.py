@@ -268,9 +268,15 @@ class AuthState(Suplex):
             self.log_out()
         except Exception as e:
             # 403 / token expirado — la sesión ya no es válida en Supabase.
-            # Limpiamos el estado local manualmente y continuamos con el redirect.
+            # self.reset() resetea los Reflex state vars a sus defaults ("").
+            # PERO las cookies del browser solo se borran si Reflex envía un
+            # Set-Cookie con max_age=0. self.reset() no garantiza eso para
+            # rx.Cookie fields — la cookie puede persistir y restaurarse en
+            # el próximo page load. Por eso llamamos set_tokens("", "") después
+            # del reset: fuerza que Reflex envíe Set-Cookie con valores vacíos.
             print(f"[AUTH] log_out falló ({type(e).__name__}: {e}) — limpiando estado local")
             self.reset()
+            self.set_tokens(access_token="", refresh_token="")
         return rx.redirect("/")
 
     @rx.event
