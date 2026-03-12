@@ -78,7 +78,7 @@ def auth_page_ui() -> rx.Component:
             AuthState.loading_step > 0,
             _render_loading_overlay(),
         ),
-        width="100vw",
+        width="fit-content",
     )
 
 
@@ -125,15 +125,13 @@ def _render_register_segment() -> rx.Component:
                 rx.cond(
                     AuthState.password != "",
                     rx.box(
-                        badge("a-z", AuthState.has_lowercase),
-                        badge("A-Z", AuthState.has_uppercase),
-                        badge("0-9", AuthState.has_number),
-                        badge("#$", AuthState.has_special),
-                        badge("8+", AuthState.is_length_valid),
+                        badge("Letra minúscula (a-z)", AuthState.has_lowercase),
+                        badge("Letra mayúscula (A-Z)", AuthState.has_uppercase),
+                        badge("Número (0-9)", AuthState.has_number),
+                        badge("Símbolo especial (¿¡#$!?)", AuthState.has_special),
+                        badge("8 caracteres o más", AuthState.is_length_valid),
                         flex_wrap="wrap",
-                        justify_content="center",
                         spacing="2",
-                        margin_top="0.5em",
                     ),
                 ),
                 # Confirm password
@@ -170,12 +168,11 @@ def _render_register_segment() -> rx.Component:
                     margin_top="1em",
                 ),
                 spacing="4",
-                align="center",
                 width="100%",
             ),
         ),
         spacing="2",
-        width="100%",
+        width="fit-content",
     )
 
 
