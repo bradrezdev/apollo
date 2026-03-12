@@ -1,21 +1,21 @@
 """Estilos comunes reutilizables en toda la aplicación"""
 
 import reflex as rx
-from .colors import ApolloTheme
+from .colors import *
 
 # === EFECTOS VISUALES ===
 glassmorphism_style = {
     "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_background"],
-        dark=ApolloTheme.dark_colors()["input_background"]
+        light=BRAND_BACKGROUND_ALT,
+        dark=BRAND_BACKGROUND_ALT
     ),
     "border": rx.color_mode_cond(
-        light=f"1px solid {ApolloTheme.light_colors()['input_border']}",
-        dark="1px solid rgba(255, 255, 255, 0.1)",
+        light=f"1px solid {BRAND_BACKGROUND_ALT}",
+        dark=f"1px solid {BRAND_BACKGROUND_ALT}",
     ),
     "box_shadow": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["box_shadow"],
-        dark="0 4px 20px rgba(0, 0, 0, 0.4)",
+        light=f"{BRAND_BACKGROUND_ALT}10 4px 30px",
+        dark=f"{BRAND_BACKGROUND_ALT}10 4px 30px",
     ),
     "style": {
         "backdropFilter": "blur(20px)",

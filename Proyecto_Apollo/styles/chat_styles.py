@@ -1,7 +1,9 @@
 """Estilos para componentes de chat"""
 
 import reflex as rx
-from .colors import ApolloTheme
+from .colors import *
+from .fonts import *
+from ..components.ui import *
 
 # === ESTILOS BASE ===
 base_message_style = {
@@ -15,12 +17,12 @@ base_message_style = {
 question_style = {
     **base_message_style,
     "background_color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["question_background"],
-        dark=ApolloTheme.dark_colors()["question_background"]
+        light=BRAND_BACKGROUND_ALT,
+        dark=BRAND_BACKGROUND_ALT
     ),
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["question_text_color"],
-        dark=ApolloTheme.dark_colors()["question_text_color"]
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE
     ),
     "margin_right": "10px",
     "max_width": "80%",
@@ -31,8 +33,8 @@ answer_style = {
     **base_message_style,
     "max_width": "100%",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["answer_text_color"],
-        dark=ApolloTheme.dark_colors()["answer_text_color"]
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE
     ),
 }
 
@@ -77,8 +79,8 @@ text_area_desktop_style = {
     "padding": "8px",
     "font_size": "1rem",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_text_color"],
-        dark=ApolloTheme.dark_colors()["input_text_color"]
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE
     ),
     "_focus": {
         "outline": "none",
@@ -100,37 +102,37 @@ text_area_mobile_style = {
     "font_size": "16px",
     "border_radius": "14px",
     "color": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["input_text_color"],
-        dark=ApolloTheme.dark_colors()["input_text_color"]
+        light=BRAND_TEXT_DARK,
+        dark=BRAND_WHITE
     ),
 }
 
 send_button_desktop_style = {
     "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["send_button_color"],
-        dark=ApolloTheme.dark_colors()["send_button_color"]
+        light=BRAND_BACKGROUND_ALT,
+        dark=BRAND_BACKGROUND_ALT
     ),
     "radius": "full",
     "size": "3",
     "_hover": {
         "bg": rx.color_mode_cond(
-            light=ApolloTheme.light_colors()["send_button_hover_color"],
-            dark=ApolloTheme.dark_colors()["send_button_hover_color"]
+            light=BRAND_BACKGROUND_ALT,
+            dark=BRAND_BACKGROUND_ALT
         ),
     },
 }
 
 send_button_mobile_style = {
     "bg": rx.color_mode_cond(
-        light=ApolloTheme.light_colors()["send_button_color"],
-        dark=ApolloTheme.dark_colors()["send_button_color"]
+        light=BRAND_BACKGROUND_ALT,
+        dark=BRAND_BACKGROUND_ALT
     ),
     "radius": "full",
     "size": "3",
     "_hover": {
         "bg": rx.color_mode_cond(
-            light=ApolloTheme.light_colors()["send_button_hover_color"],
-            dark=ApolloTheme.dark_colors()["send_button_hover_color"]
+            light=BRAND_BACKGROUND_ALT,
+            dark=BRAND_BACKGROUND_ALT
         ),
     },
 }
