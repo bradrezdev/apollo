@@ -80,7 +80,7 @@ global_styles = {
 app = rx.App(
     style=global_styles,
     theme=rx.theme(
-        appearance="inherit",
+        appearance="light",
     ),
 )
 

@@ -23,3 +23,4 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///reflex.db")
 # === APP CONFIGURATION ===
 APP_NAME = "Proyecto_Apollo"
 APP_DESCRIPTION = "Chatbot con IA usando OpenAI Assistants"
+APP_VERSION = "1.0"
